@@ -21,6 +21,7 @@
 *.pdf
 *.png
 *.wmf
+*.zip
 
 # Ignore these sub-directories, whereever they are
 _Colleagues_Projects
