@@ -1,0 +1,147 @@
+% Header
+\documentclass{article}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{datetime}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\hrule
+\begin{quote}
+  \begin{flushleft}
+    Patrick R. Gillespie\\
+    Walsh Fellow\\
+    Teagasc, REDP\\
+    Athenry, Co Galway, Ireland\\
+    patrick.gillespie@teagasc.ie\\
+  \end{flushleft}
+\end{quote}
+\hrule
+\begin{flushleft}
+  \textbf{\jobname.Rnw}\\
+  \today at \currenttime
+\end{flushleft}
+\hrule
+\vspace{1cm}
+
+\begin{flushleft}
+\subsection*{Clearing and loading}
+<<echo=T, results='markup'>>=
+rm(list=ls()) 
+paneldir <- "/media/MyPassport/Data/data_NFSPanelAnalysis/"
+#paneldir <- "G:\\Data/data_NFSPanelAnalysi/"
+source(paste(paneldir, "code_R/dirstruct.R", sep='')) 
+setwd(Rdir)
+library(foreign) #...for the ability to read .dta files
+library(data.table) #... useful for big datasets (makes manipulation faster & easier)
+library(xtable) #... to get nice looking tables.
+@
+ 
+Don't need very much from this file... just read in var labels from file Brian sent me, extract varnames from fadn, and print off both to make the searching easier.
+
+<<echo=TRUE, results='markup'>>=
+fadn <- data.table(read.csv(paste(fadndir9907, "Ireland.csv", sep='')), key="A30")
+fadn <- fadn[A30==4110]
+setkey(fadn, Farm.Code, YEAR) # reset key
+
+# create new data table for just the 2005 year
+fadn05 <-fadn[YEAR==2005]
+
+# set the key 
+setkey(fadn05, Total.UAA)
+
+# now read in the key (saved the Enterprise sheet from the full spreadsheet as a csv in NFSPanelAnalysis for reading in) ...
+nfskey <- data.table(read.csv("nfskey.csv")) # includes rows and columns I don't need
+
+# ... and clean it up a bit.
+sr <- grep("Farm code", nfskey$ENTREPRISE.LAYOUT, ignore.case=T) # starting row
+er <- length(nfskey$ENTREPRISE.LAYOUT) # ending row
+# select starting to ending row, cols 1 to 2 (note that the typo in "ENTREPRISE.LAYOUT" is in the csv, hence it is "correct" here)
+nfskey <- nfskey[sr:er, list(ENTREPRISE.LAYOUT, X)]
+setnames(nfskey, c("ENTREPRISE.LAYOUT", "X"),c("labels", "varnames"))  # rename columns
+nfskey <- nfskey[varnames!=""]
+fadn.names <- data.table(vars = names(fadn05)) # create a column of fadn names 
+@
+
+
+% Printing NFS names (that I have so far), 50 rows at a time
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey[1:50])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey[51:100])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey[101:150])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey[151:200])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey[201:250])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey[251:300])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey[301:350])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey[351:400])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey[401:450])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey[451:500])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey[501:550])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey[551:600])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey[601:650])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey[651:700])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey[701:length(nfskey[,varnames])])
+@
+
+% Printing FADN names, 50 rows at a time
+\clearpage
+<<echo=FALSE, results='asis'>>=
+xtable(fadn.names[1:50])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(fadn.names[51:100])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(fadn.names[101:150])
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+xtable(fadn.names[151:length(fadn.names[,vars])])
+@
+
+\end{flushleft}
+\end{document}

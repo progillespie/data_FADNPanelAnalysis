@@ -1,0 +1,2 @@
+log close
+view logs/multisward2013_11_21.txt

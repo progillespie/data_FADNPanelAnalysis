@@ -1,0 +1,1985 @@
+--> RESET$
+Initializing NLOGIT Version 4.1 (November 1, 2009).
+--> READ	;FILE="G:\Data\data_FADNPanelAnalysis\OutData\DataCreatorFADN\test_constructed_data_FADN.csv"$
+--> CREATE	;A=LANDFAGE$
+--> DSTAT		;RHS=Y2,H,C,L3,A$
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+      Y2|  138478.      136168.      .000000      .278235E+07    22222       0
+       H|  64.7783      55.1926      .000000      922.500        22222       0
+       C|  138541.      132260.      .000000      .169372E+07    22222       0
+      L3|  472.194      289.800      .000000      4200.00        22222       0
+       A|  35.2091      28.5941      .000000      551.304        22222       0
+--> REJECT	;Y2<=0$
+--> REJECT	;H<=0$
+--> REJECT	;C<=0$
+--> REJECT	;L3<=0$
+--> REJECT	;A<=0$
+--> DSTAT		;RHS=Y2,H,C,L3,A$ ? <-- D taken out as it is missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+      Y2|  138566.      136192.      1353.73      .278235E+07    22202       0
+       H|  64.8151      55.2011      2.80000      922.500        22202       0
+       C|  138665.      132254.      70.4966      .169372E+07    22202       0
+      L3|  472.493      289.728      46.6450      4200.00        22202       0
+       A|  35.2234      28.6008      2.32416      551.304        22202       0
+--> SORT		;LHS=FC;RHS=*$
+FC       was sorted carrying  62 variables.
+--> CREATE	;IND=NDX(FC,0)$
+--> REGRESS	;LHS=ONE;RHS=ONE;STR=fc;PANEL$
+=====================================================
+| No variables specified. Stratification and count  |
+| variables were created. Ngroup =     6158         |
+| Full sample with missing data  =    22202         |
+| Stratification variable is       _STRATUM         |
+| Count variable for N(i) is       _GROUPTI         |
+=====================================================
+--> CREATE	;GRPSIZE=_GROUPTI$
+--> CALC		;LIST;G=MAX(GRPSIZE)$
++------------------------------------+
+| Listed Calculator Results          |
++------------------------------------+
+G       =      9.000000
+--> CALC		;MEANY1=XBR(Y1)$
+--> CALC		;MEANY2=XBR(Y2)$
+--> CALC		;MEANH=XBR(H)$
+--> CALC		;MEANC=XBR(C)$
+--> CALC		;MEANL=XBR(L3)$
+--> CALC		;MEANA=XBR(A)$
+--> CREATE	;MY1=Y1/MEANY1 ;MY2=Y2/MEANY2 ;MH=H/MEANH ;MC=C/MEANC ; ML=L3/MEANL ;MA=A/MEANA$  ? <-- "MD=D/MEAND  ;" removed as D is missing
+--> CREATE	;LNY1=LOG(MY1);LNY2=LOG(MY2);LNH=LOG(MH);LNC=LOG(MC);LNL=LOG(ML) ;LNA=LOG(MA)$ ? <-- "LND=LOG(MD);" removed... D missing
+--> CREATE	;TT=T*T ;LNHH=LNH*LNH ;LNHC=LNH*LNC ;LNHL=LNH*LNL
+    		;LNCC=LNC*LNC ;LNCL=LNC*LNL ;LNLL=LNL*LNL
+    		;LNHA=LNH*LNA ;LNCA=LNC*LNA ;LNLA=LNL*LNA ;LNAA=LNA*LNA
+    		;LNHT=LNH*T ;LNCT=LNC*T ;LNLT=LNL*T ;TTT=TT*T$
+--> NAMELIST	;CD=ONE,LNH,LNC,LNL,LNA$ ? <-- "LND," removed... D missing
+--> NAMELIST	;TL=LNHH,LNHC,LNHL,LNHA,LNCC,LNCL,LNCA,LNLL,LNLA,LNAA$ ? <--"LNHD,LNDD,LNDC,LNDL,LNDA," removed... D missing
+--> NAMELIST	;TCD=T,TT$
+--> NAMELIST	;TTL=T,TT,LNHT,LNCT,LNLT$ ? <-- "LNDT," removed... D missing
+--> NAMELIST	;TDV=T2,T3,T4,T5,T6,T7,T8,T9$ <-- ",T10,T11" removed ... only 9 years
+--> REJECT	;NEW;_GROUPTI<0		$
+--> FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV
+    		;PDS=GRPSIZE;EFF=UPL	$
+Normal exit:  31 iterations. Status=0. F=   -546.3334
+
+------------------------------------------------------------------
+Limited Dependent Variable Model - FRONTIER
+Dependent variable                 LNY2
+Log likelihood function       546.33338
+Estimation based on N =  22202, K =  25
+Information Criteria: Normalization=1/N
+              Normalized   Unnormalized
+AIC              -.04696    -1042.66676
+Fin.Smpl.AIC     -.04696    -1042.60814
+Bayes IC         -.03795     -842.46832
+Hannan Quinn     -.04403     -977.49783
+Model estimated: Jun 12, 2013, 17:05:29
+Variances: Sigma-squared(v)=     .02233
+           Sigma-squared(u)=     .09828
+           Sigma(v)        =     .14943
+           Sigma(u)        =     .31350
+Sigma = Sqr[(s^2(u)+s^2(v)]=     .34729
+Stochastic Production Frontier, e = v-u
+--------+---------------------------------------------------------
+        |                  Standard           Prob.       Mean
+    LNY2| Coefficient        Error       z    z>|Z|       of X
+--------+---------------------------------------------------------
+        |Primary Index Equation for Model
+Constant|     .20572***      .00483    42.61  .0000
+     LNH|     .92947***      .00570   163.14  .0000    -.23261
+     LNC|     .13641***      .00247    55.15  .0000    -.40536
+     LNL|     .11524***      .00533    21.63  .0000    -.13224
+     LNA|    -.02484***      .00532    -4.67  .0000    -.21666
+    LNHH|    -.05210***      .00953    -5.47  .0000     .47927
+    LNHC|    -.01857***      .00598    -3.10  .0019     .40049
+    LNHL|     .09301***      .01432     6.50  .0000     .24965
+    LNHA|    -.00960         .01446     -.66  .5068     .40312
+    LNCC|     .01618***      .00125    12.90  .0000    1.13468
+    LNCL|    -.01142**       .00518    -2.20  .0276     .26748
+    LNCA|     .00746         .00526     1.42  .1561     .34397
+    LNLL|    -.05744***      .00800    -7.18  .0000     .25977
+    LNLA|     .01722         .01220     1.41  .1580     .21563
+    LNAA|    -.00608         .00777     -.78  .4343     .45196
+      T2|     .13024***      .00617    21.12  .0000     .11630
+      T3|     .16307***      .00616    26.48  .0000     .11652
+      T4|    -.04413***      .00638    -6.92  .0000     .11175
+      T5|    -.06842***      .00631   -10.84  .0000     .11850
+      T6|    -.10483***      .00646   -16.24  .0000     .11103
+      T7|    -.03819***      .00655    -5.83  .0000     .10513
+      T8|    -.00700         .00667    -1.05  .2936     .09810
+      T9|     .19643***      .00676    29.04  .0000     .09256
+        |Variance parameters for compound error
+  Lambda|    2.09805***      .03208    65.39  .0000
+   Sigma|     .34729***   .1391D-04 24966.27  .0000
+--------+---------------------------------------------------------
+Note: nnnnn.D-xx or D+xx => multiply by 10 to -xx or +xx.
+Note: ***, **, * ==>  Significance at 1%, 5%, 10% level.
+------------------------------------------------------------------
+
+Normal exit:  38 iterations. Status=0. F=   -10074.01
+
+------------------------------------------------------------------
+Limited Dependent Variable Model - FRONTIER
+Dependent variable                 LNY2
+Log likelihood function     10074.01038
+Estimation based on N =  22202, K =  25
+Information Criteria: Normalization=1/N
+              Normalized   Unnormalized
+AIC              -.90523   -20098.02075
+Fin.Smpl.AIC     -.90523   -20097.96213
+Bayes IC         -.89622   -19897.82231
+Hannan Quinn     -.90230   -20032.85183
+Model estimated: Jun 12, 2013, 17:05:35
+Stochastic frontier based on panel data
+Estimation based on    6158 individuals
+Variances: Sigma-squared(v)=     .01147
+           Sigma-squared(u)=     .18245
+           Sigma(v)        =     .10710
+           Sigma(u)        =     .42715
+Sigma = Sqr[(s^2(u)+s^2(v)]=     .44037
+Stochastic Production Frontier, e = v-u
+--------+---------------------------------------------------------
+        |                  Standard           Prob.       Mean
+    LNY2| Coefficient        Error       z    z>|Z|       of X
+--------+---------------------------------------------------------
+        |Primary Index Equation for Model
+Constant|     .30638***      .00328    93.32  .0000
+     LNH|     .89752***      .00388   231.06  .0000    -.23261
+     LNC|     .06915***      .00170    40.56  .0000    -.40536
+     LNL|     .10140***      .00336    30.14  .0000    -.13224
+     LNA|     .01762***      .00375     4.70  .0000    -.21666
+    LNHH|    -.04032***      .00422    -9.56  .0000     .47927
+    LNHC|    -.00649**       .00326    -1.99  .0462     .40049
+    LNHL|     .07689***      .00592    12.98  .0000     .24965
+    LNHA|    -.01933***      .00723    -2.67  .0075     .40312
+    LNCC|     .00845***      .00070    12.07  .0000    1.13468
+    LNCL|    -.04282***      .00291   -14.72  .0000     .26748
+    LNCA|     .02275***      .00313     7.26  .0000     .34397
+    LNLL|    -.02870***      .00361    -7.95  .0000     .25977
+    LNLA|     .01685**       .00671     2.51  .0120     .21563
+    LNAA|    -.00715         .00475    -1.50  .1324     .45196
+      T2|     .13300***      .00366    36.34  .0000     .11630
+      T3|     .16268***      .00344    47.35  .0000     .11652
+      T4|    -.08478***      .00356   -23.79  .0000     .11175
+      T5|    -.11059***      .00369   -30.00  .0000     .11850
+      T6|    -.14585***      .00377   -38.69  .0000     .11103
+      T7|    -.08678***      .00370   -23.45  .0000     .10513
+      T8|    -.06195***      .00374   -16.58  .0000     .09810
+      T9|     .14985***      .00354    42.33  .0000     .09256
+        |Variance parameters for compound error
+  Lambda|    3.98841***      .08421    47.36  .0000
+Sigma(u)|     .42715***      .00434    98.49  .0000
+--------+---------------------------------------------------------
+Note: ***, **, * ==>  Significance at 1%, 5%, 10% level.
+------------------------------------------------------------------
+
+--> CREATE	;EPL=EXP(-UPL)		$
+--> SAMPLE	;ALL				$
+--> 						? T2		is B(16)
+--> 	? You won't be too		? T3		is B(17)
+--> 	? interested in the		? T4		is B(18)
+--> 	? time dummy beta's		? T5		is B(19)
+--> 	? but I've kept them		? T6		is B(20)
+--> 	? listed for reference		? T7		is B(21)
+--> 						? T8		is B(22)
+--> 						? T9		is B(23)
+--> CREATE;	EH=B(2)+(2*LNH*B(6))+(LNC*B(7))+(LNL*B(8))+(LNA*B(9))$
+--> CREATE;	EC=B(3)+(LNH*B(7))+(2*LNC*B(10))+(LNL*B(11))+(LNA*B(12))$
+--> CREATE;	EL=B(4)+(LNH*B(8))+(LNC*B(11))+(2*LNL*B(13))+(LNA*B(14))$
+--> CREATE;	EA=B(5)+(LNH*B(9))+(LNC*B(12))+(LNL*B(14))+(2*LNA*B(15))$
+--> CREATE	;RTS=EH+EC+EL+EA$ ?<-- "ED+" removed... D missing
+--> DSTAT		;RHS=EH,EC,EL,EA,RTS;WTS=W$ ?<-- "ED," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+      EH|  .925269      .508384E-01  .715088      1.15483        22202      20
+      EC|  .635110E-01  .211218E-01 -.323388E-01  .145685        22202      20
+      EL|  .100638      .521539E-01 -.120083      .454097        22202      20
+      EA|  .140900E-01  .237125E-01 -.165292      .102082        22202      20
+     RTS|  1.10351      .243044E-01  .982986      1.20509        22202      20
+--> INCLUDE	;New;t=1$
+--> DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EPL|  .699930      .145937      .179953      .990546         2889       2
+      EH|  .944467      .490010E-01  .784929      1.15365         2889       2
+      EC|  .580533E-01  .211744E-01 -.211883E-01  .137979         2889       2
+      EL|  .774239E-01  .481524E-01 -.120083      .281482         2889       2
+      EA|  .229980E-01  .227856E-01 -.839281E-01  .102082         2889       2
+     LNH| -.517537      .627621     -3.14192      2.65555         2889       2
+     LNC| -.437920      1.06331     -5.57230      2.50262         2889       2
+     LNL| -.892833E-01  .411245     -2.24600      2.18482         2889       2
+     LNA| -.477971      .592303     -2.71835      2.37552         2889       2
+--> INCLUDE	;New;t=2$
+--> DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EPL|  .700697      .146805      .179953      .992433         2582       0
+      EH|  .940581      .482228E-01  .793118      1.13377         2582       0
+      EC|  .584033E-01  .198716E-01 -.116715E-01  .123587         2582       0
+      EL|  .776887E-01  .469497E-01 -.441816E-01  .290991         2582       0
+      EA|  .237725E-01  .218971E-01 -.920660E-01  .757809E-01     2582       0
+     LNH| -.459833      .626054     -2.78524      2.01960         2582       0
+     LNC| -.361812      1.01316     -5.51189      2.22882         2582       0
+     LNL| -.699376E-01  .405322     -1.89454      1.83817         2582       0
+     LNA| -.466257      .591404     -2.19323      1.91910         2582       0
+--> INCLUDE	;New;t=3$
+--> DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EPL|  .704218      .148009      .229940      .993415         2587       2
+      EH|  .942464      .496319E-01  .759488      1.13492         2587       2
+      EC|  .586576E-01  .201180E-01 -.323388E-01  .133825         2587       2
+      EL|  .766193E-01  .475540E-01 -.537155E-01  .263713         2587       2
+      EA|  .237752E-01  .219406E-01 -.631283E-01  .786548E-01     2587       2
+     LNH| -.488328      .646170     -2.62398      2.12667         2587       2
+     LNC| -.378590      1.02163     -5.24577      2.18927         2587       2
+     LNL| -.754555E-01  .400571     -2.12209      1.94819         2587       2
+     LNA| -.461132      .617120     -2.56037      2.27413         2587       2
+--> INCLUDE	;New;t=4$
+--> DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EPL|  .709277      .148706      .229940      .993415         2481       4
+      EH|  .925238      .496939E-01  .740747      1.15483         2481       4
+      EC|  .628028E-01  .206087E-01 -.142407E-01  .138140         2481       4
+      EL|  .108546      .495898E-01 -.453439E-01  .292060         2481       4
+      EA|  .102033E-01  .225986E-01 -.787248E-01  .733753E-01     2481       4
+     LNH| -.479776      .645696     -2.91878      2.15693         2481       4
+     LNC| -.774488      1.00336     -5.82427      2.09911         2481       4
+     LNL| -.318639      .426579     -1.62055      1.81238         2481       4
+     LNA| -.439990      .616101     -2.36391      2.53194         2481       4
+--> INCLUDE	;New;t=5$
+--> DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EPL|  .715747      .146729      .253398      .993415         2631       1
+      EH|  .920470      .494554E-01  .766587      1.09153         2631       1
+      EC|  .633560E-01  .206284E-01 -.178020E-01  .135687         2631       1
+      EL|  .112453      .499897E-01 -.993808E-01  .320620         2631       1
+      EA|  .904937E-02  .226465E-01 -.100912      .851861E-01     2631       1
+     LNH| -.428188      .621005     -2.11742      2.26044         2631       1
+     LNC| -.762087      .983004     -6.00699      2.17164         2631       1
+     LNL| -.317429      .427586     -1.64317      1.64139         2631       1
+     LNA| -.407884      .609751     -2.02176      2.21589         2631       1
+--> INCLUDE	;New;t=6$
+--> DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EPL|  .714374      .148193      .222731      .993415         2465       5
+      EH|  .914172      .478285E-01  .728104      1.05359         2465       5
+      EC|  .674741E-01  .212211E-01 -.168929E-01  .137174         2465       5
+      EL|  .116607      .516812E-01 -.371275E-01  .394896         2465       5
+      EA|  .735800E-02  .238560E-01 -.143859      .724744E-01     2465       5
+     LNH| -.417759      .615168     -1.94152      2.44853         2465       5
+     LNC| -.743134      1.03093     -7.35427      2.14973         2465       5
+     LNL| -.368042      .465668     -1.67605      1.86919         2465       5
+     LNA| -.333233      .603024     -1.87094      2.15478         2465       5
+--> INCLUDE	;New;t=7$
+--> DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EPL|  .719632      .148989      .222731      .993415         2334       2
+      EH|  .912109      .469862E-01  .715088      1.06577         2334       2
+      EC|  .679666E-01  .208314E-01 -.268588E-01  .141641         2334       2
+      EL|  .117791      .501864E-01 -.508120E-01  .454097         2334       2
+      EA|  .712665E-02  .230231E-01 -.165292      .702343E-01     2334       2
+     LNH| -.398914      .602234     -1.86895      2.50049         2334       2
+     LNC| -.728572      1.01001     -7.58425      2.29186         2334       2
+     LNL| -.371367      .469208     -1.79257      2.05188         2334       2
+     LNA| -.323283      .609417     -2.15765      2.36231         2334       2
+--> INCLUDE	;New;t=8$
+--> DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EPL|  .723811      .148073      .222731      .993415         2178       2
+      EH|  .909526      .491694E-01  .756809      1.07682         2178       2
+      EC|  .681854E-01  .200636E-01 -.192994E-01  .139521         2178       2
+      EL|  .117488      .488889E-01 -.621780E-01  .339537         2178       2
+      EA|  .779216E-02  .225696E-01 -.115192      .733588E-01     2178       2
+     LNH| -.352999      .647066     -2.22563      2.61326         2178       2
+     LNC| -.664462      1.02913     -6.17977      2.37557         2178       2
+     LNL| -.345367      .478558     -1.78699      1.96173         2178       2
+     LNA| -.299262      .617417     -2.40726      2.35368         2178       2
+--> INCLUDE	;New;t=9$
+--> DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EPL|  .713796      .147325      .280090      .993415         2055       2
+      EH|  .907158      .495956E-01  .717219      1.07132         2055       2
+      EC|  .703547E-01  .212996E-01 -.204077E-01  .145685         2055       2
+      EL|  .113152      .473240E-01 -.379625E-01  .351886         2055       2
+      EA|  .102114E-01  .217501E-01 -.121156      .670741E-01     2055       2
+     LNH| -.323917      .647473     -2.26943      2.47030         2055       2
+     LNC| -.524187      1.02308     -6.53724      2.50245         2055       2
+     LNL| -.323721      .487791     -2.31546      2.14632         2055       2
+     LNA| -.259106      .620111     -1.93412      2.75058         2055       2
+--> SAMPLE	;ALL$
+--> REJECT	;NEW;_GROUPTI<0$
+--> FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV;PDS=GRPSIZE;MODEL=BC;EFF=UBC$
+Normal exit:  31 iterations. Status=0. F=   -546.3334
+
+------------------------------------------------------------------
+Limited Dependent Variable Model - FRONTIER
+Dependent variable                 LNY2
+Log likelihood function       546.33338
+Estimation based on N =  22202, K =  25
+Information Criteria: Normalization=1/N
+              Normalized   Unnormalized
+AIC              -.04696    -1042.66676
+Fin.Smpl.AIC     -.04696    -1042.60814
+Bayes IC         -.03795     -842.46832
+Hannan Quinn     -.04403     -977.49783
+Model estimated: Jun 12, 2013, 17:05:43
+Variances: Sigma-squared(v)=     .02233
+           Sigma-squared(u)=     .09828
+           Sigma(v)        =     .14943
+           Sigma(u)        =     .31350
+Sigma = Sqr[(s^2(u)+s^2(v)]=     .34729
+Stochastic Production Frontier, e = v-u
+--------+---------------------------------------------------------
+        |                  Standard           Prob.       Mean
+    LNY2| Coefficient        Error       z    z>|Z|       of X
+--------+---------------------------------------------------------
+        |Primary Index Equation for Model
+Constant|     .20572***      .00483    42.61  .0000
+     LNH|     .92947***      .00570   163.14  .0000    -.23261
+     LNC|     .13641***      .00247    55.15  .0000    -.40536
+     LNL|     .11524***      .00533    21.63  .0000    -.13224
+     LNA|    -.02484***      .00532    -4.67  .0000    -.21666
+    LNHH|    -.05210***      .00953    -5.47  .0000     .47927
+    LNHC|    -.01857***      .00598    -3.10  .0019     .40049
+    LNHL|     .09301***      .01432     6.50  .0000     .24965
+    LNHA|    -.00960         .01446     -.66  .5068     .40312
+    LNCC|     .01618***      .00125    12.90  .0000    1.13468
+    LNCL|    -.01142**       .00518    -2.20  .0276     .26748
+    LNCA|     .00746         .00526     1.42  .1561     .34397
+    LNLL|    -.05744***      .00800    -7.18  .0000     .25977
+    LNLA|     .01722         .01220     1.41  .1580     .21563
+    LNAA|    -.00608         .00777     -.78  .4343     .45196
+      T2|     .13024***      .00617    21.12  .0000     .11630
+      T3|     .16307***      .00616    26.48  .0000     .11652
+      T4|    -.04413***      .00638    -6.92  .0000     .11175
+      T5|    -.06842***      .00631   -10.84  .0000     .11850
+      T6|    -.10483***      .00646   -16.24  .0000     .11103
+      T7|    -.03819***      .00655    -5.83  .0000     .10513
+      T8|    -.00700         .00667    -1.05  .2936     .09810
+      T9|     .19643***      .00676    29.04  .0000     .09256
+        |Variance parameters for compound error
+  Lambda|    2.09805***      .03208    65.39  .0000
+   Sigma|     .34729***   .1391D-04 24966.27  .0000
+--------+---------------------------------------------------------
+Note: nnnnn.D-xx or D+xx => multiply by 10 to -xx or +xx.
+Note: ***, **, * ==>  Significance at 1%, 5%, 10% level.
+------------------------------------------------------------------
+
+Line search does not improve fn. Exiting optimization.
+
+------------------------------------------------------------------
+Limited Dependent Variable Model - FRONTIER
+Dependent variable                 LNY2
+Log likelihood function     10085.98620
+Estimation based on N =  22202, K =  26
+Information Criteria: Normalization=1/N
+              Normalized   Unnormalized
+AIC              -.90622   -20119.97240
+Fin.Smpl.AIC     -.90622   -20119.90909
+Bayes IC         -.89685   -19911.76603
+Hannan Quinn     -.90317   -20052.19672
+Model estimated: Jun 12, 2013, 17:07:49
+Stochastic frontier based on panel data
+Estimation based on    6158 individuals
+Variances: Sigma-squared(v)=     .01146
+           Sigma-squared(u)=     .18469
+           Sigma(v)        =     .10705
+           Sigma(u)        =     .42975
+Sigma = Sqr[(s^2(u)+s^2(v)]=     .44289
+Stochastic Production Frontier, e = v-u
+Time varying u(i,t)=exp[-eta(t-T)]*|U(i)|
+--------+---------------------------------------------------------
+        |                  Standard           Prob.       Mean
+    LNY2| Coefficient        Error       z    z>|Z|       of X
+--------+---------------------------------------------------------
+        |Primary Index Equation for Model
+Constant|     .30629***      .00328    93.37  .0000
+     LNH|     .89764***      .00388   231.22  .0000    -.23261
+     LNC|     .06925***      .00170    40.66  .0000    -.40536
+     LNL|     .10137***      .00336    30.14  .0000    -.13224
+     LNA|     .01770***      .00375     4.72  .0000    -.21666
+    LNHH|    -.04032***      .00422    -9.56  .0000     .47927
+    LNHC|    -.00637*        .00325    -1.96  .0502     .40049
+    LNHL|     .07644***      .00593    12.90  .0000     .24965
+    LNHA|    -.01907***      .00723    -2.64  .0084     .40312
+    LNCC|     .00847***      .00070    12.11  .0000    1.13468
+    LNCL|    -.04261***      .00290   -14.67  .0000     .26748
+    LNCA|     .02246***      .00313     7.18  .0000     .34397
+    LNLL|    -.02839***      .00361    -7.86  .0000     .25977
+    LNLA|     .01708**       .00670     2.55  .0108     .21563
+    LNAA|    -.00748         .00475    -1.58  .1151     .45196
+      T2|     .13293***      .00365    36.42  .0000     .11630
+      T3|     .16069***      .00345    46.54  .0000     .11652
+      T4|    -.08297***      .00360   -23.07  .0000     .11175
+      T5|    -.11111***      .00368   -30.21  .0000     .11850
+      T6|    -.14848***      .00381   -38.94  .0000     .11103
+      T7|    -.08571***      .00372   -23.04  .0000     .10513
+      T8|    -.06002***      .00377   -15.90  .0000     .09810
+      T9|     .15024***      .00354    42.43  .0000     .09256
+        |Variance parameters for compound error
+  Lambda|    4.01463***      .00251  1601.88  .0000
+Sigma(u)|     .42975***      .00086   497.71  .0000
+        |Eta parameter for time varying inefficiency
+     Eta|    -.00524***      .00109    -4.82  .0000
+--------+---------------------------------------------------------
+Note: ***, **, * ==>  Significance at 1%, 5%, 10% level.
+------------------------------------------------------------------
+
+--> CREATE	;EBC=EXP(-UBC)$
+--> SAMPLE	;ALL$
+--> CREATE;	EH=B(2)+(2*LNH*B(6))+(LNC*B(7))+(LNL*B(8))+(LNA*B(9))$
+--> CREATE;	EC=B(3)+(LNH*B(7))+(2*LNC*B(10))+(LNL*B(11))+(LNA*B(12))$
+--> CREATE;	EL=B(4)+(LNH*B(8))+(LNC*B(11))+(2*LNL*B(13))+(LNA*B(14))$
+--> CREATE;	EA=B(5)+(LNH*B(9))+(LNC*B(12))+(LNL*B(14))+(2*LNA*B(15))$
+--> CREATE	;RTS=EH+EC+EL+EA$ ?<-- "ED+" removed... D missing
+--> DSTAT		;RHS=EH,EC,EL,EA,RTS;WTS=W$ ?<-- "ED," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+      EH|  .925323      .506850E-01  .716008      1.15422        22202      20
+      EC|  .636028E-01  .210651E-01 -.322217E-01  .145408        22202      20
+      EL|  .100439      .519302E-01 -.118991      .452127        22202      20
+      EA|  .144184E-01  .236008E-01 -.163383      .102259        22202      20
+     RTS|  1.10378      .242714E-01  .983606      1.20491        22202      20
+--> INCLUDE	;New;t=1$
+--> DSTAT		;RHS=EBC,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EBC|  .696495      .152393      .910991E-01  .990675         2889       2
+      EH|  .944448      .488592E-01  .785437      1.15324         2889       2
+      EC|  .581972E-01  .211417E-01 -.210767E-01  .137733         2889       2
+      EL|  .773715E-01  .479704E-01 -.118991      .280328         2889       2
+      EA|  .233525E-01  .226357E-01 -.824168E-01  .102259         2889       2
+--> INCLUDE	;New;t=2$
+--> DSTAT		;RHS=EBC,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EBC|  .699454      .149416      .180843      .992419         2582       0
+      EH|  .940566      .480867E-01  .793563      1.13319         2582       0
+      EC|  .585579E-01  .198385E-01 -.111974E-01  .123541         2582       0
+      EL|  .776414E-01  .467793E-01 -.439822E-01  .289720         2582       0
+      EA|  .241169E-01  .217676E-01 -.904357E-01  .764317E-01     2582       0
+--> INCLUDE	;New;t=3$
+--> DSTAT		;RHS=EBC,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EBC|  .704977      .148750      .195964      1.05431         2587       2
+      EH|  .942451      .494939E-01  .760044      1.13432         2587       2
+      EC|  .588054E-01  .200795E-01 -.322217E-01  .133261         2587       2
+      EL|  .765789E-01  .473858E-01 -.532908E-01  .262264         2587       2
+      EA|  .241125E-01  .218130E-01 -.617345E-01  .789185E-01     2587       2
+--> INCLUDE	;New;t=4$
+--> DSTAT		;RHS=EBC,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EBC|  .708093      .149671      .229402      .993380         2481       4
+      EH|  .925290      .495547E-01  .741225      1.15422         2481       4
+      EC|  .628806E-01  .205582E-01 -.142929E-01  .137854         2481       4
+      EL|  .108270      .494076E-01 -.444156E-01  .290806         2481       4
+      EA|  .105867E-01  .224878E-01 -.778758E-01  .740249E-01     2481       4
+--> INCLUDE	;New;t=5$
+--> DSTAT		;RHS=EBC,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EBC|  .715177      .148558      .252472      1.05460         2631       1
+      EH|  .920532      .493087E-01  .766952      1.09100         2631       1
+      EC|  .634317E-01  .205819E-01 -.178248E-01  .135420         2631       1
+      EL|  .112164      .498036E-01 -.979646E-01  .319207         2631       1
+      EA|  .942194E-02  .225412E-01 -.993600E-01  .853594E-01     2631       1
+--> INCLUDE	;New;t=6$
+--> DSTAT		;RHS=EBC,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EBC|  .716068      .147661      .222581      .993310         2465       5
+      EH|  .914277      .476814E-01  .728972      1.05319         2465       5
+      EC|  .675197E-01  .211555E-01 -.170113E-01  .136882         2465       5
+      EL|  .116303      .514545E-01 -.368596E-01  .393053         2465       5
+      EA|  .766772E-02  .237410E-01 -.141972      .728953E-01     2465       5
+--> INCLUDE	;New;t=7$
+--> DSTAT		;RHS=EBC,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EBC|  .718654      .150248      .224335      1.05519         2334       2
+      EH|  .912221      .468397E-01  .716008      1.06536         2334       2
+      EC|  .680115E-01  .207709E-01 -.269802E-01  .141214         2334       2
+      EL|  .117482      .499591E-01 -.498910E-01  .452127         2334       2
+      EA|  .742983E-02  .229008E-01 -.163383      .699717E-01     2334       2
+--> INCLUDE	;New;t=8$
+--> DSTAT		;RHS=EBC,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EBC|  .722016      .150079      .997626E-01  .993448         2178       2
+      EH|  .909640      .490268E-01  .757373      1.07617         2178       2
+      EC|  .682368E-01  .200125E-01 -.194458E-01  .139268         2178       2
+      EL|  .117194      .486775E-01 -.611165E-01  .338023         2178       2
+      EA|  .807916E-02  .224543E-01 -.113562      .730951E-01     2178       2
+--> INCLUDE	;New;t=9$
+--> DSTAT		;RHS=EBC,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EBC|  .712059      .150098      .240142      1.05490         2055       2
+      EH|  .907290      .494425E-01  .718184      1.07089         2055       2
+      EC|  .704076E-01  .212314E-01 -.204594E-01  .145408         2055       2
+      EL|  .112897      .471095E-01 -.371804E-01  .350249         2055       2
+      EA|  .104446E-01  .216344E-01 -.119347      .675835E-01     2055       2
+--> SAMPLE	;ALL	$
+--> REJECT	;NEW;_GROUPTI<0	$
+--> FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV$
+Normal exit:  31 iterations. Status=0. F=   -546.3334
+
+------------------------------------------------------------------
+Limited Dependent Variable Model - FRONTIER
+Dependent variable                 LNY2
+Log likelihood function       546.33338
+Estimation based on N =  22202, K =  25
+Information Criteria: Normalization=1/N
+              Normalized   Unnormalized
+AIC              -.04696    -1042.66676
+Fin.Smpl.AIC     -.04696    -1042.60814
+Bayes IC         -.03795     -842.46832
+Hannan Quinn     -.04403     -977.49783
+Model estimated: Jun 12, 2013, 17:07:57
+Variances: Sigma-squared(v)=     .02233
+           Sigma-squared(u)=     .09828
+           Sigma(v)        =     .14943
+           Sigma(u)        =     .31350
+Sigma = Sqr[(s^2(u)+s^2(v)]=     .34729
+Stochastic Production Frontier, e = v-u
+--------+---------------------------------------------------------
+        |                  Standard           Prob.       Mean
+    LNY2| Coefficient        Error       z    z>|Z|       of X
+--------+---------------------------------------------------------
+        |Primary Index Equation for Model
+Constant|     .20572***      .00483    42.61  .0000
+     LNH|     .92947***      .00570   163.14  .0000    -.23261
+     LNC|     .13641***      .00247    55.15  .0000    -.40536
+     LNL|     .11524***      .00533    21.63  .0000    -.13224
+     LNA|    -.02484***      .00532    -4.67  .0000    -.21666
+    LNHH|    -.05210***      .00953    -5.47  .0000     .47927
+    LNHC|    -.01857***      .00598    -3.10  .0019     .40049
+    LNHL|     .09301***      .01432     6.50  .0000     .24965
+    LNHA|    -.00960         .01446     -.66  .5068     .40312
+    LNCC|     .01618***      .00125    12.90  .0000    1.13468
+    LNCL|    -.01142**       .00518    -2.20  .0276     .26748
+    LNCA|     .00746         .00526     1.42  .1561     .34397
+    LNLL|    -.05744***      .00800    -7.18  .0000     .25977
+    LNLA|     .01722         .01220     1.41  .1580     .21563
+    LNAA|    -.00608         .00777     -.78  .4343     .45196
+      T2|     .13024***      .00617    21.12  .0000     .11630
+      T3|     .16307***      .00616    26.48  .0000     .11652
+      T4|    -.04413***      .00638    -6.92  .0000     .11175
+      T5|    -.06842***      .00631   -10.84  .0000     .11850
+      T6|    -.10483***      .00646   -16.24  .0000     .11103
+      T7|    -.03819***      .00655    -5.83  .0000     .10513
+      T8|    -.00700         .00667    -1.05  .2936     .09810
+      T9|     .19643***      .00676    29.04  .0000     .09256
+        |Variance parameters for compound error
+  Lambda|    2.09805***      .03208    65.39  .0000
+   Sigma|     .34729***   .1391D-04 24966.27  .0000
+--------+---------------------------------------------------------
+Note: nnnnn.D-xx or D+xx => multiply by 10 to -xx or +xx.
+Note: ***, **, * ==>  Significance at 1%, 5%, 10% level.
+------------------------------------------------------------------
+
+--> FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV;PDS=GRPSIZE;HALTON;PTS=10;RPM;FCN=ONE(n);EFF=UTRE$
+Line search does not improve fn. Exiting optimization.
+
+------------------------------------------------------------------
+Random Coefficients  Frontier Model
+Dependent variable                 LNY2
+Log likelihood function      9132.31897
+Restricted log likelihood        .00000
+Chi squared [   1 d.f.]     18264.63794
+Significance level               .00000
+Estimation based on N =  22202, K =  26
+Information Criteria: Normalization=1/N
+              Normalized   Unnormalized
+AIC              -.82032   -18212.63794
+Fin.Smpl.AIC     -.82031   -18212.57463
+Bayes IC         -.81094   -18004.43156
+Hannan Quinn     -.81726   -18144.86226
+Model estimated: Jun 12, 2013, 17:20:21
+Unbalanced panel has   6158 individuals
+Stochastic frontier (half normal)
+Simulation based on     10 Halton draws
+Sigma( u) (1 sided)  =      .16870
+Sigma( v) (symmetric)=      .06022
+--------+---------------------------------------------------------
+        |                  Standard           Prob.       Mean
+    LNY2| Coefficient        Error       z    z>|Z|       of X
+--------+---------------------------------------------------------
+        |Production / Cost parameters, nonrandom first
+     LNH|     .89595***      .00217   413.04  .0000    -.23261
+     LNC|     .08681***      .00093    93.61  .0000    -.40536
+     LNL|     .11950***      .00199    59.99  .0000    -.13224
+     LNA|     .02325***      .00197    11.82  .0000    -.21666
+    LNHH|    -.05123***      .00302   -16.98  .0000     .47927
+    LNHC|    -.04352***      .00203   -21.46  .0000     .40049
+    LNHL|     .08953***      .00494    18.11  .0000     .24965
+    LNHA|     .01336***      .00468     2.85  .0043     .40312
+    LNCC|     .01149***      .00047    24.65  .0000    1.13468
+    LNCL|    -.02914***      .00183   -15.91  .0000     .26748
+    LNCA|     .03839***      .00172    22.36  .0000     .34397
+    LNLL|    -.01854***      .00274    -6.76  .0000     .25977
+    LNLA|    -.00526         .00424    -1.24  .2140     .21563
+    LNAA|    -.01963***      .00275    -7.13  .0000     .45196
+      T2|     .13199***      .00323    40.91  .0000     .11630
+      T3|     .16049***      .00303    52.95  .0000     .11652
+      T4|    -.07678***      .00312   -24.62  .0000     .11175
+      T5|    -.10189***      .00304   -33.47  .0000     .11850
+      T6|    -.14153***      .00319   -44.30  .0000     .11103
+      T7|    -.07914***      .00322   -24.59  .0000     .10513
+      T8|    -.04792***      .00316   -15.15  .0000     .09810
+      T9|     .17401***      .00295    59.01  .0000     .09256
+        |Means for random parameters
+Constant|     .08216***      .00219    37.57  .0000
+        |Scale parameters for dists. of random parameters
+Constant|     .07484***      .00083    90.15  .0000
+        |Variance parameter for v +/- u
+   Sigma|     .17912***      .00047   380.76  .0000
+        |Asymmetry parameter, lambda
+  Lambda|    2.80115***      .03435    81.55  .0000
+--------+---------------------------------------------------------
+Note: ***, **, * ==>  Significance at 1%, 5%, 10% level.
+------------------------------------------------------------------
+
+
+Implied standard deviations of random parameters
+
+Matrix S.D_Beta has  1 rows and  1 columns.
+               1
+        +-------------+
+       1|     .07484
+        +-------------+
+--> CREATE	;ETRE=EXP(-UTRE)	$
+--> SAMPLE	;ALL			$
+--> CREATE;	EH=B(2)+(2*LNH*B(6))+(LNC*B(7))+(LNL*B(8))+(LNA*B(9))$
+--> CREATE;	EC=B(3)+(LNH*B(7))+(2*LNC*B(10))+(LNL*B(11))+(LNA*B(12))$
+--> CREATE;	EL=B(4)+(LNH*B(8))+(LNC*B(11))+(2*LNL*B(13))+(LNA*B(14))$
+--> CREATE;	EA=B(5)+(LNH*B(9))+(LNC*B(12))+(LNL*B(14))+(2*LNA*B(15))$
+--> CREATE;	RTS=EH+EC+EL+EA$ ?<-- "ED+" removed... D missing
+--> DSTAT		;RHS=EH,EC,EL,EA,RTS;WTS=W$ ?<-- "ED," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+      EH|  .640107E-01  .824283E-01 -.578588      .324095        22202      20
+      EC|  .112877      .600202E-01 -.631265E-01  .505276        22202      20
+      EL|  .501453E-02  .381894E-01 -.265841      .102265        22202      20
+      EA| -.144079      .157444     -.731258      .665092        22202      20
+     RTS|  .378230E-01  .192733     -.652886      .989727        22202      20
+--> INCLUDE	;New;t=1$
+--> DSTAT		;RHS=ETRE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETRE|  .876317      .702289E-01  .321628      .982863         2889       2
+      EH|  .859646E-01  .833568E-01 -.306633      .324095         2889       2
+      EC|  .104127      .617375E-01 -.628399E-01  .339358         2889       2
+      EL|  .984617E-02  .403491E-01 -.194987      .101642         2889       2
+      EA| -.173480      .151635     -.731258      .517098         2889       2
+--> INCLUDE	;New;t=2$
+--> DSTAT		;RHS=ETRE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETRE|  .879765      .686142E-01  .321628      .990915         2582       0
+      EH|  .881493E-01  .790609E-01 -.339774      .267084         2582       0
+      EC|  .105383      .589795E-01 -.406610E-01  .344301         2582       0
+      EL|  .131053E-01  .379442E-01 -.183801      .102073         2582       0
+      EA| -.171516      .151302     -.591423      .412666         2582       0
+--> INCLUDE	;New;t=3$
+--> DSTAT		;RHS=ETRE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETRE|  .877926      .720257E-01  .321628      .982436         2587       2
+      EH|  .891124E-01  .797165E-01 -.249431      .273604         2587       2
+      EC|  .103502      .597459E-01 -.488507E-01  .297260         2587       2
+      EL|  .120381E-01  .378658E-01 -.165172      .102265         2587       2
+      EA| -.170071      .157645     -.697038      .506431         2587       2
+--> INCLUDE	;New;t=4$
+--> DSTAT		;RHS=ETRE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETRE|  .886037      .646455E-01  .321628      .983562         2481       4
+      EH|  .499173E-01  .803877E-01 -.314955      .247159         2481       4
+      EC|  .117617      .613225E-01 -.631265E-01  .339753         2481       4
+      EL| -.901911E-03  .372565E-01 -.176294      .854728E-01     2481       4
+      EA| -.152280      .158306     -.650919      .624142         2481       4
+--> INCLUDE	;New;t=5$
+--> DSTAT		;RHS=ETRE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETRE|  .884537      .629770E-01  .321628      .988666         2631       1
+      EH|  .469226E-01  .799991E-01 -.360554      .260313         2631       1
+      EC|  .120964      .606175E-01 -.283252E-01  .361578         2631       1
+      EL| -.379615E-03  .364868E-01 -.184779      .981935E-01     2631       1
+      EA| -.143466      .157049     -.547040      .502448         2631       1
+--> INCLUDE	;New;t=6$
+--> DSTAT		;RHS=ETRE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETRE|  .887042      .617203E-01  .429962      .986908         2465       5
+      EH|  .478935E-01  .829017E-01 -.503817      .278200         2465       5
+      EC|  .117466      .603558E-01 -.568251E-01  .427454         2465       5
+      EL| -.444889E-03  .379096E-01 -.255760      .852834E-01     2465       5
+      EA| -.122998      .155056     -.512498      .492102         2465       5
+--> INCLUDE	;New;t=7$
+--> DSTAT		;RHS=ETRE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETRE|  .886525      .653192E-01  .321628      .989709         2334       2
+      EH|  .476269E-01  .810584E-01 -.578588      .268935         2334       2
+      EC|  .117992      .588569E-01 -.349775E-01  .505276         2334       2
+      EL|  .205572E-03  .367590E-01 -.265841      .929800E-01     2334       2
+      EA| -.120359      .155636     -.597923      .544037         2334       2
+--> INCLUDE	;New;t=8$
+--> DSTAT		;RHS=ETRE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETRE|  .881143      .729325E-01  .321628      .988380         2178       2
+      EH|  .499938E-01  .785494E-01 -.403727      .274902         2178       2
+      EC|  .118919      .573480E-01 -.431396E-01  .374645         2178       2
+      EL|  .253505E-02  .378281E-01 -.211221      .960754E-01     2178       2
+      EA| -.115189      .157175     -.603709      .535101         2178       2
+--> INCLUDE	;New;t=9$
+--> DSTAT		;RHS=ETRE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETRE|  .869263      .848808E-01  .321628      .984898         2055       2
+      EH|  .607722E-01  .767399E-01 -.434500      .259721         2055       2
+      EC|  .113433      .564528E-01 -.103324E-01  .419994         2055       2
+      EL|  .729300E-02  .370649E-01 -.221970      .996296E-01     2055       2
+      EA| -.107280      .157062     -.537737      .665092         2055       2
+--> SAMPLE		;ALL		$
+--> REJECT	;NEW;_GROUPTI<0	$
+--> FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV$
+Normal exit:  31 iterations. Status=0. F=   -546.3334
+
+------------------------------------------------------------------
+Limited Dependent Variable Model - FRONTIER
+Dependent variable                 LNY2
+Log likelihood function       546.33338
+Estimation based on N =  22202, K =  25
+Information Criteria: Normalization=1/N
+              Normalized   Unnormalized
+AIC              -.04696    -1042.66676
+Fin.Smpl.AIC     -.04696    -1042.60814
+Bayes IC         -.03795     -842.46832
+Hannan Quinn     -.04403     -977.49783
+Model estimated: Jun 12, 2013, 17:20:29
+Variances: Sigma-squared(v)=     .02233
+           Sigma-squared(u)=     .09828
+           Sigma(v)        =     .14943
+           Sigma(u)        =     .31350
+Sigma = Sqr[(s^2(u)+s^2(v)]=     .34729
+Stochastic Production Frontier, e = v-u
+--------+---------------------------------------------------------
+        |                  Standard           Prob.       Mean
+    LNY2| Coefficient        Error       z    z>|Z|       of X
+--------+---------------------------------------------------------
+        |Primary Index Equation for Model
+Constant|     .20572***      .00483    42.61  .0000
+     LNH|     .92947***      .00570   163.14  .0000    -.23261
+     LNC|     .13641***      .00247    55.15  .0000    -.40536
+     LNL|     .11524***      .00533    21.63  .0000    -.13224
+     LNA|    -.02484***      .00532    -4.67  .0000    -.21666
+    LNHH|    -.05210***      .00953    -5.47  .0000     .47927
+    LNHC|    -.01857***      .00598    -3.10  .0019     .40049
+    LNHL|     .09301***      .01432     6.50  .0000     .24965
+    LNHA|    -.00960         .01446     -.66  .5068     .40312
+    LNCC|     .01618***      .00125    12.90  .0000    1.13468
+    LNCL|    -.01142**       .00518    -2.20  .0276     .26748
+    LNCA|     .00746         .00526     1.42  .1561     .34397
+    LNLL|    -.05744***      .00800    -7.18  .0000     .25977
+    LNLA|     .01722         .01220     1.41  .1580     .21563
+    LNAA|    -.00608         .00777     -.78  .4343     .45196
+      T2|     .13024***      .00617    21.12  .0000     .11630
+      T3|     .16307***      .00616    26.48  .0000     .11652
+      T4|    -.04413***      .00638    -6.92  .0000     .11175
+      T5|    -.06842***      .00631   -10.84  .0000     .11850
+      T6|    -.10483***      .00646   -16.24  .0000     .11103
+      T7|    -.03819***      .00655    -5.83  .0000     .10513
+      T8|    -.00700         .00667    -1.05  .2936     .09810
+      T9|     .19643***      .00676    29.04  .0000     .09256
+        |Variance parameters for compound error
+  Lambda|    2.09805***      .03208    65.39  .0000
+   Sigma|     .34729***   .1391D-04 24966.27  .0000
+--------+---------------------------------------------------------
+Note: nnnnn.D-xx or D+xx => multiply by 10 to -xx or +xx.
+Note: ***, **, * ==>  Significance at 1%, 5%, 10% level.
+------------------------------------------------------------------
+
+--> DSTAT		;RHS=_GROUPTI,FC,T$
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+_GROUPTI|  5.57589      2.75178      1.00000      9.00000        22202       0
+      FC|  2914.39      1889.16      1.00000      6305.00        22202       0
+       T|  4.77164      2.55929      1.00000      9.00000        22202       0
+--> FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV;PDS=GRPSIZE;FEM;EFF=UTFE$
+Nonlinear Estimation of Model Parameters
+Method=Newton; Maximum iterations=100
+Convergence criteria: max|dB|   .1000D-08, dF/F=  .1000D-08, g<H>g=  .1000D-05
+Normal exit from iterations. Exit status=0.
+
+------------------------------------------------------------------
+FIXED EFFECTS Frontr Model
+Dependent variable                 LNY2
+Log likelihood function      4515.80063
+Estimation based on N =  22202, K =6182
+Information Criteria: Normalization=1/N
+              Normalized   Unnormalized
+AIC               .15009     3332.39874
+Fin.Smpl.AIC      .36504     8104.64495
+Bayes IC         2.37985    52837.46932
+Hannan Quinn      .87593    19447.37105
+Model estimated: Jun 12, 2013, 17:20:31
+Unbalanced panel has   6158 individuals
+Skipped    0 groups with inestimable ai
+Half normal stochastic frontier
+Sigma( u) (1 sided)  =      .44537
+Sigma( v) (symmetric)=      .18739
+--------+---------------------------------------------------------
+        |                  Standard           Prob.       Mean
+    LNY2| Coefficient        Error       z    z>|Z|       of X
+--------+---------------------------------------------------------
+        |Production / Cost parameters
+     LNH|     .93020***      .00494   188.33  .0000    -.23261
+     LNC|     .13765***      .00158    86.98  .0000    -.40536
+     LNL|     .11426***      .00318    35.96  .0000    -.13224
+     LNA|    -.02503***      .00315    -7.96  .0000    -.21666
+    LNHH|    -.05367***      .00573    -9.37  .0000     .47927
+    LNHC|    -.01819***      .00350    -5.19  .0000     .40049
+    LNHL|     .09502***      .00846    11.24  .0000     .24965
+    LNHA|    -.00963         .00873    -1.10  .2700     .40312
+    LNCC|     .01583***      .00076    20.95  .0000    1.13468
+    LNCL|    -.00815***      .00305    -2.67  .0075     .26748
+    LNCA|     .00747**       .00307     2.44  .0148     .34397
+    LNLL|    -.06302***      .00458   -13.77  .0000     .25977
+    LNLA|     .01763**       .00728     2.42  .0155     .21563
+    LNAA|    -.00674         .00457    -1.48  .1400     .45196
+      T2|     .11618***      .00331    35.05  .0000     .11630
+      T3|     .15148***      .00340    44.54  .0000     .11652
+      T4|    -.05403***      .00354   -15.24  .0000     .11175
+      T5|    -.07823***      .00345   -22.69  .0000     .11850
+      T6|    -.11463***      .00361   -31.71  .0000     .11103
+      T7|    -.04711***      .00374   -12.60  .0000     .10513
+      T8|    -.01591***      .00382    -4.16  .0000     .09810
+      T9|     .18426***      .00377    48.81  .0000     .09256
+        |Variance parameter for v +/- u
+   Sigma|     .48319***      .00189   255.87  .0000
+        |Asymmetry parameter, lambda
+  Lambda|    2.37665***      .03813    62.33  .0000
+--------+---------------------------------------------------------
+Note: ***, **, * ==>  Significance at 1%, 5%, 10% level.
+------------------------------------------------------------------
+
+--> CREATE	;ETFE=EXP(-UTFE)	$
+--> SAMPLE	;ALL			$
+--> CREATE;	EH=B(2)+(2*LNH*B(6))+(LNC*B(7))+(LNL*B(8))+(LNA*B(9))$
+--> CREATE;	EC=B(3)+(LNH*B(7))+(2*LNC*B(10))+(LNL*B(11))+(LNA*B(12))$
+--> CREATE;	EL=B(4)+(LNH*B(8))+(LNC*B(11))+(2*LNL*B(13))+(LNA*B(14))$
+--> CREATE;	EA=B(5)+(LNH*B(9))+(LNC*B(12))+(LNL*B(14))+(2*LNA*B(15))$
+--> CREATE	;RTS=EH+EC+EL+EA$ ?<-- "ED+" removed... D missing
+--> DSTAT		;RHS=EH,EC,EL,EA,RTS;WTS=W$ ?<-- "ED," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+      EH|  .934528E-01  .904783E-01 -.563661      .337419        22202      20
+      EC|  .105423      .333477E-01 -.117807      .257495        22202      20
+      EL| -.312235E-01  .162684E-01 -.123389      .443684E-01    22202      20
+      EA| -.112848      .138759     -.583154      .574908        22202      20
+     RTS|  .548040E-01  .164048     -.495506      .884915        22202      20
+--> INCLUDE	;New;t=1$
+--> DSTAT		;RHS=ETFE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETFE|  .773374      .416122E-01  .479027      .902842         2889       2
+      EH|  .108152      .935005E-01 -.321748      .331402         2889       2
+      EC|  .101670      .343838E-01 -.117807      .244857         2889       2
+      EL| -.232459E-01  .136669E-01 -.998419E-01  .314962E-01     2889       2
+      EA| -.144720      .135106     -.559446      .378855         2889       2
+--> INCLUDE	;New;t=2$
+--> DSTAT		;RHS=ETFE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETFE|  .779694      .421896E-01  .252781      .897130         2582       0
+      EH|  .113284      .885982E-01 -.354992      .337419         2582       0
+      EC|  .105319      .320483E-01 -.471722E-02  .225071         2582       0
+      EL| -.226292E-01  .133985E-01 -.103958      .350871E-01     2582       0
+      EA| -.146012      .133151     -.520952      .308124         2582       0
+--> INCLUDE	;New;t=3$
+--> DSTAT		;RHS=ETFE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETFE|  .775045      .484647E-01  .242938      .903494         2587       2
+      EH|  .112860      .893598E-01 -.318817      .325468         2587       2
+      EC|  .102521      .337432E-01 -.202073E-01  .230585         2587       2
+      EL| -.227094E-01  .132183E-01 -.110406      .387280E-01     2587       2
+      EA| -.144178      .136818     -.583154      .412859         2587       2
+--> INCLUDE	;New;t=4$
+--> DSTAT		;RHS=ETFE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETFE|  .774619      .449328E-01  .257528      .895107         2481       4
+      EH|  .776079E-01  .881792E-01 -.368702      .291320         2481       4
+      EC|  .106633      .347949E-01 -.100883E-01  .240604         2481       4
+      EL| -.344694E-01  .143425E-01 -.832646E-01  .296291E-01     2481       4
+      EA| -.112541      .139141     -.575427      .574908         2481       4
+--> INCLUDE	;New;t=5$
+--> DSTAT		;RHS=ETFE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETFE|  .773966      .401808E-01  .297077      .919982         2631       1
+      EH|  .774066E-01  .870669E-01 -.383079      .311949         2631       1
+      EC|  .109319      .313545E-01 -.293402E-01  .236680         2631       1
+      EL| -.350470E-01  .144744E-01 -.920329E-01  .443684E-01     2631       1
+      EA| -.105054      .138904     -.486587      .415212         2631       1
+--> INCLUDE	;New;t=6$
+--> DSTAT		;RHS=ETFE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETFE|  .774210      .407860E-01  .461525      .917356         2465       5
+      EH|  .804973E-01  .905495E-01 -.520537      .289271         2465       5
+      EC|  .104918      .338571E-01 -.199696E-01  .257495         2465       5
+      EL| -.372939E-01  .165972E-01 -.106901      .210903E-01     2465       5
+      EA| -.883961E-01  .137261     -.453520      .413666         2465       5
+--> INCLUDE	;New;t=7$
+--> DSTAT		;RHS=ETFE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETFE|  .771796      .449712E-01  .246241      .911246         2334       2
+      EH|  .813851E-01  .888898E-01 -.563661      .317953         2334       2
+      EC|  .105819      .324273E-01 -.251887E-01  .238077         2334       2
+      EL| -.375507E-01  .163586E-01 -.109348      .254419E-01     2334       2
+      EA| -.866809E-01  .136115     -.493275      .462271         2334       2
+--> INCLUDE	;New;t=8$
+--> DSTAT		;RHS=ETFE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETFE|  .767626      .488624E-01  .396119      .909589         2178       2
+      EH|  .859368E-01  .884675E-01 -.414279      .322672         2178       2
+      EC|  .107818      .325126E-01 -.343354E-01  .233473         2178       2
+      EL| -.367586E-01  .162696E-01 -.111414      .241538E-01     2178       2
+      EA| -.845882E-01  .136639     -.436285      .427779         2178       2
+--> INCLUDE	;New;t=9$
+--> DSTAT		;RHS=ETFE,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ETFE|  .768771      .596962E-01  .239342      .894059         2055       2
+      EH|  .986349E-01  .877445E-01 -.448664      .325457         2055       2
+      EC|  .105927      .341763E-01  .397687E-02  .255973         2055       2
+      EL| -.354974E-01  .165605E-01 -.123389      .344201E-01     2055       2
+      EA| -.837834E-01  .133273     -.443859      .571946         2055       2
+--> SAMPLE	;ALL$
+--> SAMPLE		;ALL$
+--> INCLUDE	;New;t=1$
+--> CREATE	;RKPL2=RNK(UPL)$
+--> CREATE	;RKBC2=RNK(UBC)$
+--> CREATE	;RKTRE2=RNK(UTRE)$
+--> CREATE	;RKTFE2=RNK(UTFE)$
+--> INCLUDE	;New;t=2$
+--> CREATE	;RKPL2=RNK(UPL)$
+--> CREATE	;RKBC2=RNK(UBC)$
+--> CREATE	;RKTRE2=RNK(UTRE)$
+--> CREATE	;RKTFE2=RNK(UTFE)$
+--> INCLUDE	;New;t=3$
+--> CREATE	;RKPL2=RNK(UPL)$
+--> CREATE	;RKBC2=RNK(UBC)$
+--> CREATE	;RKTRE2=RNK(UTRE)$
+--> CREATE	;RKTFE2=RNK(UTFE)$
+--> INCLUDE	;New;t=4$
+--> CREATE	;RKPL2=RNK(UPL)$
+--> CREATE	;RKBC2=RNK(UBC)$
+--> CREATE	;RKTRE2=RNK(UTRE)$
+--> CREATE	;RKTFE2=RNK(UTFE)$
+--> INCLUDE	;New;t=5$
+--> CREATE	;RKPL2=RNK(UPL)$
+--> CREATE	;RKBC2=RNK(UBC)$
+--> CREATE	;RKTRE2=RNK(UTRE)$
+--> CREATE	;RKTFE2=RNK(UTFE)$
+--> INCLUDE	;New;t=6$
+--> CREATE	;RKPL2=RNK(UPL)$
+--> CREATE	;RKBC2=RNK(UBC)$
+--> CREATE	;RKTRE2=RNK(UTRE)$
+--> CREATE	;RKTFE2=RNK(UTFE)$
+--> INCLUDE	;New;t=7$
+--> CREATE	;RKPL2=RNK(UPL)$
+--> CREATE	;RKBC2=RNK(UBC)$
+--> CREATE	;RKTRE2=RNK(UTRE)$
+--> CREATE	;RKTFE2=RNK(UTFE)$
+--> INCLUDE	;New;t=8$
+--> CREATE	;RKPL2=RNK(UPL)$
+--> CREATE	;RKBC2=RNK(UBC)$
+--> CREATE	;RKTRE2=RNK(UTRE)$
+--> CREATE	;RKTFE2=RNK(UTFE)$
+--> INCLUDE	;New;t=9$
+--> CREATE	;RKPL2=RNK(UPL)$
+--> CREATE	;RKBC2=RNK(UBC)$
+--> CREATE	;RKTRE2=RNK(UTRE)$
+--> CREATE	;RKTFE2=RNK(UTFE)$
+--> SAMPLE		;ALL$
+--> REJECT		;NEW;_GROUPTI<0$
+--> FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV
+    		;PDS=GRPSIZE
+    		;MODEL=BC; EFF=UKO
+    		;HFU=AID,FSIZE,AGE,ALLOC,INTENSE$ ? <-- "SOIL2,SOIL3,EXTEND,OFFFARM," removed from HFU... don't have them
+Normal exit:  31 iterations. Status=0. F=   -546.3334
+
+------------------------------------------------------------------
+Limited Dependent Variable Model - FRONTIER
+Dependent variable                 LNY2
+Log likelihood function       546.33338
+Estimation based on N =  22202, K =  25
+Information Criteria: Normalization=1/N
+              Normalized   Unnormalized
+AIC              -.04696    -1042.66676
+Fin.Smpl.AIC     -.04696    -1042.60814
+Bayes IC         -.03795     -842.46832
+Hannan Quinn     -.04403     -977.49783
+Model estimated: Jun 12, 2013, 17:20:41
+Variances: Sigma-squared(v)=     .02233
+           Sigma-squared(u)=     .09828
+           Sigma(v)        =     .14943
+           Sigma(u)        =     .31350
+Sigma = Sqr[(s^2(u)+s^2(v)]=     .34729
+Stochastic Production Frontier, e = v-u
+--------+---------------------------------------------------------
+        |                  Standard           Prob.       Mean
+    LNY2| Coefficient        Error       z    z>|Z|       of X
+--------+---------------------------------------------------------
+        |Primary Index Equation for Model
+Constant|     .20572***      .00483    42.61  .0000
+     LNH|     .92947***      .00570   163.14  .0000    -.23261
+     LNC|     .13641***      .00247    55.15  .0000    -.40536
+     LNL|     .11524***      .00533    21.63  .0000    -.13224
+     LNA|    -.02484***      .00532    -4.67  .0000    -.21666
+    LNHH|    -.05210***      .00953    -5.47  .0000     .47927
+    LNHC|    -.01857***      .00598    -3.10  .0019     .40049
+    LNHL|     .09301***      .01432     6.50  .0000     .24965
+    LNHA|    -.00960         .01446     -.66  .5068     .40312
+    LNCC|     .01618***      .00125    12.90  .0000    1.13468
+    LNCL|    -.01142**       .00518    -2.20  .0276     .26748
+    LNCA|     .00746         .00526     1.42  .1561     .34397
+    LNLL|    -.05744***      .00800    -7.18  .0000     .25977
+    LNLA|     .01722         .01220     1.41  .1580     .21563
+    LNAA|    -.00608         .00777     -.78  .4343     .45196
+      T2|     .13024***      .00617    21.12  .0000     .11630
+      T3|     .16307***      .00616    26.48  .0000     .11652
+      T4|    -.04413***      .00638    -6.92  .0000     .11175
+      T5|    -.06842***      .00631   -10.84  .0000     .11850
+      T6|    -.10483***      .00646   -16.24  .0000     .11103
+      T7|    -.03819***      .00655    -5.83  .0000     .10513
+      T8|    -.00700         .00667    -1.05  .2936     .09810
+      T9|     .19643***      .00676    29.04  .0000     .09256
+        |Variance parameters for compound error
+  Lambda|    2.09805***      .03208    65.39  .0000
+   Sigma|     .34729***   .1391D-04 24966.27  .0000
+--------+---------------------------------------------------------
+Note: nnnnn.D-xx or D+xx => multiply by 10 to -xx or +xx.
+Note: ***, **, * ==>  Significance at 1%, 5%, 10% level.
+------------------------------------------------------------------
+
+Line search does not improve fn. Exiting optimization.
+
+------------------------------------------------------------------
+Limited Dependent Variable Model - FRONTIER
+Dependent variable                 LNY2
+Log likelihood function     10439.93413
+Estimation based on N =  22202, K =  30
+Information Criteria: Normalization=1/N
+              Normalized   Unnormalized
+AIC              -.93775   -20819.86825
+Fin.Smpl.AIC     -.93774   -20819.78436
+Bayes IC         -.92693   -20579.63012
+Hannan Quinn     -.93423   -20741.66554
+Model estimated: Jun 12, 2013, 17:25:20
+Stochastic frontier based on panel data
+Estimation based on    6158 individuals
+Variances: Sigma-squared(v)=     .01118
+           Sigma-squared(u)=     .55092
+           Sigma(v)        =     .10575
+           Sigma(u)        =     .74224
+Sigma = Sqr[(s^2(u)+s^2(v)]=     .74974
+Stochastic Production Frontier, e = v-u
+Time varying u(i,t)=exp[eta*z(i,t)]*|U(i)|
+--------+---------------------------------------------------------
+        |                  Standard           Prob.       Mean
+    LNY2| Coefficient        Error       z    z>|Z|       of X
+--------+---------------------------------------------------------
+        |Primary Index Equation for Model
+Constant|     .28482***      .00318    89.44  .0000
+     LNH|     .90470***      .00433   209.10  .0000    -.23261
+     LNC|     .06388***      .00161    39.58  .0000    -.40536
+     LNL|     .08012***      .00347    23.09  .0000    -.13224
+     LNA|    -.00430         .00428    -1.01  .3147    -.21666
+    LNHH|    -.03952***      .00409    -9.66  .0000     .47927
+    LNHC|    -.00867**       .00339    -2.56  .0106     .40049
+    LNHL|     .07559***      .00619    12.22  .0000     .24965
+    LNHA|    -.00252         .00706     -.36  .7207     .40312
+    LNCC|     .00686***      .00073     9.44  .0000    1.13468
+    LNCL|    -.02215***      .00330    -6.72  .0000     .26748
+    LNCA|     .02482***      .00319     7.79  .0000     .34397
+    LNLL|    -.02363***      .00373    -6.34  .0000     .25977
+    LNLA|     .01738***      .00674     2.58  .0099     .21563
+    LNAA|    -.03125***      .00463    -6.75  .0000     .45196
+      T2|     .13287***      .00363    36.63  .0000     .11630
+      T3|     .15862***      .00331    47.98  .0000     .11652
+      T4|    -.06251***      .00358   -17.44  .0000     .11175
+      T5|    -.08853***      .00362   -24.45  .0000     .11850
+      T6|    -.12191***      .00374   -32.57  .0000     .11103
+      T7|    -.06148***      .00365   -16.83  .0000     .10513
+      T8|    -.03587***      .00373    -9.63  .0000     .09810
+      T9|     .17251***      .00352    49.04  .0000     .09256
+        |Variance parameters for compound error
+  Lambda|    7.01856***      .00465  1510.86  .0000
+Sigma(u)|     .74224***      .01365    54.38  .0000
+        |Coefficients in u(i,t)=[exp{eta*z(i,t)}]*|U(i)|
+     AID|     .01435         .01384     1.04  .2998
+   FSIZE|    -.00209***      .00014   -15.11  .0000
+     AGE|     .00317***      .00034     9.22  .0000
+   ALLOC|    -.63765***      .01300   -49.04  .0000
+ INTENSE|    -.02679***      .00653    -4.10  .0000
+--------+---------------------------------------------------------
+Note: ***, **, * ==>  Significance at 1%, 5%, 10% level.
+------------------------------------------------------------------
+
+--> CREATE	;EKO=EXP(-UKO)		$
+--> DSTAT		;RHS=EKO;WTS=W		$
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EKO|  .704919      .153014      .768128E-01  1.09224        22202       0
+--> SAMPLE	;ALL			$
+--> CREATE;	EH=B(2)+(2*LNH*B(6))+(LNC*B(7))+(LNL*B(8))+(LNA*B(9))$
+--> CREATE;	EC=B(3)+(LNH*B(7))+(2*LNC*B(10))+(LNL*B(11))+(LNA*B(12))$
+--> CREATE;	EL=B(4)+(LNH*B(8))+(LNC*B(11))+(2*LNL*B(13))+(LNA*B(14))$
+--> CREATE;	EA=B(5)+(LNH*B(9))+(LNC*B(12))+(LNL*B(14))+(2*LNA*B(15))$
+--> CREATE	;RTS=EH+EC+EL+EA$ ?<-- "ED+" removed... D missing
+--> DSTAT		;RHS=EH,EC,EL,EA,RTS;WTS=W$ ?<-- "ED," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+      EH|  .926765      .435752E-01  .738800      1.13394        22202      20
+      EC|  .552062E-01  .173180E-01 -.275008E-01  .117731        22202      20
+      EL|  .650286E-01  .440347E-01 -.104037      .268461        22202      20
+      EA|  .240804E-02  .371107E-01 -.214558      .132533        22202      20
+     RTS|  1.04941      .179330E-01  .967664      1.11570        22202      20
+--> INCLUDE	;New;t=1$
+--> DSTAT		;RHS=EKO,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EKO|  .705438      .152434      .789914E-01  .991248         2889       2
+      EH|  .943861      .427226E-01  .787758      1.13394         2889       2
+      EC|  .524652E-01  .174830E-01 -.119224E-01  .117731         2889       2
+      EL|  .466153E-01  .409823E-01 -.104037      .192631         2889       2
+      EA|  .144554E-01  .357607E-01 -.114334      .110953         2889       2
+--> INCLUDE	;New;t=2$
+--> DSTAT		;RHS=EKO,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EKO|  .708937      .150149      .114845      .993155         2582       0
+      EH|  .940073      .413920E-01  .817053      1.10729         2582       0
+      EC|  .528721E-01  .166298E-01 -.875714E-02  .103354         2582       0
+      EL|  .485802E-01  .407465E-01 -.733500E-01  .190165         2582       0
+      EA|  .158029E-01  .346654E-01 -.115134      .127258         2582       0
+--> INCLUDE	;New;t=3$
+--> DSTAT		;RHS=EKO,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EKO|  .715185      .146675      .160932      1.08718         2587       2
+      EH|  .942041      .422686E-01  .782733      1.10769         2587       2
+      EC|  .531381E-01  .172704E-01 -.275008E-01  .105747         2587       2
+      EL|  .471479E-01  .419000E-01 -.726700E-01  .186401         2587       2
+      EA|  .150423E-01  .352314E-01 -.116119      .132533         2587       2
+--> INCLUDE	;New;t=4$
+--> DSTAT		;RHS=EKO,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EKO|  .697189      .154869      .202938      .993096         2481       4
+      EH|  .926360      .422573E-01  .771962      1.12819         2481       4
+      EC|  .535417E-01  .171797E-01 -.209168E-01  .108692         2481       4
+      EL|  .684247E-01  .431749E-01 -.824022E-01  .232323         2481       4
+      EA| -.352674E-03  .363265E-01 -.155303      .119187         2481       4
+--> INCLUDE	;New;t=5$
+--> DSTAT		;RHS=EKO,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EKO|  .702790      .153744      .218563      1.08962         2631       1
+      EH|  .922185      .420520E-01  .791101      1.08694         2631       1
+      EC|  .540349E-01  .168974E-01 -.255273E-01  .107616         2631       1
+      EL|  .725501E-01  .431935E-01 -.881864E-01  .216711         2631       1
+      EA| -.216039E-02  .361587E-01 -.127648      .101591         2631       1
+--> INCLUDE	;New;t=6$
+--> DSTAT		;RHS=EKO,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EKO|  .699950      .154344      .146089      .993195         2465       5
+      EH|  .917182      .405612E-01  .748747      1.04308         2465       5
+      EC|  .571788E-01  .173530E-01 -.133051E-01  .109276         2465       5
+      EL|  .766078E-01  .425061E-01 -.473388E-01  .238240         2465       5
+      EA| -.726085E-02  .372129E-01 -.184026      .950976E-01     2465       5
+--> INCLUDE	;New;t=7$
+--> DSTAT		;RHS=EKO,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EKO|  .703810      .155444      .254406      1.09053         2334       2
+      EH|  .915290      .399927E-01  .738800      1.05511         2334       2
+      EC|  .575360E-01  .171585E-01 -.203394E-01  .114391         2334       2
+      EL|  .780397E-01  .413560E-01 -.481106E-01  .268461         2334       2
+      EA| -.762659E-02  .359807E-01 -.214558      .950580E-01     2334       2
+--> INCLUDE	;New;t=8$
+--> DSTAT		;RHS=EKO,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EKO|  .708198      .154918      .768128E-01  .993502         2178       2
+      EH|  .913010      .421392E-01  .786327      1.06444         2178       2
+      EC|  .580383E-01  .165594E-01 -.143494E-01  .108180         2178       2
+      EL|  .792787E-01  .416876E-01 -.643491E-01  .244316         2178       2
+      EA| -.720052E-02  .357058E-01 -.150443      .842272E-01     2178       2
+--> INCLUDE	;New;t=9$
+--> DSTAT		;RHS=EKO,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     EKO|  .701147      .155352      .208043      1.09224         2055       2
+      EH|  .911030      .424416E-01  .741100      1.05994         2055       2
+      EC|  .602290E-01  .175651E-01 -.189714E-01  .113986         2055       2
+      EL|  .780443E-01  .407302E-01 -.430503E-01  .228575         2055       2
+      EA| -.592554E-02  .346461E-01 -.150487      .958596E-01     2055       2
+--> SAMPLE	;ALL$
+--> REJECT	;NEW;_GROUPTI<0		$
+--> FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV	$
+Normal exit:  31 iterations. Status=0. F=   -546.3334
+
+------------------------------------------------------------------
+Limited Dependent Variable Model - FRONTIER
+Dependent variable                 LNY2
+Log likelihood function       546.33338
+Estimation based on N =  22202, K =  25
+Information Criteria: Normalization=1/N
+              Normalized   Unnormalized
+AIC              -.04696    -1042.66676
+Fin.Smpl.AIC     -.04696    -1042.60814
+Bayes IC         -.03795     -842.46832
+Hannan Quinn     -.04403     -977.49783
+Model estimated: Jun 12, 2013, 17:25:31
+Variances: Sigma-squared(v)=     .02233
+           Sigma-squared(u)=     .09828
+           Sigma(v)        =     .14943
+           Sigma(u)        =     .31350
+Sigma = Sqr[(s^2(u)+s^2(v)]=     .34729
+Stochastic Production Frontier, e = v-u
+--------+---------------------------------------------------------
+        |                  Standard           Prob.       Mean
+    LNY2| Coefficient        Error       z    z>|Z|       of X
+--------+---------------------------------------------------------
+        |Primary Index Equation for Model
+Constant|     .20572***      .00483    42.61  .0000
+     LNH|     .92947***      .00570   163.14  .0000    -.23261
+     LNC|     .13641***      .00247    55.15  .0000    -.40536
+     LNL|     .11524***      .00533    21.63  .0000    -.13224
+     LNA|    -.02484***      .00532    -4.67  .0000    -.21666
+    LNHH|    -.05210***      .00953    -5.47  .0000     .47927
+    LNHC|    -.01857***      .00598    -3.10  .0019     .40049
+    LNHL|     .09301***      .01432     6.50  .0000     .24965
+    LNHA|    -.00960         .01446     -.66  .5068     .40312
+    LNCC|     .01618***      .00125    12.90  .0000    1.13468
+    LNCL|    -.01142**       .00518    -2.20  .0276     .26748
+    LNCA|     .00746         .00526     1.42  .1561     .34397
+    LNLL|    -.05744***      .00800    -7.18  .0000     .25977
+    LNLA|     .01722         .01220     1.41  .1580     .21563
+    LNAA|    -.00608         .00777     -.78  .4343     .45196
+      T2|     .13024***      .00617    21.12  .0000     .11630
+      T3|     .16307***      .00616    26.48  .0000     .11652
+      T4|    -.04413***      .00638    -6.92  .0000     .11175
+      T5|    -.06842***      .00631   -10.84  .0000     .11850
+      T6|    -.10483***      .00646   -16.24  .0000     .11103
+      T7|    -.03819***      .00655    -5.83  .0000     .10513
+      T8|    -.00700         .00667    -1.05  .2936     .09810
+      T9|     .19643***      .00676    29.04  .0000     .09256
+        |Variance parameters for compound error
+  Lambda|    2.09805***      .03208    65.39  .0000
+   Sigma|     .34729***   .1391D-04 24966.27  .0000
+--------+---------------------------------------------------------
+Note: nnnnn.D-xx or D+xx => multiply by 10 to -xx or +xx.
+Note: ***, **, * ==>  Significance at 1%, 5%, 10% level.
+------------------------------------------------------------------
+
+--> FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV
+    		;PDS=GRPSIZE;LCM;PTS=2
+    		;EFF=ULCM			$
+Line search does not improve fn. Exiting optimization.
+
+------------------------------------------------------------------
+Latent Class / Panel Frontier Model
+Dependent variable                 LNY2
+Log likelihood function      6263.19213
+Restricted log likelihood        .00000
+Chi squared [  27 d.f.]     12526.38425
+Significance level               .00000
+Estimation based on N =  22202, K =  51
+Information Criteria: Normalization=1/N
+              Normalized   Unnormalized
+AIC              -.55961   -12424.38425
+Fin.Smpl.AIC     -.55960   -12424.14479
+Bayes IC         -.54121   -12015.97943
+Hannan Quinn     -.55362   -12291.43964
+Model estimated: Jun 12, 2013, 17:26:20
+Unbalanced panel has   6158 individuals
+Stochastic frontier (half normal)
+Model fit with  2 latent classes.
+--------+---------------------------------------------------------
+        |                  Standard           Prob.       Mean
+    LNY2| Coefficient        Error       z    z>|Z|       of X
+--------+---------------------------------------------------------
+        |Model parameters for latent class 1
+Constant|     .01292**       .00629     2.05  .0401
+     LNH|     .90151***      .00840   107.34  .0000    -.23261
+     LNC|     .11534***      .00351    32.87  .0000    -.40536
+     LNL|     .13519***      .00730    18.51  .0000    -.13224
+     LNA|     .00241         .00834      .29  .7721    -.21666
+    LNHH|    -.07889***      .01656    -4.76  .0000     .47927
+    LNHC|    -.06387***      .00722    -8.84  .0000     .40049
+    LNHL|     .12407***      .01791     6.93  .0000     .24965
+    LNHA|     .04545*        .02703     1.68  .0926     .40312
+    LNCC|     .01888***      .00147    12.84  .0000    1.13468
+    LNCL|    -.03459***      .00635    -5.45  .0000     .26748
+    LNCA|     .03195***      .00683     4.67  .0000     .34397
+    LNLL|    -.03199***      .00942    -3.40  .0007     .25977
+    LNLA|     .01333         .01653      .81  .4200     .21563
+    LNAA|    -.04045***      .01323    -3.06  .0022     .45196
+      T2|     .12116***      .00665    18.23  .0000     .11630
+      T3|     .15464***      .00690    22.41  .0000     .11652
+      T4|    -.07691***      .00733   -10.49  .0000     .11175
+      T5|    -.09365***      .00736   -12.73  .0000     .11850
+      T6|    -.13808***      .00746   -18.51  .0000     .11103
+      T7|    -.07901***      .00772   -10.23  .0000     .10513
+      T8|    -.05212***      .00790    -6.60  .0000     .09810
+      T9|     .14863***      .00820    18.13  .0000     .09256
+   Sigma|     .29061***      .00285   101.93  .0000
+  Lambda|    3.40982***      .12096    28.19  .0000
+        |Model parameters for latent class 2
+Constant|     .18552***      .00909    20.40  .0000
+     LNH|     .93909***      .00580   161.99  .0000    -.23261
+     LNC|     .09812***      .00247    39.71  .0000    -.40536
+     LNL|     .07320***      .00537    13.63  .0000    -.13224
+     LNA|    -.00143         .00541     -.26  .7915    -.21666
+    LNHH|    -.03471***      .01076    -3.23  .0013     .47927
+    LNHC|    -.01072*        .00600    -1.78  .0743     .40049
+    LNHL|     .02928**       .01435     2.04  .0413     .24965
+    LNHA|    -.03586**       .01686    -2.13  .0334     .40312
+    LNCC|     .00973***      .00129     7.56  .0000    1.13468
+    LNCL|    -.01462***      .00547    -2.67  .0075     .26748
+    LNCA|     .01503***      .00539     2.79  .0053     .34397
+    LNLL|    -.02360***      .00887    -2.66  .0078     .25977
+    LNLA|     .04471***      .01267     3.53  .0004     .21563
+    LNAA|    -.00398         .00844     -.47  .6373     .45196
+      T2|     .14280***      .00555    25.71  .0000     .11630
+      T3|     .17114***      .00558    30.68  .0000     .11652
+      T4|    -.06150***      .00577   -10.65  .0000     .11175
+      T5|    -.09039***      .00573   -15.78  .0000     .11850
+      T6|    -.12330***      .00586   -21.04  .0000     .11103
+      T7|    -.05933***      .00590   -10.05  .0000     .10513
+      T8|    -.02430***      .00603    -4.03  .0001     .09810
+      T9|     .19445***      .00625    31.13  .0000     .09256
+   Sigma|     .15516***      .00359    43.27  .0000
+  Lambda|     .59678***      .08512     7.01  .0000
+        |Estimated prior probabilities for class membership
+Class1Pr|     .46988***      .00834    56.32  .0000
+Class2Pr|     .53012***      .00834    63.54  .0000
+--------+---------------------------------------------------------
+Note: ***, **, * ==>  Significance at 1%, 5%, 10% level.
+------------------------------------------------------------------
+
++---------------------------------------------------+
+| Stochastic Frontier Model Variance Parameters     |
+| Class     Lambda      Sigma   Sigma(u)   Sigma(v) |
+|     1   3.409824    .290614    .278869    .081784 |
+|     2    .596781    .155163    .079515    .133240 |
++---------------------------------------------------+
+--> CREATE	;ELCM=EXP(-ULCM)		$
+--> DSTAT		;RHS=ELCM;WTS=W		$
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ELCM|  .919599      .758249E-01  .265056      .988581        22202       0
+--> SAMPLE	;ALL			$
+--> CREATE;	EH=B(2)+(2*LNH*B(6))+(LNC*B(7))+(LNL*B(8))+(LNA*B(9))$
+--> CREATE;	EC=B(3)+(LNH*B(7))+(2*LNC*B(10))+(LNL*B(11))+(LNA*B(12))$
+--> CREATE;	EL=B(4)+(LNH*B(8))+(LNC*B(11))+(2*LNL*B(13))+(LNA*B(14))$
+--> CREATE;	EA=B(5)+(LNH*B(9))+(LNC*B(12))+(LNL*B(14))+(2*LNA*B(15))$
+--> CREATE	;RTS=EH+EC+EL+EA$ ?<-- "ED+" removed... D missing
+--> DSTAT		;RHS=EH,EC,EL,EA,RTS;WTS=W$ ?<-- "ED," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+      EH|  .959818      .100205      .622858      1.47121        22202      20
+      EC|  .116744      .385432E-01 -.122423      .253137        22202      20
+      EL|  .112014      .661746E-01 -.138768      .417960        22202      20
+      EA| -.776428E-02  .424765E-01 -.273783      .166239        22202      20
+     RTS|  1.18081      .416013E-01  1.04324      1.39133        22202      20
+--> INCLUDE	;New;t=1$
+--> DSTAT		;RHS=ELCM,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ELCM|  .915106      .792141E-01  .265056      .986291         2889       2
+      EH|  .978333      .106871      .690853      1.47121         2889       2
+      EC|  .119681      .398621E-01 -.337975E-01  .253137         2889       2
+      EL|  .854693E-01  .623782E-01 -.138768      .312610         2889       2
+      EA|  .238147E-02  .433980E-01 -.210678      .166239         2889       2
+--> INCLUDE	;New;t=2$
+--> DSTAT		;RHS=ELCM,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ELCM|  .917705      .752962E-01  .294385      .988581         2582       0
+      EH|  .967301      .100924      .691735      1.36899         2582       0
+      EC|  .118574      .376634E-01 -.297802E-01  .220451         2582       0
+      EL|  .889144E-01  .618213E-01 -.949532E-01  .312168         2582       0
+      EA|  .674597E-02  .403466E-01 -.180005      .165684         2582       0
+--> INCLUDE	;New;t=3$
+--> DSTAT		;RHS=ELCM,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ELCM|  .917931      .761834E-01  .369013      .987529         2587       2
+      EH|  .972416      .101835      .680254      1.40265         2587       2
+      EC|  .120115      .384199E-01 -.101291E-01  .223495         2587       2
+      EL|  .863807E-01  .636334E-01 -.933568E-01  .299144         2587       2
+      EA|  .442654E-02  .404812E-01 -.161719      .163251         2587       2
+--> INCLUDE	;New;t=4$
+--> DSTAT		;RHS=ELCM,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ELCM|  .922013      .721257E-01  .461746      .984917         2481       4
+      EH|  .967143      .990768E-01  .671781      1.40026         2481       4
+      EC|  .113711      .395143E-01 -.269295E-01  .240334         2481       4
+      EL|  .116975      .654181E-01 -.111213      .360489         2481       4
+      EA| -.127848E-01  .412213E-01 -.188196      .146612         2481       4
+--> INCLUDE	;New;t=5$
+--> DSTAT		;RHS=ELCM,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ELCM|  .921982      .726157E-01  .515865      .988574         2631       1
+      EH|  .959821      .962676E-01  .695109      1.37126         2631       1
+      EC|  .111868      .385538E-01 -.381985E-01  .212187         2631       1
+      EL|  .123297      .650703E-01 -.113983      .349751         2631       1
+      EA| -.126253E-01  .390168E-01 -.182043      .906850E-01     2631       1
+--> INCLUDE	;New;t=6$
+--> DSTAT		;RHS=ELCM,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ELCM|  .923226      .727245E-01  .425047      .985856         2465       5
+      EH|  .954078      .944792E-01  .690565      1.38575         2465       5
+      EC|  .116053      .392338E-01 -.742422E-01  .233897         2465       5
+      EL|  .128168      .637921E-01 -.624935E-01  .374021         2465       5
+      EA| -.182600E-01  .432184E-01 -.267014      .149594         2465       5
+--> INCLUDE	;New;t=7$
+--> DSTAT		;RHS=ELCM,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ELCM|  .923550      .738512E-01  .449907      .988569         2334       2
+      EH|  .950215      .925875E-01  .680793      1.38596         2334       2
+      EC|  .115832      .381997E-01 -.122423      .216847         2334       2
+      EL|  .130348      .620967E-01 -.620735E-01  .417960         2334       2
+      EA| -.177876E-01  .409271E-01 -.273783      .990716E-01     2334       2
+--> INCLUDE	;New;t=8$
+--> DSTAT		;RHS=ELCM,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ELCM|  .920482      .797201E-01  .312741      .987588         2178       2
+      EH|  .943193      .100019      .690203      1.37241         2178       2
+      EC|  .115188      .366605E-01 -.428579E-01  .224760         2178       2
+      EL|  .132484      .628022E-01 -.852943E-01  .384929         2178       2
+      EA| -.152493E-01  .421350E-01 -.221375      .101388         2178       2
+--> INCLUDE	;New;t=9$
+--> DSTAT		;RHS=ELCM,EH,EC,EL,EA;WTS=W$ ?<-- "ED,LND," removed... D missing
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    ELCM|  .914619      .805554E-01  .444091      .985710         2055       2
+      EH|  .934156      .998704E-01  .622858      1.35511         2055       2
+      EC|  .119160      .372265E-01 -.880763E-01  .207183         2055       2
+      EL|  .130390      .613129E-01 -.533257E-01  .354723         2055       2
+      EA| -.124061E-01  .416417E-01 -.222958      .107430         2055       2
+--> SAMPLE	;ALL$
+--> DSTAT;Rhs=UPL,UBC,UKO,UTRE,UTFE;Wts=W;Output=2$ ? <--"UCS," removed ... no idea which model this was from, but not here
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+     UPL|  .365208      .224019      .660669E-02  1.71506        22202      20
+     UBC|  .367655      .230469     -.537243E-01  2.39581        22202      20
+     UKO|  .376134      .238885     -.882304E-01  2.56638        22202      20
+    UTRE|  .130240      .887209E-01  .912689E-02  1.13436        22202      20
+    UTFE|  .258835      .653251E-01  .834012E-01  1.42986        22202      20
+
+Correlation Matrix for Listed Variables
+
+              UPL      UBC      UKO     UTRE     UTFE
+     UPL  1.00000   .98547   .97289   .31193   .05864
+     UBC   .98547  1.00000   .98821   .34293   .05564
+     UKO   .97289   .98821  1.00000   .35226   .07255
+    UTRE   .31193   .34293   .35226  1.00000   .83906
+    UTFE   .05864   .05564   .07255   .83906  1.00000
+
+--> CREATE	;RKPL=RNK(UPL)	$
+--> CREATE	;RKBC=RNK(UBC)	$
+--> CREATE	;RKKO=RNK(UKO)	$
+--> CREATE	;RKTRE=RNK(UTRE)	$
+--> CREATE	;RKTFE=RNK(UTFE)	$
+--> CREATE	;RKLCM=RNK(ULCM)	$
+--> DSTAT	;Rhs=RKPL,RKBC,RKKO,RKTRE,RKTFE
+    	;Wts=W;Output=2		$	? <-- "RKCS," removed... no UCS model
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+    RKPL|  11731.5      6364.75      21.0000      22222.0        22202      20
+    RKBC|  11729.9      6365.13      21.0000      22222.0        22202      20
+    RKKO|  11896.9      6325.88      21.0000      22222.0        22202      20
+   RKTRE|  11217.2      6496.06      21.0000      22222.0        22202      20
+   RKTFE|  11106.2      6477.40      21.0000      22222.0        22202      20
+
+Correlation Matrix for Listed Variables
+
+             RKPL     RKBC     RKKO    RKTRE    RKTFE
+    RKPL  1.00000   .99947   .98900   .20805   .00751
+    RKBC   .99947  1.00000   .98943   .21078   .00747
+    RKKO   .98900   .98943  1.00000   .20630   .00895
+   RKTRE   .20805   .21078   .20630  1.00000   .86921
+   RKTFE   .00751   .00747   .00895   .86921  1.00000
+
+--> INCLUDE	;New;t=1		$
+--> CREATE	;RKPL2=RNK(UPL)	$
+--> CREATE	;RKBC2=RNK(UBC)	$
+--> CREATE	;RKTRE2=RNK(UTRE)	$
+--> CREATE	;RKTFE2=RNK(UTFE)	$
+--> CREATE	;RKKO2=RNK(UKO)	$
+--> CREATE	;RKLCM2=RNK(ULCM)	$
+--> INCLUDE	;New;t=2		$
+--> CREATE	;RKPL2=RNK(UPL)	$
+--> CREATE	;RKBC2=RNK(UBC)	$
+--> CREATE	;RKTRE2=RNK(UTRE)	$
+--> CREATE	;RKTFE2=RNK(UTFE)	$
+--> CREATE	;RKKO2=RNK(UKO)	$
+--> CREATE	;RKLCM2=RNK(ULCM)	$
+--> INCLUDE	;New;t=3		$
+--> CREATE	;RKPL2=RNK(UPL)	$
+--> CREATE	;RKBC2=RNK(UBC)	$
+--> CREATE	;RKTRE2=RNK(UTRE)	$
+--> CREATE	;RKTFE2=RNK(UTFE)	$
+--> CREATE	;RKKO2=RNK(UKO)	$
+--> CREATE	;RKLCM2=RNK(ULCM)	$
+--> INCLUDE	;New;t=4		$
+--> CREATE	;RKPL2=RNK(UPL)	$
+--> CREATE	;RKBC2=RNK(UBC)	$
+--> CREATE	;RKTRE2=RNK(UTRE)	$
+--> CREATE	;RKTFE2=RNK(UTFE)	$
+--> CREATE	;RKKO2=RNK(UKO)	$
+--> CREATE	;RKLCM2=RNK(ULCM)	$
+--> INCLUDE	;New;t=5		$
+--> CREATE	;RKPL2=RNK(UPL)	$
+--> CREATE	;RKBC2=RNK(UBC)	$
+--> CREATE	;RKTRE2=RNK(UTRE)	$
+--> CREATE	;RKTFE2=RNK(UTFE)	$
+--> CREATE	;RKKO2=RNK(UKO)	$
+--> CREATE	;RKLCM2=RNK(ULCM)	$
+--> INCLUDE	;New;t=6		$
+--> CREATE	;RKPL2=RNK(UPL)	$
+--> CREATE	;RKBC2=RNK(UBC)	$
+--> CREATE	;RKTRE2=RNK(UTRE)	$
+--> CREATE	;RKTFE2=RNK(UTFE)	$
+--> CREATE	;RKKO2=RNK(UKO)	$
+--> CREATE	;RKLCM2=RNK(ULCM)	$
+--> INCLUDE	;New;t=7		$
+--> CREATE	;RKPL2=RNK(UPL)	$
+--> CREATE	;RKBC2=RNK(UBC)	$
+--> CREATE	;RKTRE2=RNK(UTRE)	$
+--> CREATE	;RKTFE2=RNK(UTFE)	$
+--> CREATE	;RKKO2=RNK(UKO)	$
+--> CREATE	;RKLCM2=RNK(ULCM)	$
+--> INCLUDE	;New;t=8		$
+--> CREATE	;RKPL2=RNK(UPL)	$
+--> CREATE	;RKBC2=RNK(UBC)	$
+--> CREATE	;RKTRE2=RNK(UTRE)	$
+--> CREATE	;RKTFE2=RNK(UTFE)	$
+--> CREATE	;RKKO2=RNK(UKO)	$
+--> CREATE	;RKLCM2=RNK(ULCM)	$
+--> INCLUDE	;New;t=9		$
+--> CREATE	;RKPL2=RNK(UPL)	$
+--> CREATE	;RKBC2=RNK(UBC)	$
+--> CREATE	;RKTRE2=RNK(UTRE)	$
+--> CREATE	;RKTFE2=RNK(UTFE)	$
+--> CREATE	;RKKO2=RNK(UKO)	$
+--> CREATE	;RKLCM2=RNK(ULCM)	$
+--> REJECT		;NEW	;_GROUPTI<0	$
+--> DSTAT	;Rhs=RKPL2,RKBC2,RKTRE2,RKTFE2
+    	   , RKKO2, RKLCM2
+    	;Wts=W ; Output=2			$
+Descriptive Statistics
+All results based on nonmissing observations.
+==============================================================================
+Variable     Mean       Std.Dev.     Minimum      Maximum        Cases Missing
+==============================================================================
+All observations in current sample
+--------+---------------------------------------------------------------------
+   RKPL2|  1316.88      728.721      1.00000      2891.00        22202       0
+   RKBC2|  1316.73      728.908      1.00000      2891.00        22202       0
+  RKTRE2|  1260.25      743.559      1.00000      2891.00        22202       0
+  RKTFE2|  1247.43      741.569      1.00000      2891.00        22202       0
+   RKKO2|  1335.63      725.304      1.00000      2891.00        22202       0
+  RKLCM2|  1279.74      733.413      1.00000      2891.00        22202       0
+
+Correlation Matrix for Listed Variables
+
+            RKPL2    RKBC2   RKTRE2   RKTFE2    RKKO2   RKLCM2
+   RKPL2  1.00000   .99946   .21839   .01588   .99241   .89098
+   RKBC2   .99946  1.00000   .22129   .01560   .99272   .89194
+  RKTRE2   .21839   .22129  1.00000   .87078   .22015   .50970
+  RKTFE2   .01588   .01560   .87078  1.00000   .01476   .33508
+   RKKO2   .99241   .99272   .22015   .01476  1.00000   .87333
+  RKLCM2   .89098   .89194   .50970   .33508   .87333  1.00000
+
+--> WRITE	;T,FC,W,UPL,UBC,UTRE ,UTFE,UKO
+    	 ,ULCM,EPL, EBC, ETRE,ETFE,EKO
+    	 ,ELCM,RKPL,RKBC,RKTRE,RKTFE
+    	 ,RKKO,RKLCM,RKPL2,RKBC2
+    	 ,RKTRE2,RKTFE2,RKKO2,RKLCM2
+    	;File="G:\Data\data_FADNPanelAnalysis\OutData\multisward\uits_dairy_multisward.xls"
+    	;Format=XLS$
+Data written in .CSV format. In your spreadsheet program,
+use File:Open,... then change type to *.prn,*.txt,*.csv.
+Wrote data file:
+G:\Data\data_FADNPanelAnalysis\OutData\multisward\uits_dairy_multisward.csv
+Data file contains   22202 observations and  27 variables.
+ T       , FC      , W       , UPL     , UBC     , UTRE    , UTFE    , UKO     ,
+ ULCM    , EPL     , EBC     , ETRE    , ETFE    , EKO     , ELCM    , RKPL    ,
+ RKBC    , RKTRE   , RKTFE   , RKKO    , RKLCM   , RKPL2   , RKBC2   , RKTRE2  ,
+ RKTFE2  , RKKO2   , RKLCM2  ,
+--> SAVE;file="G:\Data\data_FADNPanelAnalysis\code_NLOGIT\multisward\sfa_dairy_multisward.lpj"$

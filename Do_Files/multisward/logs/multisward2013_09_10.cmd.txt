@@ -1,0 +1,6 @@
+gen fdratio = exp(lnfdratio)
+tw scatter te fdratio
+drop teagasc
+tw scatter te fdratio
+predict bc95_te, jlms
+do msward_2013_08_30

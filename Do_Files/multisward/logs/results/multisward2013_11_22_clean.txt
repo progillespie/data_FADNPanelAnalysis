@@ -1,0 +1,410 @@
+log:  G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_11_22.txt (resaved as clean version)
+  log type:  text
+ opened on:  22 Nov 2013, 15:25:17
+
+RESULTS
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+(GUIDE TO OUTPUT)
+
+ - Last two iterations - 
+   If you see "(backed up)" or "(not concave) here (last two iterations only) then you have to take that result with a grain of salt.
+   
+ - Frontier - 
+   parameter for the cost frontier function
+ 
+ - Mu       - 
+   mean inefficiency in the inefficieny effects function (determinants)
+ 
+ - Usigma   - 
+   effect of variables on heteroscedasticity in inefficiency component (must be same vars as in Mu function)
+ 
+ - Vsigma   - 
+   effect of variables on heteroscedasticity in random error component (needn't be same as in Mu function... always TREND here)
+ 
+ - di `e(converged)' - 
+   makes Stata report whether or not the model actually converged (1 means yes). I made sure all of them did.
+ 
+ ----------------------------------------------------------------------------------------------------------------------------------------------
+
+********************************
+GERMANY
+********************************
+
+sfpanel `dep_vlist' `indep_vlist' TREND if country == "DEU",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') vsigma(TREND)
+...
+Iteration 46:  Log pseudolikelihood = -3710.1261    
+Iteration 47:  Log pseudolikelihood =  -3710.126  
+
+Inefficiency effects model (truncated-normal)        Number of obs =     13369
+Group variable: pid                               Number of groups =      2966
+Time variable: year                             Obs per group: min =         1
+                                                               avg =       4.5
+                                                               max =         9
+
+                                                     Prob > chi2   =    0.0000
+Log pseudolikelihood = -3710.1260                    Wald chi2(5)  =  15741.23
+
+                                                    (Std. Err. adjusted for 2966 clusters in pid)
+-------------------------------------------------------------------------------------------------
+                                |               Robust
+           lntotalspecificcosts |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------------------+----------------------------------------------------------------
+Frontier                        |
+                lndairyproducts |   1.018425   .0091923   110.79   0.000     1.000408    1.036441
+                 lnPTotalCattle |   .1849968   .0476318     3.88   0.000     .0916401    .2783534
+lnPCompoundfeedingstuffsforcatt |   .6127854   .0273143    22.43   0.000     .5592503    .6663204
+ lnPFERTILISERSANDSOILIMPROVERS |   .1613312   .0463931     3.48   0.001     .0704024    .2522599
+                          TREND |   .0007735   .0028821     0.27   0.788    -.0048754    .0064224
+                          _cons |  -5.970793   .2269811   -26.31   0.000    -6.415668   -5.525918
+--------------------------------+----------------------------------------------------------------
+Mu                              |
+                   lngrassratio |   4.549041   2.425056     1.88   0.061     -.203982    9.302064
+                      lnspecial |  -10.39102          .        .       .            .           .
+                          _cons |   10.66122   14.18414     0.75   0.452    -17.13919    38.46162
+--------------------------------+----------------------------------------------------------------
+Usigma                          |
+                          _cons |   1.087618   .3023651     3.60   0.000     .4949937    1.680243
+--------------------------------+----------------------------------------------------------------
+Vsigma                          |
+                          TREND |   .0520202   .0112184     4.64   0.000     .0300326    .0740078
+                          _cons |  -2.724706   .0753686   -36.15   0.000    -2.872426   -2.576986
+--------------------------------+----------------------------------------------------------------
+  E(sigma_v) |   .2925477                                 .2922191    .2928763
+     sigma_u |   1.722556   .2604204     6.61   0.000     1.280815    2.316648
+------------------------------------------------------------------------------
+
+. estimates store `model1name'_DEU_`tech_or_cost'
+
+. di `e(converged)'
+1
+
+
+********************************
+FRANCE
+********************************
+
+sfpanel `dep_vlist' `indep_vlist' TREND if country == "FRA",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') vsigma(TREND)
+...
+Iteration 61:  Log pseudolikelihood = -89.662649  
+Iteration 62:  Log pseudolikelihood = -89.662648  
+
+Inefficiency effects model (truncated-normal)        Number of obs =      3727
+Group variable: pid                               Number of groups =      1629
+Time variable: year                             Obs per group: min =         1
+                                                               avg =       2.3
+                                                               max =         8
+
+                                                     Prob > chi2   =    0.0000
+Log pseudolikelihood =   -89.6626                    Wald chi2(5)  =   3811.53
+
+                                                    (Std. Err. adjusted for 1629 clusters in pid)
+-------------------------------------------------------------------------------------------------
+                                |               Robust
+           lntotalspecificcosts |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------------------+----------------------------------------------------------------
+Frontier                        |
+                lndairyproducts |   1.018245   .0170056    59.88   0.000     .9849143    1.051575
+                 lnPTotalCattle |  -.1565048   .1079462    -1.45   0.147    -.3680755    .0550658
+lnPCompoundfeedingstuffsforcatt |   1.128881   .1510499     7.47   0.000     .8328285    1.424933
+ lnPFERTILISERSANDSOILIMPROVERS |   .8765143    .136035     6.44   0.000     .6098907    1.143138
+                          TREND |  -.0557834   .0062078    -8.99   0.000    -.0679504   -.0436164
+                          _cons |  -12.68203    .792346   -16.01   0.000      -14.235   -11.12906
+--------------------------------+----------------------------------------------------------------
+Mu                              |
+                   lngrassratio |  -.0431394   .0077414    -5.57   0.000    -.0583122   -.0279666
+                      lnspecial |  -.8970746   .0591554   -15.16   0.000    -1.013017   -.7811323
+                          _cons |   5.359872   .2834122    18.91   0.000     4.804394     5.91535
+--------------------------------+----------------------------------------------------------------
+Usigma                          |
+                   lngrassratio |   4.325771   .8730738     4.95   0.000     2.614578    6.036964
+                      lnspecial |   7.828909   1.606469     4.87   0.000     4.680287    10.97753
+                          _cons |    -55.459   9.419981    -5.89   0.000    -73.92183   -36.99618
+--------------------------------+----------------------------------------------------------------
+Vsigma                          |
+                          TREND |    .311708   .0193171    16.14   0.000     .2738473    .3495688
+                          _cons |  -3.863947   .1052454   -36.71   0.000    -4.070224    -3.65767
+--------------------------------+----------------------------------------------------------------
+  E(sigma_u) |   .0423355                                 .0282807    .0563902
+  E(sigma_v) |   .3428615                                 .3384413    .3472817
+------------------------------------------------------------------------------
+
+. estimates store `model1name'_FRA_`tech_or_cost' 
+
+. di `e(converged)'
+1
+
+
+********************************
+IRELAND
+********************************
+
+. sfpanel `dep_vlist' `indep_vlist' TREND if country == "IRE",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') 
+...
+Iteration 49:  Log pseudolikelihood =   343.2353  
+Iteration 50:  Log pseudolikelihood =  343.23533  
+
+Inefficiency effects model (truncated-normal)        Number of obs =      3549
+Group variable: pid                               Number of groups =       724
+Time variable: year                             Obs per group: min =         1
+                                                               avg =       4.9
+                                                               max =         9
+
+                                                     Prob > chi2   =    0.0000
+Log pseudolikelihood =   343.2353                    Wald chi2(5)  =   7402.14
+
+                                                     (Std. Err. adjusted for 724 clusters in pid)
+-------------------------------------------------------------------------------------------------
+                                |               Robust
+           lntotalspecificcosts |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------------------+----------------------------------------------------------------
+Frontier                        |
+                lndairyproducts |    .984384   .0121129    81.27   0.000      .960643    1.008125
+                 lnPTotalCattle |   .2705533   .0724399     3.73   0.000     .1285738    .4125328
+lnPCompoundfeedingstuffsforcatt |   1.019733    .090773    11.23   0.000     .8418212    1.197645
+ lnPFERTILISERSANDSOILIMPROVERS |   .3441195   .0810692     4.24   0.000     .1852269    .5030122
+                          TREND |   -.044969   .0050669    -8.88   0.000    -.0548999   -.0350382
+                          _cons |   -16.3578   .5192922   -31.50   0.000     -17.3756   -15.34001
+--------------------------------+----------------------------------------------------------------
+Mu                              |
+                   lngrassratio |  -.0998233   .0137938    -7.24   0.000    -.1268586   -.0727879
+                      lnspecial |  -1.019213   .0501654   -20.32   0.000    -1.117536   -.9208911
+                          _cons |   13.07795          .        .       .            .           .
+--------------------------------+----------------------------------------------------------------
+Usigma                          |
+                   lngrassratio |  -1.397906   .3153606    -4.43   0.000    -2.016002   -.7798106
+                      lnspecial |   2.757505   .9449816     2.92   0.004     .9053754    4.609635
+                          _cons |  -13.09381   4.434923    -2.95   0.003     -21.7861   -4.401524
+--------------------------------+----------------------------------------------------------------
+Vsigma                          |
+                          _cons |  -3.179744   .0846214   -37.58   0.000    -3.345599   -3.013889
+--------------------------------+----------------------------------------------------------------
+  E(sigma_u) |   .0779142                                 .0754564    .0803719
+     sigma_v |   .2039517   .0086293    23.63   0.000     .1877208     .221586
+------------------------------------------------------------------------------
+
+. estimates store `model1name'_IRE_`tech_or_cost'
+
+. di `e(converged)'
+1
+
+********************************
+WALES
+********************************
+
+sfpanel `dep_vlist' `indep_vlist' TREND if country == "UKI",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist')
+...
+Iteration 51:  Log pseudolikelihood =  -265.2429  
+Iteration 52:  Log pseudolikelihood =  -265.2429  
+
+Inefficiency effects model (truncated-normal)        Number of obs =      4961
+Group variable: pid                               Number of groups =      1682
+Time variable: year                             Obs per group: min =         1
+                                                               avg =       2.9
+                                                               max =         9
+
+                                                     Prob > chi2   =    0.0000
+Log pseudolikelihood =  -265.2429                    Wald chi2(5)  =   9769.85
+
+                                                    (Std. Err. adjusted for 1682 clusters in pid)
+-------------------------------------------------------------------------------------------------
+                                |               Robust
+           lntotalspecificcosts |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------------------+----------------------------------------------------------------
+Frontier                        |
+                lndairyproducts |    .991189    .011176    88.69   0.000     .9692844    1.013094
+                 lnPTotalCattle |   .2824773   .0811232     3.48   0.000     .1234788    .4414758
+lnPCompoundfeedingstuffsforcatt |   .9705705   .1065852     9.11   0.000     .7616674    1.179474
+ lnPFERTILISERSANDSOILIMPROVERS |   .6137901   .0966777     6.35   0.000     .4243052    .8032751
+                          TREND |  -.0504789   .0067898    -7.43   0.000    -.0637867   -.0371711
+                          _cons |   -21.3268   .4541212   -46.96   0.000    -22.21687   -20.43674
+--------------------------------+----------------------------------------------------------------
+Mu                              |
+                   lngrassratio |   .0172176   .0055437     3.11   0.002     .0063522     .028083
+                      lnspecial |  -.8387546   .0721304   -11.63   0.000    -.9801276   -.6973816
+                          _cons |   15.98282   .2922928    54.68   0.000     15.40993     16.5557
+--------------------------------+----------------------------------------------------------------
+Usigma                          |
+                   lngrassratio |   2.198627   .4834996     4.55   0.000     1.250985    3.146269
+                      lnspecial |  -2.296248   1.369504    -1.68   0.094    -4.980426    .3879308
+                          _cons |  -1.756786   5.769211    -0.30   0.761    -13.06423     9.55066
+--------------------------------+----------------------------------------------------------------
+Vsigma                          |
+                          _cons |  -2.800038   .0669579   -41.82   0.000    -2.931273   -2.668803
+--------------------------------+----------------------------------------------------------------
+  E(sigma_u) |   .0514477                                 .0498037    .0530917
+     sigma_v |   .2465923   .0082557    29.87   0.000     .2309309    .2633157
+------------------------------------------------------------------------------
+
+. estimates store `model1name'_UKI_`tech_or_cost'
+
+. di `e(converged)'
+1
+
+
+********************************
+Atlantic Plains
+********************************
+
+sfpanel `dep_vlist' `indep_vlist' TREND if atl_plains == 1, `cost'  model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') vsigma(TREND)
+...
+Iteration 54:  Log pseudolikelihood =   2231.767  
+Iteration 55:  Log pseudolikelihood =   2231.767  
+
+Inefficiency effects model (truncated-normal)        Number of obs =      7353
+Group variable: pid                               Number of groups =      1909
+Time variable: year                             Obs per group: min =         1
+                                                               avg =       3.9
+                                                               max =         9
+
+                                                     Prob > chi2   =    0.0000
+Log pseudolikelihood =  2231.7670                    Wald chi2(5)  =  11562.39
+
+                                                    (Std. Err. adjusted for 1909 clusters in pid)
+-------------------------------------------------------------------------------------------------
+                                |               Robust
+           lntotalspecificcosts |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------------------+----------------------------------------------------------------
+Frontier                        |
+                lndairyproducts |   .9812546   .0093214   105.27   0.000     .9629851    .9995241
+                 lnPTotalCattle |  -.0697699   .0696829    -1.00   0.317    -.2063459    .0668062
+lnPCompoundfeedingstuffsforcatt |   .7743301   .1673987     4.63   0.000     .4462347    1.102426
+ lnPFERTILISERSANDSOILIMPROVERS |   .5226542   .0828377     6.31   0.000     .3602953    .6850131
+                          TREND |  -.0497909    .004245   -11.73   0.000     -.058111   -.0414708
+                          _cons |  -21.36733          .        .       .            .           .
+--------------------------------+----------------------------------------------------------------
+Mu                              |
+                   lngrassratio |  -.0518436   .0074689    -6.94   0.000    -.0664823    -.037205
+                      lnspecial |  -.9833663   .0610059   -16.12   0.000    -1.102936   -.8637969
+                          _cons |   18.16485   .6355415    28.58   0.000     16.91922    19.41049
+--------------------------------+----------------------------------------------------------------
+Usigma                          |
+                   lngrassratio |   .3987186          .        .       .            .           .
+                      lnspecial |  -4.506775          .        .       .            .           .
+                          _cons |   -3.22521          .        .       .            .           .
+--------------------------------+----------------------------------------------------------------
+Vsigma                          |
+                          TREND |   .5616244   .0224623    25.00   0.000     .5175992    .6056497
+                          _cons |  -4.713819   .0776168   -60.73   0.000    -4.865945   -4.561693
+--------------------------------+----------------------------------------------------------------
+  E(sigma_u) |   .0000213                                 .0000204    .0000223
+  E(sigma_v) |   .4786841                                 .4710621    .4863061
+------------------------------------------------------------------------------
+
+. estimates store `model1name'_ATL_`tech_or_cost'
+
+. di `e(converged)'
+1
+
+
+********************************
+Central Europe
+********************************
+
+sfpanel `dep_vlist' `indep_vlist' TREND if cont_eur == 1,   `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') 
+...
+Iteration 74:  Log pseudolikelihood = -4338.9621  (backed up)
+Iteration 75:  Log pseudolikelihood = -4338.9621  (backed up)
+
+Inefficiency effects model (truncated-normal)        Number of obs =     18253
+Group variable: pid                               Number of groups =      5092
+Time variable: year                             Obs per group: min =         1
+                                                               avg =       3.6
+                                                               max =         9
+
+                                                     Prob > chi2   =    0.0000
+Log pseudolikelihood = -4338.9621                    Wald chi2(5)  =  27255.70
+
+                                                    (Std. Err. adjusted for 5092 clusters in pid)
+-------------------------------------------------------------------------------------------------
+                                |               Robust
+           lntotalspecificcosts |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------------------+----------------------------------------------------------------
+Frontier                        |
+                lndairyproducts |   1.033251   .0072089   143.33   0.000     1.019122     1.04738
+                 lnPTotalCattle |   .0126241   .0459243     0.27   0.783    -.0773858     .102634
+lnPCompoundfeedingstuffsforcatt |   .6499794   .0316044    20.57   0.000     .5880358    .7119229
+ lnPFERTILISERSANDSOILIMPROVERS |   .7032475   .0536898    13.10   0.000     .5980174    .8084776
+                          TREND |  -.0258635   .0027504    -9.40   0.000    -.0312542   -.0204728
+                          _cons |  -10.04211          .        .       .            .           .
+--------------------------------+----------------------------------------------------------------
+Mu                              |
+                   lngrassratio |   .0056517   .0028584     1.98   0.048     .0000495     .011254
+                      lnspecial |  -.7338315   .0435942   -16.83   0.000    -.8192745   -.6483885
+                          _cons |   4.642598   .2282171    20.34   0.000     4.195301    5.089895
+--------------------------------+----------------------------------------------------------------
+Usigma                          |
+                   lngrassratio |  -3.370097   .4227595    -7.97   0.000     -4.19869   -2.541503
+                      lnspecial |    3.57323          .        .       .            .           .
+                          _cons |  -46.66738          .        .       .            .           .
+--------------------------------+----------------------------------------------------------------
+Vsigma                          |
+                          _cons |  -2.362451   .0284408   -83.07   0.000    -2.418194   -2.306708
+--------------------------------+----------------------------------------------------------------
+  E(sigma_u) |   3.17e-06                                 2.19e-06    4.15e-06
+     sigma_v |   .3069024   .0043643    70.32   0.000     .2984666    .3155765
+------------------------------------------------------------------------------
+
+. estimates store `model1name'_CEU_`tech_or_cost'
+
+. di `e(converged)'
+1
+
+
+********************************
+Whole Sample (Meta Frontier)
+********************************
+
+sfpanel `dep_vlist' `indep_vlist' TREND , `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') vsigma(TREND)
+...
+Iteration 67:  Log pseudolikelihood =  3732.1356  
+Iteration 68:  Log pseudolikelihood =  3732.1356  
+
+Inefficiency effects model (truncated-normal)        Number of obs =     25606
+Group variable: pid                               Number of groups =      7001
+Time variable: year                             Obs per group: min =         1
+                                                               avg =       3.7
+                                                               max =         9
+
+                                                     Prob > chi2   =    0.0000
+Log pseudolikelihood =  3732.1356                    Wald chi2(5)  =  31056.66
+
+                                                    (Std. Err. adjusted for 7001 clusters in pid)
+-------------------------------------------------------------------------------------------------
+                                |               Robust
+           lntotalspecificcosts |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------------------+----------------------------------------------------------------
+Frontier                        |
+                lndairyproducts |   1.021172   .0058682   174.02   0.000      1.00967    1.032674
+                 lnPTotalCattle |   .0908232   .0384272     2.36   0.018     .0155072    .1661392
+lnPCompoundfeedingstuffsforcatt |   .8211557   .0782973    10.49   0.000     .6676959    .9746156
+ lnPFERTILISERSANDSOILIMPROVERS |   .3718991   .0495539     7.50   0.000     .2747753    .4690229
+                          TREND |  -.0256454   .0023293   -11.01   0.000    -.0302108     -.02108
+                          _cons |  -9.368743   1.519443    -6.17   0.000     -12.3468   -6.390689
+--------------------------------+----------------------------------------------------------------
+Mu                              |
+                   lngrassratio |  -.0054131   .0028567    -1.89   0.058    -.0110122     .000186
+                      lnspecial |   -.854449   .0457637   -18.67   0.000    -.9441441   -.7647538
+                          _cons |   5.425669   1.488719     3.64   0.000     2.507834    8.343504
+--------------------------------+----------------------------------------------------------------
+Usigma                          |
+                   lngrassratio |   2.308268   .4753376     4.86   0.000     1.376623    3.239912
+                      lnspecial |   13.88524   2.056493     6.75   0.000     9.854583    17.91589
+                          _cons |  -75.53368   8.781422    -8.60   0.000    -92.74495   -58.32241
+--------------------------------+----------------------------------------------------------------
+Vsigma                          |
+                          TREND |   .5547151   .0123843    44.79   0.000     .5304423    .5789879
+                          _cons |  -4.538382    .051596   -87.96   0.000    -4.639508   -4.437256
+--------------------------------+----------------------------------------------------------------
+  E(sigma_u) |   197.6849                                -186.7471     582.117
+  E(sigma_v) |   .5214682                                 .5171171    .5258193
+------------------------------------------------------------------------------
+
+. estimates store `model1name'_ALL_`tech_or_cost'
+
+. di `e(converged)'
+1
+
+
+
+

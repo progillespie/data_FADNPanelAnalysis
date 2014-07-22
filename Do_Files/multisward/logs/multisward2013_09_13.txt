@@ -1,0 +1,662 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_09_13.txt
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}13 Sep 2013, 01:14:58
+{txt}
+{com}. di  "Job  Started  at  $S_TIME  on $S_DATE"
+{res}Job  Started  at  01:14:58  on 13 Sep 2013
+{txt}
+{com}. cmdlog using logs/$project$datestamp.cmd.txt, replace
+{txt}(cmdlog G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_09_13.cmd.txt opened)
+
+{com}. 
+. 
+. gen TREND =year-1998
+{txt}
+{com}. 
+. 
+. preserve
+{txt}
+{com}. 
+. 
+. drop country
+{txt}
+{com}. gen int country = countrycode2
+{txt}
+{com}. keep pid year country `dep_vlist' `indep_vlist' `z_vlist' TREND
+{txt}
+{com}. 
+. outsheet _all using `fadnoutdatadir'/exported_data.csv, comma replace nolabel
+{txt}
+{com}. save `fadnoutdatadir'/exported_data.dta, replace nolabel
+{txt}file G:\\Data/data_FADNPanelAnalysis/OutData/multisward/exported_data.dta saved
+
+{com}. 
+. restore
+{txt}
+{com}. 
+. 
+. 
+. * ===================
+. * MODEL COMMANDS HERE
+. * ===================
+. 
+. *sfpanel `dep_vlist' `indep_vlist' TREND if country=="DEU", model(bc95) cost d(tnormal) emean(`z_vlist')
+. *estimates store DEU
+. 
+. *sfpanel `dep_vlist' `indep_vlist' TREND if country=="FRA", model(bc95) cost d(tnormal) emean(`z_vlist')
+. *estimates store FRA
+. 
+. sfpanel `dep_vlist' `indep_vlist' TREND if country=="IRE", model(bc95) cost d(tnormal) emean(`z_vlist') usigma(`z_vlist') 
+
+{res}
+{txt}initial:{col 16}Log likelihood = {res:-4129.7434}
+Iteration 0:{space 3}Log likelihood = {res:-4129.7434}  
+Iteration 1:{space 3}Log likelihood = {res:-4086.4154}  (backed up)
+Iteration 2:{space 3}Log likelihood = {res:-4080.3433}  (backed up)
+Iteration 3:{space 3}Log likelihood = {res:-4079.2525}  (backed up)
+Iteration 4:{space 3}Log likelihood = {res:-4078.9962}  (backed up)
+Iteration 5:{space 3}Log likelihood = {res:-4078.9287}  (backed up)
+Iteration 6:{space 3}Log likelihood = {res:-2868.8691}  (backed up)
+Iteration 7:{space 3}Log likelihood = {res: -2750.575}  (backed up)
+Iteration 8:{space 3}Log likelihood = {res:-2729.3138}  (backed up)
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 9:{space 3}Log likelihood = {res:-2729.3138}  (backed up)
+Iteration 10:{space 2}Log likelihood = {res:-2708.4449}  (backed up)
+Iteration 11:{space 2}Log likelihood = {res:-1995.2022}  (backed up)
+Iteration 12:{space 2}Log likelihood = {res:-1779.0274}  (backed up)
+Iteration 13:{space 2}Log likelihood = {res:-1649.7613}  (backed up)
+Iteration 14:{space 2}Log likelihood = {res:-1616.1329}  (backed up)
+Iteration 15:{space 2}Log likelihood = {res:-1351.1119}  (backed up)
+Iteration 16:{space 2}Log likelihood = {res:-1335.5384}  (backed up)
+Iteration 17:{space 2}Log likelihood = {res:-1051.1917}  
+Iteration 18:{space 2}Log likelihood = {res:-792.59083}  (backed up)
+Iteration 19:{space 2}Log likelihood = {res:-750.20381}  
+Iteration 20:{space 2}Log likelihood = {res: -595.9392}  
+Iteration 21:{space 2}Log likelihood = {res:-402.99907}  
+Iteration 22:{space 2}Log likelihood = {res:-163.34533}  
+Iteration 23:{space 2}Log likelihood = {res:-71.757644}  
+Iteration 24:{space 2}Log likelihood = {res:-25.259854}  
+Iteration 25:{space 2}Log likelihood = {res:-2.1251567}  
+Iteration 26:{space 2}Log likelihood = {res: 30.169813}  
+Iteration 27:{space 2}Log likelihood = {res: 43.681294}  
+Iteration 28:{space 2}Log likelihood = {res: 47.059038}  
+Iteration 29:{space 2}Log likelihood = {res: 51.031726}  
+Iteration 30:{space 2}Log likelihood = {res: 55.342931}  
+Iteration 31:{space 2}Log likelihood = {res: 57.323869}  
+Iteration 32:{space 2}Log likelihood = {res:  58.90704}  
+Iteration 33:{space 2}Log likelihood = {res: 59.547686}  
+Iteration 34:{space 2}Log likelihood = {res: 60.550887}  
+Iteration 35:{space 2}Log likelihood = {res: 60.871025}  
+Iteration 36:{space 2}Log likelihood = {res: 61.096602}  
+Iteration 37:{space 2}Log likelihood = {res: 61.302849}  
+Iteration 38:{space 2}Log likelihood = {res: 62.362356}  
+Iteration 39:{space 2}Log likelihood = {res: 64.082272}  
+Iteration 40:{space 2}Log likelihood = {res: 64.789574}  
+Iteration 41:{space 2}Log likelihood = {res: 65.454423}  
+Iteration 42:{space 2}Log likelihood = {res: 66.513036}  
+Iteration 43:{space 2}Log likelihood = {res: 67.616963}  
+Iteration 44:{space 2}Log likelihood = {res: 68.690224}  
+Iteration 45:{space 2}Log likelihood = {res: 69.243852}  
+Iteration 46:{space 2}Log likelihood = {res: 70.001868}  
+Iteration 47:{space 2}Log likelihood = {res: 70.453686}  
+Iteration 48:{space 2}Log likelihood = {res: 70.923107}  
+Iteration 49:{space 2}Log likelihood = {res: 71.537246}  
+Iteration 50:{space 2}Log likelihood = {res: 71.993283}  
+Iteration 51:{space 2}Log likelihood = {res: 72.304182}  
+Iteration 52:{space 2}Log likelihood = {res: 72.874182}  
+Iteration 53:{space 2}Log likelihood = {res: 73.206902}  
+Iteration 54:{space 2}Log likelihood = {res: 73.508148}  
+Iteration 55:{space 2}Log likelihood = {res: 73.769083}  
+Iteration 56:{space 2}Log likelihood = {res: 74.079031}  
+Iteration 57:{space 2}Log likelihood = {res: 74.324035}  
+Iteration 58:{space 2}Log likelihood = {res: 74.559924}  
+Iteration 59:{space 2}Log likelihood = {res: 74.744195}  
+Iteration 60:{space 2}Log likelihood = {res: 74.968305}  
+Iteration 61:{space 2}Log likelihood = {res: 75.136543}  
+Iteration 62:{space 2}Log likelihood = {res: 75.225005}  
+Iteration 63:{space 2}Log likelihood = {res: 75.308982}  
+Iteration 64:{space 2}Log likelihood = {res: 75.407596}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 65:{space 2}Log likelihood = {res:   75.4457}  
+Iteration 66:{space 2}Log likelihood = {res: 75.454444}  (backed up)
+Iteration 67:{space 2}Log likelihood = {res:  75.45455}  (backed up)
+Iteration 68:{space 2}Log likelihood = {res: 75.456857}  (backed up)
+Iteration 69:{space 2}Log likelihood = {res: 75.458422}  (backed up)
+Iteration 70:{space 2}Log likelihood = {res: 75.458691}  
+Iteration 71:{space 2}Log likelihood = {res: 75.459327}  (backed up)
+Iteration 72:{space 2}Log likelihood = {res: 75.459546}  
+Iteration 73:{space 2}Log likelihood = {res: 75.471243}  
+Iteration 74:{space 2}Log likelihood = {res: 75.531568}  
+Iteration 75:{space 2}Log likelihood = {res: 75.576986}  
+Iteration 76:{space 2}Log likelihood = {res: 75.592613}  
+Iteration 77:{space 2}Log likelihood = {res: 75.598489}  
+Iteration 78:{space 2}Log likelihood = {res: 75.605154}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 79:{space 2}Log likelihood = {res: 75.641492}  
+Iteration 80:{space 2}Log likelihood = {res: 75.647671}  (backed up)
+Iteration 81:{space 2}Log likelihood = {res: 75.647742}  (backed up)
+Iteration 82:{space 2}Log likelihood = {res: 75.650601}  (backed up)
+Iteration 83:{space 2}Log likelihood = {res: 75.650947}  (backed up)
+Iteration 84:{space 2}Log likelihood = {res: 75.651625}  (backed up)
+Iteration 85:{space 2}Log likelihood = {res: 75.655208}  (backed up)
+Iteration 86:{space 2}Log likelihood = {res: 75.655941}  
+Iteration 87:{space 2}Log likelihood = {res: 75.656487}  
+Iteration 88:{space 2}Log likelihood = {res: 75.662892}  
+Iteration 89:{space 2}Log likelihood = {res: 75.682231}  
+Iteration 90:{space 2}Log likelihood = {res: 75.716871}  
+Iteration 91:{space 2}Log likelihood = {res: 75.722334}  
+Iteration 92:{space 2}Log likelihood = {res: 75.725781}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 93:{space 2}Log likelihood = {res: 75.805314}  
+Iteration 94:{space 2}Log likelihood = {res: 75.810153}  (backed up)
+Iteration 95:{space 2}Log likelihood = {res: 75.810175}  (backed up)
+Iteration 96:{space 2}Log likelihood = {res: 75.810733}  (backed up)
+Iteration 97:{space 2}Log likelihood = {res: 75.811025}  (backed up)
+Iteration 98:{space 2}Log likelihood = {res: 75.811086}  (backed up)
+Iteration 99:{space 2}Log likelihood = {res: 75.811336}  
+Iteration 100:{space 1}Log likelihood = {res: 75.811513}  
+
+Inefficiency effects model (truncated-normal){col 54}Number of obs {col 68}={col 70}{res}     2763
+{txt}Group variable: {res}pid{txt}{col 51}Number of groups{col 68}={col 70}{res}      601
+{txt}Time variable: {res}year{txt}{col 49}Obs per group: min{col 68}={col 70}{res}        1
+{col 64}{txt}avg{col 68}={col 70}{res}      4.6
+{col 64}{txt}max{col 68}={col 70}{res}        9
+
+{txt}{col 54}Prob > chi2   = {res}   0.0000
+{txt}Log likelihood = {res}   75.8115{txt}{col 54}Wald chi2({res}5{txt})  = {res} 18594.25
+
+{txt}{hline 32}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}           lntotalspecificcosts{col 33}{c |}      Coef.{col 45}   Std. Err.{col 57}      z{col 65}   P>|z|{col 73}     [95% Con{col 86}f. Interval]
+{hline 32}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Frontier                        {txt}{c |}
+{space 16}lndairyproducts {c |}{col 33}{res}{space 2} .9762599{col 45}{space 2} .0073253{col 56}{space 1}  133.27{col 65}{space 3}0.000{col 73}{space 4} .9619025{col 86}{space 3} .9906173
+{txt}{space 17}lnPTotalCattle {c |}{col 33}{res}{space 2} .3405291{col 45}{space 2} .1132339{col 56}{space 1}    3.01{col 65}{space 3}0.003{col 73}{space 4} .1185947{col 86}{space 3} .5624634
+{txt}lnPCompoundfeedingstuffsforcatt {c |}{col 33}{res}{space 2} .6670877{col 45}{space 2} .1499038{col 56}{space 1}    4.45{col 65}{space 3}0.000{col 73}{space 4} .3732816{col 86}{space 3} .9608938
+{txt}{space 1}lnPFERTILISERSANDSOILIMPROVERS {c |}{col 33}{res}{space 2} .3944531{col 45}{space 2} .1431266{col 56}{space 1}    2.76{col 65}{space 3}0.006{col 73}{space 4} .1139301{col 86}{space 3} .6749761
+{txt}{space 26}TREND {c |}{col 33}{res}{space 2}-.0365343{col 45}{space 2} .0076655{col 56}{space 1}   -4.77{col 65}{space 3}0.000{col 73}{space 4}-.0515584{col 86}{space 3}-.0215102
+{txt}{space 26}_cons {c |}{col 33}{res}{space 2}-6.648492{col 45}{space 2} .8128393{col 56}{space 1}   -8.18{col 65}{space 3}0.000{col 73}{space 4}-8.241628{col 86}{space 3}-5.055357
+{txt}{hline 32}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Mu                              {txt}{c |}
+{space 22}lnfdratio {c |}{col 33}{res}{space 2} 32.34385{col 45}{space 2} 31.46473{col 56}{space 1}    1.03{col 65}{space 3}0.304{col 73}{space 4}-29.32588{col 86}{space 3} 94.01358
+{txt}{space 26}_cons {c |}{col 33}{res}{space 2} 1.742161{col 45}{space 2} 4.652897{col 56}{space 1}    0.37{col 65}{space 3}0.708{col 73}{space 4}-7.377349{col 86}{space 3} 10.86167
+{txt}{hline 32}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Usigma                          {txt}{c |}
+{space 22}lnfdratio {c |}{col 33}{res}{space 2}-1.081525{col 45}{space 2} .1078492{col 56}{space 1}  -10.03{col 65}{space 3}0.000{col 73}{space 4}-1.292906{col 86}{space 3}-.8701445
+{txt}{space 26}_cons {c |}{col 33}{res}{space 2}-.4661048{col 45}{space 2} .9873174{col 56}{space 1}   -0.47{col 65}{space 3}0.637{col 73}{space 4}-2.401211{col 86}{space 3} 1.469002
+{txt}{hline 32}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Vsigma                          {txt}{c |}
+{space 26}_cons {c |}{col 33}{res}{space 2}-2.994966{col 45}{space 2}  .044076{col 56}{space 1}  -67.95{col 65}{space 3}0.000{col 73}{space 4}-3.081353{col 86}{space 3}-2.908578
+{txt}{hline 32}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+  E(sigma_u) {c |}  {res} 2.006777                                 1.974358    2.039195
+{col 1}{text}     sigma_v{col 14}{c |}{result}{space 2} .2236925{col 26}{space 2} .0049297{col 37}{space 1}   45.38{col 46}{space 3}0.000{col 55}{space 3} .2142361{col 67}{space 3} .2335663
+{txt}{hline 13}{c BT}{hline 64}
+
+{com}. estimates store `model1name'
+{txt}
+{com}. 
+. *capture sfpanel `dep_vlist' `indep_vlist' TREND if country=="UKI", model(bc95) cost d(tnormal) emean(`z_vlist')
+. *capture estimates store UKI
+. 
+. *bysort country: sfpanel `dep_vlist' `indep_vlist' TREND, model(bc95) d(tnormal) emean(`z_vlist')
+. 
+. *bysort country: xtreg `dep_vlist' `indep_vlist' , constraints(1)
+. 
+. *`model1command'
+. 
+. *sfpanel `dep_vlist' `indep_vlist' year if country=="IRE",  model(tfe) cost d(exponential) usigma(`z_vlist') vsigma(`z_vlist') // emean(`z_vlist')  
+. *estimates store tfe
+. 
+. *sfpanel `dep_vlist' `indep_vlist' year if country=="IRE",  model(tre) cost d(exponential) usigma(`z_vlist') vsigma(`z_vlist') // emean(`z_vlist')  
+. *estimates store tre
+. 
+. *sfpanel `dep_vlist' `indep_vlist' year,  model(bc95) cost d(tnormal) emean(`z_vlist') // usigma(`z_vlist')  vsigma(`z_vlist') marginal(`z_vlist')  constraint(1)
+. * ===================
+. 
+. * store estimates 
+. *qui estimates store `model1name'
+. 
+. 
+. *create list of price parameters to sum for homogeneity test
+. local est_vlist: colnames e(b)
+{txt}
+{com}. local lnhomog_w: list lnhomog_w & est_vlist
+{txt}
+{com}. foreach lnw_var of local lnhomog_w {c -(}
+{txt}  2{com}.         local homog_w_test "`homog_w_test' _b[`lnw_var'] +"
+{txt}  3{com}. {c )-}
+{txt}
+{com}. * remove trailing "+" from homog_w_test
+. local homog_w_test: di substr("`homog_w_test'", 1, length("`homog_w_test'")-1)
+{res}{txt}
+{com}. 
+. 
+. predict xb, xb
+{txt}(3 missing values generated)
+
+{com}. predict u, u
+{txt}(3 missing values generated)
+(3 missing values generated)
+(2614 missing values generated)
+
+{com}. qui reg `dep_vlist' xb u
+{txt}
+{com}. di "R-squared for reg of predictions + u on `dep_vlist' is `e(r2)'. "
+{res}R-squared for reg of predictions + u on lntotalspecificcosts is .9249488669523335. 
+{txt}
+{com}. qui xtreg `dep_vlist' `indep_vlist', fe
+{txt}
+{com}. di "R-squared for xtreg of equivalent spec is `e(r2)'"
+{res}R-squared for xtreg of equivalent spec is .4330507415597255
+{txt}
+{com}. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. * Get the AIC and BIC estimates for the fitted model
+. estimates stats
+
+{txt}{hline 13}{c TT}{hline 63}
+       Model {c |}    Obs    ll(null)   ll(model)     df          AIC         BIC
+{hline 13}{c +}{hline 63}
+{ralign 12:.}{col 14}{c |}{res}{col 17}21957{col 25} 7823.068{col 37} 14053.21{col 48}    5{col 57}-28096.41{col 69}-28056.43
+{txt}{hline 13}{c BT}{hline 63}
+{p 15 22 2}
+Note:  N=Obs used in calculating BIC; see {helpb bic_note:[R] BIC note}
+{p_end}
+
+{com}. 
+. 
+. 
+. 
+. qui estimates save  `fadnoutdatadir'/`model1name'$datestamp$timestamp.ster, replace
+{txt}
+{com}. qui capture drop te_`model1name'
+{txt}
+{com}. 
+. 
+. 
+. 
+. 
+. * constructs ind. level CI's for TE scores
+. *qui frontier_teci te_`model1name'_ci 
+. 
+. /*
+> * store estimates and predict ind. TE scores
+> qui estimates store `model2name'
+> qui estimates save  `model2name'$datestamp.ster, replace
+> qui capture drop te_`model2name'
+> qui predict te_`model2name', `predict_opts'
+> */
+. 
+. save `fadnoutdatadir'/$datanameSFApost, replace
+{txt}file G:\\Data/data_FADNPanelAnalysis/OutData/multisward/.dta saved
+
+{com}. 
+. 
+. ********************************************************
+. * End of MODELLING section              
+. ********************************************************
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. ********************************************************
+. * POSTESTIMATION 
+. ********************************************************
+. 
+. if `tests' == 1 {c -(}
+. 
+. 
+.         qui xtreg `dep_vlist' `indep_vlist', fe
+.         estimates store fixed
+.         
+.         
+.         qui xtreg `dep_vlist' `indep_vlist', re
+.         estimates store random
+.         
+.         
+.         /* Hausman specification test 
+>             H0: difference in coef not systematic (i.e. OK to use RE) */ 
+.         qui hausman fixed random
+.         local hausman_test = "Prob>chi2 = `r(p)'"
+.         
+.         
+.         /* Test for time fixed effects 
+>             H0: Joint test of year effects =0   */ 
+.         qui xtreg `dep_vlist' `indep_vlist' i.year, fe
+.         qui testparm i.year
+.         local time_FE = "Prob>F = `r(p)'"
+.         
+.         
+.         /* Breusch-Pagan LM test of RE vs OLS 
+>             H0: Variances across entities are 0 
+>               (i.e. no panel effect)            */ 
+.         estimates restore random
+.         qui xttest0
+.         local BreuschPagan_LM_RE = "Prob>chi2 = `r(p)'"
+.         
+.         
+.         /* Wald test for groupwise heteroscedasticity (for FE)
+>              H0: Constant variance (i.e. homoscedasticity)   */ 
+.         estimates restore fixed
+.         qui xttest3
+.         local wald_heterosc = "Prob>chi2 = `r(p)'"
+. 
+. 
+. {c )-}
+{txt}
+{com}. 
+. if `graphs' ==1 {c -(}
+. foreach lnw_var of local lnw_vlist {c -(}
+{txt}  2{com}.         
+.                 tw (sc `dep_vlist' `lnw_var') (lfit `dep_vlist' `lnw_var')
+{txt}  3{com}.                 graph export `fadnoutdatadir'/scplot_dep_`lnw_var'.pdf, asis replace
+{txt}  4{com}.                 graph drop _all
+{txt}  5{com}.         
+.         {c )-}
+.         
+.         *keep `dep_vlist' `indep_vlist' `z_vlist' pid year farmcode country countrycode2
+.         
+.         set matsize 5000
+.         
+.         foreach var of varlist `dep_vlist' `indep_vlist' `z_vlist' {c -(}
+{txt}  2{com}.         
+.                 kdensity `var', normal
+{txt}  3{com}.                 graph export `fadnoutdatadir'/normality_`var'.pdf, asis replace
+{txt}  4{com}.                 graph drop _all
+{txt}  5{com}.         
+.         {c )-}
+. {c )-}
+{txt}
+{com}. 
+. estimates restore bc95
+{txt}(results {stata estimates replay bc95:bc95} are active now)
+
+{com}. *sfpanel
+. qui predict `model1name'_te, `predict_opts'
+{txt}
+{com}. *qui predict te_ct_`modelname', ci
+. predict `model1name'_xb, xb
+{txt}(3 missing values generated)
+
+{com}. predict `model1name'_u, u 
+{txt}(3 missing values generated)
+(3 missing values generated)
+(2614 missing values generated)
+
+{com}. gen `model1name'_e = `dep_vlist'-`model1name'_xb
+{txt}(3 missing values generated)
+
+{com}. gen `model1name'_v =`model1name'_e - `model1name'_u
+{txt}(2614 missing values generated)
+
+{com}. 
+. 
+. local var = "`model1name'_e"
+{txt}
+{com}. kdensity `var ', normal
+{res}{txt}
+{com}. graph export `fadnoutdatadir'/normality_`var '.pdf, asis replace
+{txt}(file G:\Data/data_FADNPanelAnalysis/OutData/multisward/normality_bc95_e.pdf written in PDF format)
+
+{com}. graph drop _all
+{txt}
+{com}. tw sc `var' xb , yline(0)
+{res}{txt}
+{com}. graph export `fadnoutdatadir'/heteroscedasticity_`var '.pdf, asis replace
+{txt}(file G:\Data/data_FADNPanelAnalysis/OutData/multisward/heteroscedasticity_bc95_e.pdf written in PDF format)
+
+{com}. graph drop _all
+{txt}
+{com}. 
+. 
+. local var = "`model1name'_v"
+{txt}
+{com}. kdensity `var ', normal
+{res}{txt}
+{com}. graph export `fadnoutdatadir'/normality_`var '.pdf, asis replace
+{txt}(file G:\Data/data_FADNPanelAnalysis/OutData/multisward/normality_bc95_v.pdf written in PDF format)
+
+{com}. graph drop _all
+{txt}
+{com}. tw sc `var' xb , yline(0)
+{res}{txt}
+{com}. graph export `fadnoutdatadir'/heteroscedasticity_`var '.pdf, asis replace
+{txt}(file G:\Data/data_FADNPanelAnalysis/OutData/multisward/heteroscedasticity_bc95_v.pdf written in PDF format)
+
+{com}. graph drop _all
+{txt}
+{com}. 
+. 
+. local var = "`model1name'_u"
+{txt}
+{com}. kdensity `var ', normal
+{res}{txt}
+{com}. graph export `fadnoutdatadir'/normality_`var '.pdf, asis replace
+{txt}(file G:\Data/data_FADNPanelAnalysis/OutData/multisward/normality_bc95_u.pdf written in PDF format)
+
+{com}. graph drop _all
+{txt}
+{com}. tw sc `var' xb , yline(0)
+{res}{txt}
+{com}. graph export `fadnoutdatadir'/heteroscedasticity_`var '.pdf, asis replace
+{txt}(file G:\Data/data_FADNPanelAnalysis/OutData/multisward/heteroscedasticity_bc95_u.pdf written in PDF format)
+
+{com}. graph drop _all
+{txt}
+{com}. 
+. 
+. 
+. /*----------- Check theoretical properties (Cost Functions)----------
+>                 NOTE: See Coelli et al (2005, p. 23)
+>   1. Nonnegativity      : c(w,q) > 0
+>   2. Nondecreasing in w : if w0  >= w1, then c(w0,q) >= c(w1,q)
+>   3. Nondecreasing in q : if q0  >= q1, then c(w,q0) >= c(w,q1)
+>   4. Homgeneity         : c(kw,q) = kc(w,q) for k>0     
+>   5. Concave in w       : c([theta]w0 + [1-theta]w1,q) 
+>                             >= [theta]c(w0,q)+[1-theta]c(w1,q)
+> 
+> My translation of concavity (point 5 above) is this: The cost of a 
+> production technique which employs both (all) inputs in fixed shares 
+> will be at least as much as the share weighted sum of multiple 
+> production techniques employing each individual input in the same 
+> proportions as in the single technique. So inputs are used in the 
+> same proportions in either case (single vs multiple technique), but 
+> the single technique will always be at least as costly (and possibly 
+> moreso). 
+> -------------------------------------------------------------------*/
+. /*1* Checking 1 is simple (shouldn't see any obs < 0) */
+. 
+. foreach lnc_var of local lnc_vlist {c -(}
+{txt}  2{com}.         
+.         /* we want to check c's not their logs, so
+>         create new local without "ln" prefix, and
+>         make a list of these c_var's while you're at it  */
+.         local c_var: di substr("`lnc_var'", 3, .)
+{txt}  3{com}.         local c_vlist "`c_vlist' `c_var'"
+{txt}  4{com}. 
+.         count if `c_var' < 0 
+{txt}  5{com}. {c )-}
+{res}    0
+{txt}
+{com}. 
+. 
+. /*2* Checking 2 means dC/dw >= 0 (depends on functional form)
+> -- For Cobb-Douglas dC/dw = C*([Beta]/w), so if all three terms
+>     on the right hand side > 0, so too will dC/dw. Checked C above
+>     so its just w and Beta's to check now.
+>     */  
+. 
+. * checking w's
+. foreach lnw_var of local lnw_vlist {c -(}
+{txt}  2{com}.         
+.         /* we want to check w's not their logs, so
+>         create new local without "ln" prefix, and
+>         make a list of these w_var's while your at it  */
+.         local w_var: di substr("`lnw_var'", 3, .)
+{txt}  3{com}.         local w_vlist "`w_vlist' `w_var'"
+{txt}  4{com}. 
+.         count if `w_var' < 0 
+{txt}  5{com}. {c )-}
+{res}    0
+    0
+    0
+{txt}
+{com}. 
+. * checking [Betas] ... inspect the parameter estimates for negative
+. *  signs
+. 
+. /*3* As q is a regressor, the check is the same is in 2, i.e. check that
+>       q is always > 0, that _b[q] > 0, and we've already checked C. */
+. 
+. foreach lnq_var of local lnq_vlist {c -(}
+{txt}  2{com}.         
+.         /* we want to check q not its log, so
+>         create new local without "ln" prefix, and
+>         make a list of these q_var's while your at it  */
+.         local q_var: di substr("`lnq_var'", 3, .)
+{txt}  3{com}.         local q_vlist "`q_vlist' `q_var'"
+{txt}  4{com}. 
+.         count if `q_var' < 0 
+{txt}  5{com}. {c )-}
+{res}    0
+{txt}
+{com}. 
+. /*4* For a Cobb-Douglas, linear homogeneity in prices is satisfied if
+>            sum(_b[W]) = 1  <- not literal code here, just shorthand
+>       where W is the whole vector of input prices.       */ 
+. 
+. /* homog_w_test tells the command <test> the prices you used */
+. capture test `homog_w_test' = 1
+{txt}
+{com}. 
+. /*5* Concavity - TODO*/ 
+. 
+. *--------------------------------------------------------------------
+. 
+. 
+. 
+. 
+. /* Display exponentiated parameters for convenience 
+>  (currently All, whether that makes sense or not...
+>   will not change actual stored estimates)          */ 
+. matrix define B = e(b)
+{txt}
+{com}. matrix define expB = B
+{txt}
+{com}. 
+. local i = 1
+{txt}
+{com}. while `i' <= colsof(B) {c -(}
+{txt}  2{com}. 
+.         matrix define expB[1,`i'] = exp(B[1,`i'])
+{txt}  3{com}. 
+.         local i = `i' + 1
+{txt}  4{com}. {c )-}
+{txt}
+{com}. matrix define Bcomb = [B, expB]
+{txt}
+{com}. matrix define Bcomb = Bcomb' 
+{txt}
+{com}. 
+. * for supporting discussion of positive sign on hasreps in
+. * production function (unexpected)
+. corr `dep_vlist' `indep_vlist'
+{txt}(obs=21957)
+
+             {c |} lntota~s lndair~s lnPTot~e lnPCom~t lnPFER~S
+{hline 13}{c +}{hline 45}
+lntotalspe~s {c |}{res}   1.0000
+{txt}lndairypro~s {c |}{res}   0.9357   1.0000
+{txt}lnPTotalCa~e {c |}{res}   0.1222   0.0981   1.0000
+{txt}lnPCompoun~t {c |}{res}   0.1204   0.0688   0.5206   1.0000
+{txt}lnPFERTILI~S {c |}{res}   0.2309   0.1914   0.8064   0.6721   1.0000
+
+{txt}
+{com}. 
+. 
+. * some descriptives of the TE scores
+. tabstat `model1name'_te, stats(mean sem) by(country)
+
+{txt}Summary for variables: bc95_te
+{col 6}by categories of: country (a24)
+
+{ralign 7:country} {...}
+{c |}      mean  se(mean)
+{hline 8}{c +}{hline 20}
+{ralign 7:DEU} {...}
+{c |}{...}
+ {res} .9083125   .000644
+{txt}{ralign 7:FRA} {...}
+{c |}{...}
+ {res} .9203969  .0010327
+{txt}{ralign 7:IRE} {...}
+{c |}{...}
+ {res} .9254767  .0007096
+{txt}{ralign 7:UKI} {...}
+{c |}{...}
+ {res} .8778594  .0011912
+{txt}{hline 8}{c +}{hline 20}
+{ralign 7:Total} {...}
+{c |}{...}
+ {res} .9050796  .0004714
+{txt}{hline 8}{c BT}{hline 20}
+
+{com}. 
+. * describes the relationsip of fdratio to te_tfe
+. tw (sc `model1name'_te fdratio) (lfit `model1name'_te fdratio, lwidth(thick))
+{res}{txt}
+{com}. graph export `fadnoutdatadir'/scplot_te_fdratio.pdf, asis replace
+{txt}(file G:\Data/data_FADNPanelAnalysis/OutData/multisward/scplot_te_fdratio.pdf written in PDF format)
+
+{com}. graph drop _all
+{txt}
+{com}. ** shows weak relation to mean, but stronger for heterscedasiticy
+. ** therefore, put z's into sigma_u
+. 
+. 
+. save `fadnoutdatadir'/$datanameSFApost, replace
+{txt}file G:\\Data/data_FADNPanelAnalysis/OutData/multisward/.dta saved
+
+{com}. 
+. 
+. ********************************************************
+. * End of POSTESTIMATION section
+. ********************************************************
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. ********************************************************
+. * CLEANING UP             
+. ********************************************************
+. 
+. * report the model parameters you selected in the log
+. capture macro list _dep_vlist _indep_vlist _location_vlist _model1command _model1name _predict_opts databuild ms sectors dataname datadir project 
+{txt}
+{com}. 
+. 
+. *clear
+. capture erase blank.dta
+{txt}
+{com}. capture log close
+{smcl}
+{com}{sf}{ul off}

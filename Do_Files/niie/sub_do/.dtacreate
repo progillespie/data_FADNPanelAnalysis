@@ -1,0 +1,61 @@
+*********************************************
+*											
+* Patrick R. Gillespie					
+* Research Officer					
+* Teagasc, REDP						
+* Athenry, Co Galway, Ireland				
+* patrick.gillespie@teagasc.ie			
+*											
+*********************************************
+* RSF Project DAF RSF 07 505 (GO1390)		
+*											
+* A micro level analysis of the Irish 	
+* agri-food sector: lessons and 		
+* recommendations from Denmark and 	
+* the Netherlands				
+*											
+* Task 4
+* This file was intended to be called by 	
+* descriptives.do				
+**********************************************
+* Creating graphs of energy crops farm traits
+**********************************************
+clear
+
+*First load the blank starting dataset
+use blank
+
+local ms "Austria Belgium Bulgaria Cyprus CzechRepublic Denmark Estonia Finland France Germany Greece Hungary Ireland Italy Latvia Lithuania Luxembourg Netherlands Poland Portugal Slovakia Slovenia Spain Sweden UnitedKingdom"
+
+*Then append each country dataset to the dataset in memory
+foreach country of local ms {
+	di "Appending observations from `country'..."
+	append using ../CountrySTATAFiles/`country'
+	***replacing three letter abbrev. with 2 letter abbrev.	
+	replace country = "BE" if country== "BEL"
+	replace country = "BG" if country=="BGR"
+	replace country = "CY" if country=="CYP"
+	replace country = "CZ" if country=="CZE"
+	replace country = "DK" if country=="DAN"
+	replace country = "DE" if country=="DEU"
+	replace country = "ES" if country=="ESP"
+	replace country = "EE" if country=="EST"
+	replace country = "FR" if country=="FRA"
+	replace country = "HU" if country=="HUN"
+	replace country = "IT" if country=="ITA"
+	replace country = "LT" if country=="LTU"
+	replace country = "LU" if country=="LUX"
+	replace country = "LV" if country=="LVA"
+	replace country = "NL" if country=="NED"
+	replace country = "AT" if country=="OST"
+	replace country = "PL" if country=="POL"
+	replace country = "PT" if country=="POR"
+	replace country = "FI" if country=="SUO"
+	replace country = "RO" if country=="ROU"
+	replace country = "SE" if country=="SVE"
+	replace country = "SK" if country=="SVK"
+	replace country = "SI" if country=="SVN"
+	replace country = "UK" if country=="UKI" 
+}
+* dta for experimenting with graphs to create. Not necessary for analysis. Can be deleted if desired.
+save energygph, replace

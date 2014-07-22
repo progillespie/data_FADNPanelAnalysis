@@ -1,0 +1,86 @@
+% Header
+\documentclass{article}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{datetime}
+
+\begin{document}
+\hrule
+\begin{quote}
+  \begin{flushleft}
+    Patrick R. Gillespie\\
+    Walsh Fellow\\
+    Teagasc, REDP\\
+    Athenry, Co Galway, Ireland\\
+    patrick.gillespie@teagasc.ie\\
+  \end{flushleft}
+\end{quote}
+\hrule
+\begin{flushleft}
+  File: \textbf{\jobname.Rnw}\\
+  \today at \currenttime
+\end{flushleft}
+\hrule
+\vspace{1cm}
+
+%\subsection*{Clearing and loading}
+% <<echo=T, results='markup'>>=
+% rm(list=ls()) 
+% paneldir <- "/media/MyPassport/Data/data_NFSPanelAnalysis/"
+% source(paste(paneldir, "code_R/dirstruct.R", sep='')) 
+% setwd(Rdir)
+% library(foreign) #...for the ability to read .dta files
+% library(data.table) #... useful for big datasets (makes manipulation faster \& easier)
+% library(xtable) #... to get nice looking tables.
+% @
+ 
+%\subsection*{Setting up the data}
+%Read the Stata dataset into a data.table (type of data.frame - useful for large datasets) and ID the key variables (like subscripts for the data). Sorts by those too.         
+% <<echo=TRUE, results='markup'>>=
+% nfs <- data.table(read.dta(paste(nfsdatadir, "nfs_data.dta", sep='')))
+% setkey(nfs, farmcode, year)
+% @
+
+%\subsection*{Tables and Graphs}
+
+
+% <<echo=TRUE, results='markup'>>=
+% nfs.yr <- nfs[,lapply(.SD, mean), by=year]
+% @
+%\begin{quote}
+ % \emph{NOTE: .SD is a symbol meaning all of the data. It's a shortcut for
+ % avoiding long lists of column names for that second term (j term in the package's
+ % terminology)}
+%\end{quote}
+
+% <<echo=TRUE, results='markup'>>=
+% # create a data frame of some collapsed variables (yearly means in this case)
+% tab1 <-nfs.yr[1:16,list(year, fsizuaa, daforare, farmgo, farmdc, farmohct, farmgm)]
+% @
+
+%Then print a formatted table (code chunk will not be visible in pdf)... 
+
+%  <<echo=FALSE, results='asis'>>=
+% # create LaTeX code for the formatted table
+% print(xtable(tab1, "Selected yearly per farm means (unweighted)"), include.rownames=FALSE)
+% @
+
+
+% <<echo=TRUE, results='markup'>>=
+% #Using collapsed data to generate descriptives. When nfs.yr is attached, we don't have to write nfs.yr$ before the varnames
+% attach(nfs.yr)
+% plot(year, fsizuaa
+%      , type="l"
+%      , family="serif"
+%      , lwd=2
+%      , ylim=c(0,75)
+%      , ylab="mean hectares per farm")
+%        
+% # ... it's  easy to overlay another series on the graph...
+% points(year, daforare
+%        , type="l"
+%        , lwd=1 )
+% 
+% legend("bottom", c("Farm size", "Dairy Forage"), lwd=c("2", "1"), bty="n")
+% detach(nfs.yr) # undoes attach()
+% @
+\end{document}

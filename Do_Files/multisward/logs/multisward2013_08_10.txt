@@ -1,0 +1,157 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}C:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_08_10.txt
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}10 Aug 2013, 13:38:29
+{txt}
+{com}. di  "Job  Started  at  $S_TIME  on $S_DATE"
+{res}Job  Started  at  13:38:29  on 10 Aug 2013
+{txt}
+{com}. cmdlog using logs/$project$datestamp.cmd.txt, replace
+{txt}(cmdlog C:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_08_10.cmd.txt opened)
+
+{com}. 
+. 
+. 
+. if `tests' == 1 {c -(}
+. 
+. 
+.         qui xtreg `dep_vlist' `indep_vlist', fe
+.         estimates store fixed
+.         
+.         
+.         qui xtreg `dep_vlist' `indep_vlist', re
+.         estimates store random
+.         
+.         
+.         /* Hausman specification test 
+>             H0: difference in coef not systematic (use RE) */ 
+.         qui hausman fixed random
+.         local hausman_test = "Prob>chi2 = `r(p)'"
+.         
+.         
+.         /* Test for time fixed effects 
+>             H0: Joint test of year effects =0   */ 
+.         qui xtreg `dep_vlist' `indep_vlist' i.year, fe
+.         qui testparm i.year
+.         local time_FE = "Prob>F = `r(p)'"
+.         
+.         
+.         /* Breusch-Pagan LM test of RE vs OLS 
+>             H0: Variances across entities are 0 
+>               (i.e. no panel effect)            */ 
+.         estimates restore random
+.         qui xttest0
+.         local BreuschPagan_LM_RE = "Prob>chi2 = `r(p)'"
+.         
+.         
+.         /* Wald test for groupwise heteroscedasticity (for FE)
+>              H0: Constant variance (i.e. homoscedasticity   */ 
+.         estimates restore fixed
+.         qui xttest3
+.         local wald_heterosc = "Prob>chi2 = `r(p)'"
+. 
+. 
+. {c )-}
+{txt}
+{com}. 
+. 
+. *keep `dep_vlist' `indep_vlist' `z_vlist' pid year farmcode country countrycode2
+. 
+. set matsize 5000
+{txt}
+{com}. 
+. xtreg `dep_vlist' `indep_vlist' `location_vlist' `z_vlist' i.countrycode2 i.year if country=="IRE" | country=="UKI", re
+{txt}note: 2007.year omitted because of collinearity
+{res}
+{txt}Random-effects GLS regression                   Number of obs      = {res}     3912
+{txt}Group variable: {res}pid                             {txt}Number of groups   = {res}     1326
+
+{txt}R-sq:  within  = {res}0.5919                         {txt}Obs per group: min = {res}        1
+{txt}       between = {res}0.9015                                        {txt}avg = {res}      3.0
+{txt}       overall = {res}0.8912                                        {txt}max = {res}        9
+
+                                                {txt}{help j_robustsingular##|_new:Wald chi2(20)}{col 68}={col 70}{res}        .
+{txt}corr(u_i, X)   = {res}0{txt} (assumed)                    Prob > chi2        =    {res}     .
+
+{txt}{hline 20}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}      lntotalinputs{col 21}{c |}      Coef.{col 33}   Std. Err.{col 45}      z{col 53}   P>|z|{col 61}     [95% Con{col 74}f. Interval]
+{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 9}lndotomkgl {c |}{col 21}{res}{space 2} .7959698{col 33}{space 2} .0085315{col 44}{space 1}   93.30{col 53}{space 3}0.000{col 61}{space 4} .7792483{col 74}{space 3} .8126912
+{txt}{space 12}lnPLand {c |}{col 21}{res}{space 2} .0144412{col 33}{space 2} .0044058{col 44}{space 1}    3.28{col 53}{space 3}0.001{col 61}{space 4}  .005806{col 74}{space 3} .0230764
+{txt}{space 5}lnPTotalCattle {c |}{col 21}{res}{space 2} 1.064198{col 33}{space 2}   .74567{col 44}{space 1}    1.43{col 53}{space 3}0.154{col 61}{space 4}-.3972879{col 74}{space 3} 2.525685
+{txt}{space 10}lnPLabour {c |}{col 21}{res}{space 2} .0342156{col 33}{space 2} .0104518{col 44}{space 1}    3.27{col 53}{space 3}0.001{col 61}{space 4} .0137304{col 74}{space 3} .0547008
+{txt}lnPCompoundfeedin~t {c |}{col 21}{res}{space 2}-.6481196{col 33}{space 2} .4583977{col 44}{space 1}   -1.41{col 53}{space 3}0.157{col 61}{space 4}-1.546563{col 74}{space 3} .2503233
+{txt}lnPCerealsandmill~s {c |}{col 21}{res}{space 2} .0727086{col 33}{space 2} .1047368{col 44}{space 1}    0.69{col 53}{space 3}0.488{col 61}{space 4}-.1325717{col 74}{space 3} .2779888
+{txt}lnPFERTILISERSAND~S {c |}{col 21}{res}{space 2}-.1711898{col 33}{space 2} .1137921{col 44}{space 1}   -1.50{col 53}{space 3}0.132{col 61}{space 4}-.3942183{col 74}{space 3} .0518387
+{txt}{space 6}lnPMotorfuels {c |}{col 21}{res}{space 2} .4692606{col 33}{space 2} .1766996{col 44}{space 1}    2.66{col 53}{space 3}0.008{col 61}{space 4} .1229358{col 74}{space 3} .8155854
+{txt}lnPVETERINARYEXPE~S {c |}{col 21}{res}{space 2} .8474634{col 33}{space 2} .4080337{col 44}{space 1}    2.08{col 53}{space 3}0.038{col 61}{space 4} .0477321{col 74}{space 3} 1.647195
+{txt}lnPSEEDSANDPLANTI~K {c |}{col 21}{res}{space 2} .1064813{col 33}{space 2}  .087242{col 44}{space 1}    1.22{col 53}{space 3}0.222{col 61}{space 4}-.0645098{col 74}{space 3} .2774724
+{txt}lnPMAINTENANCEOFB~S {c |}{col 21}{res}{space 2}-1.329762{col 33}{space 2}  .432106{col 44}{space 1}   -3.08{col 53}{space 3}0.002{col 61}{space 4}-2.176674{col 74}{space 3}-.4828497
+{txt}{space 12}fdratio {c |}{col 21}{res}{space 2} .1226928{col 33}{space 2} .0249925{col 44}{space 1}    4.91{col 53}{space 3}0.000{col 61}{space 4} .0737083{col 74}{space 3} .1716772
+{txt}{space 19} {c |}
+{space 7}countrycode2 {c |}
+{space 17}1  {c |}{col 21}{res}{space 2}        0{col 33}{txt}  (empty)
+{space 17}2  {c |}{col 21}{res}{space 2}        0{col 33}{txt}  (omitted)
+{space 17}3  {c |}{col 21}{res}{space 2}-.2665535{col 33}{space 2} .0202624{col 44}{space 1}  -13.16{col 53}{space 3}0.000{col 61}{space 4}-.3062669{col 74}{space 3}  -.22684
+{txt}{space 17}4  {c |}{col 21}{res}{space 2}        0{col 33}{txt}  (omitted)
+{space 19} {c |}
+{space 15}year {c |}
+{space 14}2000  {c |}{col 21}{res}{space 2}-.1609384{col 33}{space 2} .0607243{col 44}{space 1}   -2.65{col 53}{space 3}0.008{col 61}{space 4}-.2799559{col 74}{space 3} -.041921
+{txt}{space 14}2001  {c |}{col 21}{res}{space 2}  .045949{col 33}{space 2} .0390474{col 44}{space 1}    1.18{col 53}{space 3}0.239{col 61}{space 4}-.0305826{col 74}{space 3} .1224805
+{txt}{space 14}2002  {c |}{col 21}{res}{space 2} .0625603{col 33}{space 2} .0292678{col 44}{space 1}    2.14{col 53}{space 3}0.033{col 61}{space 4} .0051964{col 74}{space 3} .1199241
+{txt}{space 14}2003  {c |}{col 21}{res}{space 2}-.0401488{col 33}{space 2} .0261848{col 44}{space 1}   -1.53{col 53}{space 3}0.125{col 61}{space 4}-.0914702{col 74}{space 3} .0111725
+{txt}{space 14}2004  {c |}{col 21}{res}{space 2}-.0682953{col 33}{space 2} .0220618{col 44}{space 1}   -3.10{col 53}{space 3}0.002{col 61}{space 4}-.1115357{col 74}{space 3}-.0250549
+{txt}{space 14}2005  {c |}{col 21}{res}{space 2}-.1406147{col 33}{space 2} .0381612{col 44}{space 1}   -3.68{col 53}{space 3}0.000{col 61}{space 4}-.2154092{col 74}{space 3}-.0658202
+{txt}{space 14}2006  {c |}{col 21}{res}{space 2}-.1638662{col 33}{space 2} .0713901{col 44}{space 1}   -2.30{col 53}{space 3}0.022{col 61}{space 4}-.3037882{col 74}{space 3}-.0239441
+{txt}{space 14}2007  {c |}{col 21}{res}{space 2}        0{col 33}{txt}  (omitted)
+{space 19} {c |}
+{space 14}_cons {c |}{col 21}{res}{space 2} 6.402671{col 33}{space 2} 2.211622{col 44}{space 1}    2.90{col 53}{space 3}0.004{col 61}{space 4} 2.067972{col 74}{space 3} 10.73737
+{txt}{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+            sigma_u {c |} {res} .22539786
+            {txt}sigma_e {c |} {res} .09185479
+                {txt}rho {c |} {res} .85757782{txt}   (fraction of variance due to u_i)
+{hline 20}{c BT}{hline 64}
+
+{com}. predict v, u // predict uses u instead of residuals for idiosyncratic error in xtreg context
+{txt}(18027 missing values generated)
+
+{com}. 
+. * Some plots for checking assumptions, normality etc.
+. kdensity v, normal saving(kdensity)
+{res}{txt}(file kdensity.gph saved)
+
+{com}. 
+. 
+. *graph matrix `dep_vlist' `indep_vlist'
+. 
+. * tests for heteroscedasticity
+. tw sc v xb, yline(0, lwidth(thick) lcol(red)) saving(heteroscedasticity)
+{err}variable xb not found
+{txt}{search r(111):r(111);}
+
+end of do-file
+
+{search r(111):r(111);}
+
+{com}. predict xb
+{txt}(option xb assumed; fitted values)
+(13825 missing values generated)
+
+{com}. tw sc v xb, yline(0, lwidth(thick) lcol(red)) saving(heteroscedasticity
+{err}parentheses do not balance
+{txt}{search r(198):r(198);}
+
+{com}. tw sc v xb, yline(0, lwidth(thick) lcol(red)) saving(heteroscedasticity)
+{res}{txt}(file heteroscedasticity.gph saved)
+
+{com}. hettest
+{err}last estimates not found
+{txt}{search r(301):r(301);}
+
+{com}. whitetest
+{err}unrecognized command:  whitetest
+{txt}{search r(199):r(199);}
+
+{com}. exit, clear

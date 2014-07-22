@@ -1,0 +1,30 @@
+% This .Rnw is saved in the R_Home directory to allow quick compiling of LaTeX
+% portion of the code (i.e. without running any R code chunks) to edit individual
+% paragraphs, equations etc...
+\documentclass{article}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{datetime}
+\begin{document}
+
+\hrule
+\begin{quote}
+  \begin{flushleft}
+    Patrick R. Gillespie\\
+    Walsh Fellow\\
+    Teagasc, REDP\\
+    Athenry, Co Galway, Ireland\\
+    patrick.gillespie@teagasc.ie\\
+  \end{flushleft}
+\end{quote}
+\hrule
+\begin{flushleft} 
+    File: \textbf{\jobname.Rnw}\\
+    
+    \today \  at \currenttime.
+\end{flushleft}
+\hrule
+\vspace{1cm}
+
+
+
+\end{document}

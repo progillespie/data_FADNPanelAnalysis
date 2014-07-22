@@ -1,0 +1,998 @@
+**********************************************************************
+**********************************************************************
+* Farm Level Microsimulation Model - Data Preparation
+*   adapted for FADN data 
+* 
+* Cathal O'Donoghue, RERC Teagasc
+*    adapted by Patrick Gillespie, Walsh Fellow
+*
+**********************************************************************
+**********************************************************************
+args standalone
+
+/* Checks to see if the file is being run as a standalone.
+   If $databuild is already set, we assume some other file
+   is calling this one, and we don't reset any globals */
+
+if "`standalone'" == "standalone"{
+
+	version 9.0
+	clear
+	clear matrix
+	set mem 700m
+	set matsize 2500
+	set more off
+
+	* Required directory macro
+	global datadir	D:\\Data
+ 	global project 	testmerge2  // folder this file is in
+	global dodir1	$datadir/data_FADNPanelAnalysis/Do_Files/$project
+
+	* Run parameters 
+	global databuild	= 1
+	global ms	        "Ireland UnitedKingdom"  
+	global countrylabels 	"msname"
+	global sectors 		"fffadnsy==4110" 
+	global oldvars 		"*"
+	global newvars 		"*" 
+
+	local  micro_data_yr	= 2004
+	scalar sc_start_yr	= 1999
+	scalar sc_micro_data_yr	= `micro_data_yr'
+	scalar sim_yr1 		= `micro_data_yr'
+	scalar sc_sim_error 	= 0
+}
+
+cd  $dodir1
+
+* locals only apply to the file in which they were set, 
+*  so either way they need to be set here
+local nfspaneldir 	$datadir/data_NFSPanelAnalysis
+local fadnpaneldir 	$datadir/data_FADNPanelAnalysis
+local fadnoutdatadir 	$datadir/data_FADNPanelAnalysis/OutData/$project
+local origdatadir 	$datadir/data_FADNPanelAnalysis/OrigData 
+* Complete dataset possible from merging just FADN_4 and FADN_5 
+*local fadn9907dir  	`origdatadir'/FADN_1
+*local fadn5dir  	`origdatadir'/FADN_2/TEAGSC
+*local fadn3dir 	`origdatadir'/FADN_3
+local fadn4dir  	`origdatadir'/FADN_4/TEAGSC
+local fadn5dir  	`origdatadir'/FADN_5/TEAGSC
+
+* Locals borrowed from NFSPrep.do
+local orig_ibsas_nfs 		= "$orig_ibsas_nfs1"
+local outdatadir 		= "$outdatadir1" 
+local nfsdatadir 		= "$nfsdatadir1" 
+local Regional_outdatadir 	= "$Regional_outdatadir1"
+local dodir 			= "$dodir1"
+local start_yr 			=  sc_start_yr
+local micro_data_year_list 	= "$micro_data_year_list1" 
+
+* three scalars that must be preserved for master file
+
+local  save_sc_start_yr 	= sc_start_yr 
+local  save_sc_micro_data_yr 	= sc_micro_data_yr 
+local  save_sim_yr1		= sim_yr1
+local  save_sc_sim_error	= sc_sim_error
+
+* make sure that your fadnoutdatadir exists
+capture mkdir 		`fadnoutdatadir'
+capture mkdir 		`fadn4dir'/../dta
+capture mkdir 		`fadn5dir'/../dta
+
+
+
+**********************************************************************
+**********************************************************************
+* databuild (if statement) - Building the panels, country by country 
+**********************************************************************
+**********************************************************************
+
+macro list databuild
+if $databuild == 1 {
+
+
+
+	* Create a blank dataset to start merging process from
+	clear
+	gen start=1
+	save `fadnoutdatadir'/data`i', replace
+	
+	
+	**************************************************************
+	*Top level loop
+	**************************************************************
+	
+	local i = 0
+	foreach country of global ms {
+
+		local i = `i'+1
+		clear
+	
+
+		*------------------------------------------------------
+		*------------------------------------------------------
+		* FADN 4 - Data from Fiona (found late in the project)
+		*------------------------------------------------------
+		*------------------------------------------------------
+
+		/* The naming of FADN_# directories pertain to the 
+		    order in which the data were made available to 
+		    Patrick Gillespie as he progressed through his PhD.	
+		    The ordering of the merges and appends ARE NOT 
+		    sequential! It goes 1,2,4,3. Merge FADN_4 *after* 
+		    FADN_2 and *before* FADN_3	*/		
+
+	
+		* Gets names of all files in `fadn4dir' 
+		local file: dir "`fadn4dir'" files *
+	
+	
+
+		/* ctry_select is the first 3 characters of 
+		    the filenames in `fadn4dir' corresponding
+		    to the countries chosen by $ms 
+
+		   Only one of the next 27 if statements will
+		    be true, so ctry_select will be assigned a
+		    value only once per ms 	    */
+
+		if "`country'" == "Austria" {
+			local  ctry_select = "ost"
+		}
+		if "`country'" == "Belgium" {
+			local   ctry_select = "bel"
+		}
+		if "`country'" == "Bulgaria" {
+			local   ctry_select = "bgr"
+		}
+		if "`country'" == "Cyprus" {
+			local   ctry_select = "cyp"
+		}
+		if "`country'" == "CzechRepublic" {
+			local   ctry_select = "cze"
+		}
+		if "`country'" == "Denmark" {
+			local   ctry_select = "dan"
+		}
+		if "`country'" == "Estonia" {
+			local   ctry_select = "est"
+		}
+		if "`country'" == "Finland" {
+			local   ctry_select = "suo"
+		}
+		if "`country'" == "France" {
+			local   ctry_select = "fra"
+		}
+		if "`country'" == "Germany" {
+			local   ctry_select = "deu"
+		}
+		if "`country'" == "Greece" {
+			local   ctry_select = "ell"
+		}
+		if "`country'" == "Hungary" {
+			local   ctry_select = "hun"
+		}
+		if "`country'" == "Ireland" {
+			local   ctry_select = "ire"
+		}
+		if "`country'" == "Italy" {
+			local   ctry_select = "ita"
+		}
+		if "`country'" == "Latvia" {
+			local   ctry_select = "lva"
+		}
+		if "`country'" == "Lithuania" {
+			local   ctry_select = "ltu"
+		}
+		if "`country'" == "Luxembourg" {
+			local   ctry_select = "lux"
+		}
+		if "`country'" == "Malta" {
+			local   ctry_select = "mlt"
+		}
+		if "`country'" == "Netherlands" {
+			local   ctry_select = "ned"
+		}
+		if "`country'" == "Poland" {
+			local   ctry_select = "pol"
+		}
+		if "`country'" == "Portugal" {
+			local   ctry_select = "por"
+		}
+		if "`country'" == "Romania" {
+			local   ctry_select = "rou"
+		}
+		if "`country'" == "Slovakia" {
+			local   ctry_select = "svk"
+		}
+		if "`country'" == "Slovenia" {
+			local   ctry_select = "svn"
+		}
+		if "`country'" == "Spain" {
+			local   ctry_select = "esp"
+		}
+		if "`country'" == "Sweden" {
+			local   ctry_select = "sve"
+		}
+		if "`country'" == "UnitedKingdom" {
+			local   ctry_select = "uki"
+		}
+		
+		di "ctry_select is set to: `ctry_select'"
+		macro list _file	
+				
+
+
+		*------------------------------------------------------
+		* Sub loop 1 - Clean and save FADN4 data before merging
+		*------------------------------------------------------
+		  
+
+		foreach filename of local file{
+
+		   /* Check to see if start of filename matches 
+			ctry_select, and if so, load, clean, append
+			and save  	*/
+		   local ctry_yr = ///
+		      substr("`filename'", 1, length("`filename'") -4) 
+
+
+	           if "`ctry_select'" == substr("`filename'", 1, 3) {
+
+		      insheet using `fadn4dir'/`filename', comma clear
+
+		      di "Renaming merge vars to match eupanel data"
+		      qui do sub_do/cleanvarnames.do
+		      qui do sub_do/labelvars.do
+
+		      sort country region year totaloutput
+		      note: Intermediate dataset. Contains ///
+		      additional FADN variables for merge with ///
+		      eupanel data
+		      label data "Intermediate dataset."
+		      di "Saving `ctry_yr' as `fadn4dir'/`ctry_yr'.dta"
+
+		      save `fadn4dir'/../dta/`ctry_yr'.dta, replace
+		   }
+			
+		}
+		
+		
+		*------------------------------------------------------
+		* Sub loop 2 - Append all FADN4 years before merging 
+		*------------------------------------------------------
+		
+		/* Drop all obs but keep varnames to start appending 
+		    process without duplicating obs. 	*/
+		drop if _n > = 1
+		
+		* This should show 0 obs but retain varnames
+		describe, short
+
+
+
+		foreach filename of local file{
+
+		   /* Check to see if start of filename matches
+		        ctry_select, and if so, load, clean, 
+		        append and save 	*/
+
+		   local ctry_yr = ///
+		      substr("`filename'", 1, length("`filename'") -4) 
+
+
+		   if "`ctry_select'" == substr("`filename'", 1, 3) {
+
+		      append using `fadn4dir'/../dta/`ctry_yr'.dta 
+		      note: Intermediate dataset. Contains ///
+		      additional FADN variables to be merged with ///
+		      eupanel data
+
+		   }
+			
+		}
+
+	
+		duplicates report country region year totaloutput ///
+		                  dairycows totaloutputcrops 
+
+		duplicates tag country region year totaloutput ///
+		                  dairycows totaloutputcrops, gen(dup) 
+
+		/* UK data results in 14 duplicate obs (7 original, 
+		    7 repeat). View with the following.
+		br if dup>0 */
+
+		/* If sufficiently small number of duplicates then drop
+		      the repeated obs */			
+		duplicates drop country region year totaloutput ///
+		                dairycows totaloutputcrops, force
+
+
+		save `fadn4dir'/../dta/`country'.dta, replace
+
+		*save `fadnoutdatadir'/data`i'.dta, replace
+
+		*------------------------------------------------------
+		*------------------------------------------------------
+		* FADN 4 APPENDED, NOT MERGED YET
+		*------------------------------------------------------
+		*------------------------------------------------------
+
+
+
+		*------------------------------------------------------
+		*------------------------------------------------------
+		* FADN 5
+		*------------------------------------------------------
+		*------------------------------------------------------
+
+		* Gets names of all files in `fadn5dir' 
+		local file: dir "`fadn5dir'" files *
+	
+	
+
+		* ctry_select is the first 3 characters of 
+		* the filenames in `fadn5dir' corresponding
+		* to the countries chosen by $ms
+
+		* Only one of the next 27 if statements will
+		* be true, so ctry_select will be assigned a
+		* value only once per ms
+
+		if "`country'" == "Austria" {
+			local  ctry_select = "ost"
+		}
+		if "`country'" == "Belgium" {
+			local   ctry_select = "bel"
+		}
+		if "`country'" == "Bulgaria" {
+			local   ctry_select = "bgr"
+		}
+		if "`country'" == "Cyprus" {
+			local   ctry_select = "cyp"
+		}
+		if "`country'" == "CzechRepublic" {
+			local   ctry_select = "cze"
+		}
+		if "`country'" == "Denmark" {
+			local   ctry_select = "dan"
+		}
+		if "`country'" == "Estonia" {
+			local   ctry_select = "est"
+		}
+		if "`country'" == "Finland" {
+			local   ctry_select = "suo"
+		}
+		if "`country'" == "France" {
+			local   ctry_select = "fra"
+		}
+		if "`country'" == "Germany" {
+			local   ctry_select = "deu"
+		}
+		if "`country'" == "Greece" {
+			local   ctry_select = "ell"
+		}
+		if "`country'" == "Hungary" {
+			local   ctry_select = "hun"
+		}
+		if "`country'" == "Ireland" {
+			local   ctry_select = "ire"
+		}
+		if "`country'" == "Italy" {
+			local   ctry_select = "ita"
+		}
+		if "`country'" == "Latvia" {
+			local   ctry_select = "lva"
+		}
+		if "`country'" == "Lithuania" {
+			local   ctry_select = "ltu"
+		}
+		if "`country'" == "Luxembourg" {
+			local   ctry_select = "lux"
+		}
+		if "`country'" == "Malta" {
+			local   ctry_select = "mlt"
+		}
+		if "`country'" == "Netherlands" {
+			local   ctry_select = "ned"
+		}
+		if "`country'" == "Poland" {
+			local   ctry_select = "pol"
+		}
+		if "`country'" == "Portugal" {
+			local   ctry_select = "por"
+		}
+		if "`country'" == "Romania" {
+			local   ctry_select = "rou"
+		}
+		if "`country'" == "Slovakia" {
+			local   ctry_select = "svk"
+		}
+		if "`country'" == "Slovenia" {
+			local   ctry_select = "svn"
+		}
+		if "`country'" == "Spain" {
+			local   ctry_select = "esp"
+		}
+		if "`country'" == "Sweden" {
+			local   ctry_select = "sve"
+		}
+		if "`country'" == "UnitedKingdom" {
+			local   ctry_select = "uki"
+		}
+		
+		di "ctry_select is set to: `ctry_select'"
+		macro list _file	
+				
+
+
+		*------------------------------------------------------
+		* Sub loop 1 - Clean and save FADN5 data before merging
+		*------------------------------------------------------
+		  
+
+		foreach filename of local file{
+
+			/* Check to see if start of filename matches
+			    ctry_select, and if so, load, clean, append
+			    and save 	*/
+
+			local ctry_yr = substr("`filename'", 1, ///
+			 length("`filename'") -4) 
+
+		   if "`ctry_select'" == substr("`filename'", 1, 3) {
+
+		      insheet using `fadn5dir'/`filename', comma clear
+
+		      di "Renaming merge vars to match eupanel data"
+		      qui do sub_do/cleanvarnames.do
+		      qui do sub_do/labelvars.do
+		      format id %15.0f
+
+		      sort country region year totaloutput
+		      note: Intermediate dataset. Contains ///
+		      additional FADN variables for merge with ///
+		      eupanel data
+		      label data "Intermediate dataset." 
+		      di "Saving `ctry_yr' as `fadn5dir'/`ctry_yr'.dta"
+
+		      save `fadn5dir'/../dta/`ctry_yr'.dta, replace
+
+		   }
+			
+		}
+		
+		
+		*------------------------------------------------------
+		* Sub loop 2 - Append all FADN5 years before merging 
+		*------------------------------------------------------
+		
+		/* Drop all obs but keep varnames to start appending 
+		   process without duplicating obs */
+		drop if _n > = 1
+		
+		/* This command should show 0 obs but the same number 
+		      of vars as before  */
+		describe, short
+
+
+
+		foreach filename of local file{
+
+		/* Check to see if start of filename matches
+		    ctry_select, and if so, load, clean, append
+		    and save */
+
+		   local ctry_yr = ///
+		      substr("`filename'",1,length("`filename'")-4) 
+
+		   if "`ctry_select'" == substr("`filename'", 1, 3) {
+		      
+		      append using `fadn5dir'/../dta/`ctry_yr'.dta 
+		      note: Intermediate dataset. Contains ///
+		      additional FADN variables to be merged ///
+		      with eupanel data
+		      label data "Intermediate dataset."
+
+		      }
+			
+		}
+		
+		
+		duplicates report country region year totaloutput ///
+		                  dairycows totaloutputcrops 
+
+		duplicates tag country region year totaloutput ///
+		                  dairycows totaloutputcrops, gen(dup) 
+
+		/* UK data results in 14 duplicate obs (7 original, 
+		    7 repeat). View with the following. */
+		*br if dup>0 		
+		
+
+		/* If sufficiently small number of duplicates then drop
+		   the repeated obs */			
+		duplicates drop country region year totaloutput ///
+		                dairycows totaloutputcrops, force
+		
+
+	
+		save `fadn5dir'/../dta/`country'.dta, replace
+
+
+
+		* Merge FADN_4 and FADN_5 data
+		di "Merging from `country'.dta..."
+		capture drop _merge
+		merge 1:1 country region year totaloutput ///
+		          dairycows totaloutputcrops ///
+			using `fadn4dir'/../dta/`country'.dta ///
+			, nonotes keepusing($newvars) gen(_mergeF45)
+
+
+
+		* ------------------------------------------
+		/* Map id's to farmcodes to check merge is ok.
+		     If all is well, then will set farmcodes
+		     equal to id and continue on. */
+		* ------------------------------------------
+
+		   *... Will eventually just set farmcode = id so...
+
+		   *... First save copy of untouched farmcodes
+		gen origfarmcode = farmcode
+
+		   *... and a copy to test.
+		gen testfarmcode = farmcode
+
+
+		   *...Use averages to indicate problems in mapping
+		sort id year
+		tsset id year, yearly // tsset by id for this part
+		by id: egen meanFC = mean(testfarmcode)
+
+
+		   /*...You'll have 47 farms which enter the survey 
+		   in 2009, so they won't be in FADN_4 or have a
+		   farmcode. You can see them with the following...
+		   
+		   br id farmcode meanFC year country if ///
+		      missing(meanFC) 
+		   
+		   ... so just use the id for them  */
+		replace testfarmcode = id if missing(meanFC)
+
+
+		   /* meanFC is also useful to see where more than one 
+		   farmcode mapped to a single id. For that do...
+		   
+		   br id farmcode meanFC year country if ///
+		      meanFC!=int(meanFC)
+		   
+		   ...which works because meanFC should always be a
+		   whole number when there's only 1 farmcode per id
+		  */
+
+
+		   /*...Use 2008 farmcode if the farm reported before
+		   2009 as identified by id */
+		replace testfarmcode = l.testfarmcode if ///
+		   year==2009 & missing(testfarmcode)
+
+
+		   *... Replace farmcode with ID or testfarmcode?
+		replace farmcode = id
+
+		* ------------------------------------------		
+
+
+
+
+
+		* ------------------------------------------
+		/* Use 2008 value of any variable to fill in missing 
+		  2009 values (as we did for farmcode) */
+		* ------------------------------------------		
+
+		* Create list of all vars except key vars
+		qui ds _all
+		local varstoextend "`r(varlist)'"
+		local id_vlist "country region year totaloutput dairycows totaloutputcrops testfarmcode farmcode id nuts2 nuts3 countryyear"
+		local varstoextend: list varstoextend - id_vlist
+
+		* Extend to 2009 using 2008 values for vars in list 
+		foreach var of local varstoextend {
+
+		   * Replace ob with 2008 value from same farm
+		   replace `var' = l.`var' if ///
+		      missing(`var') & year==2009
+		   
+		}
+
+		* ------------------------------------------
+
+
+		save `fadnoutdatadir'/data`i'.dta, replace
+
+		*------------------------------------------------------
+		*------------------------------------------------------
+		* FADN 5 -- DONE. All datasets merged for this country.
+		*------------------------------------------------------
+		*------------------------------------------------------
+	
+
+
+
+		* ... more cleaning
+
+
+		* the following variable has 0 obs. 
+		capture drop v201
+		
+		* check number of obs and vars
+		describe, short
+		
+		*------------------------------------------------------
+		/*Farmcode is not unique across countries so create a 
+		unique panel id (only relevant for multi-country panels
+ 		commented out but kept for reference). */
+	
+		*egen pid = group(country region subregion farmcode)
+		*destring pid, replace
+		*tsset pid year
+		*label variable farmcode ///
+		*   "ID (only unique within country)" 
+		*label variable pid "ID (unique for whole panel)"
+		*------------------------------------------------------
+
+		
+		*------------------------------------------------------
+		/*The variable for farmer's age is actually the year of
+		birth. Worse, some times this is recorded as a 4 digit 
+		year, and sometimes a two digit year (within the same 
+		country-year dataset!!!). The following code fixes that
+		and drops 0 observations (presumed missing or refused, 
+		as the number of farmers implied to be over 100 is 
+		implausible). The caculation of the age variable is 
+		left to the do-file renameFADN.do as it will take the 
+		NFS naming convention there.  */
+		*------------------------------------------------------
+		drop if unpaidregholdermgr1yb == 0
+		gen yrborn = unpaidregholdermgr1yb
+		gen yearcriteria = unpaidregholdermgr1yb - 1900
+		replace yrborn=unpaidregholdermgr1yb + 1900 ///
+		   if yearcriteria<0
+
+
+
+		* select Northern Ireland if working with UK data
+		if "`country'" == "UnitedKingdom" {
+			keep if region == 441
+		}
+
+		* check number of obs and vars
+		describe, short
+
+
+		* Make compatible with NFS coding conventions
+		qui do sub_do/renameFADN.do
+		
+		
+		* check number of obs and vars describe, short 
+		qui do sub_do/doFarmDerivedFADN.do
+		
+		
+		* check number of obs and vars
+		describe, short
+
+
+		tsset farmcode year
+		replace fffadnsy = l.fffadnsy if ///
+		   year==2009 & missing(fffadnsy)
+		keep if $sectors	
+
+
+
+		*******************************************************
+		*------------------------------------------------------
+		*------------------------------------------------------
+		* Code borrowed from NFSPrep.do
+		*------------------------------------------------------
+		*------------------------------------------------------
+		*******************************************************
+		
+
+
+		* P.Gillespie: Skipped start of file, as it's not 
+		* 		relevant for FADN data.
+
+
+		**********
+		* Prepare
+		**********
+		sort farmcode year
+		by farmcode: replace hasforestry = hasforestry[_n-1] if hasforestry == 0 & hasforestry[_n-1] != 0 & hasforestry[_n-1] != .
+		
+
+
+		*********
+		* Price
+		*********
+		local fgo_vlist = "$fgo_vlist"
+		
+		gen Pfdairygo_lu = PMilk
+		gen Pfcatlego_lu = PTotalCattle
+		gen Pfsheepgo_lu = PSheep
+		gen Pcropgo_ha = PTotalCrop
+		gen Pfarmdc_ha = PTotalInputs
+		gen Poth_dc_ha =  POtherInputs
+		gen Pfdpurblk_ha = PCattleFeed
+		gen Pfdpurcon_ha = PStraightFeed
+		gen Pfdferfil_ha = PTotalFert
+		gen Pfdpursed_ha = PSeeds
+		gen Pfdcrppro_ha = PPlantProtection
+		gen Pfdvetmed_ha = PVetExp
+		gen Pfdaifees_ha = PVetExp
+		gen Pfdtrans_ha = PMotorFuels
+		gen Poth_oc_ha =  POtherInputs
+		gen Pfocarelp_ha =  PElectricity
+		
+		sort farmcode year
+		local P_vlist = "$P_vlist"
+		foreach var_P in `P_vlist' {
+			capture drop `var_P'_1
+			capture drop ln`var_P'
+			by farmcode: gen `var_P'_1 = `var_P'[_n-1]
+			gen l`var_P' = ln(`var_P')
+		}
+		
+		local dccost_vlist = "$dccost_vlist" 
+		local occost_vlist = "$occost_vlist "
+		
+		
+		local price_adj_vlist = "$price_adj_vlist"
+		
+		foreach var in `price_adj_vlist' {
+			gen tP`var'2004 = P`var' if fyear == 2004
+			qui replace tP`var'2004 = 0 if tP`var'2004 == .
+			egen P`var'2004 = max(tP`var'2004)
+			qui replace P`var' = P`var'/P`var'2004
+			qui replace P`var'_1 = P`var'_1/P`var'2004
+			sort year
+			by year: egen tP`var'_1 = mean(P`var'_1)
+			replace tP`var'_1 = 0 if tP`var'_1 == .
+			by year: egen mtP`var'_1 = max(tP`var'_1)
+			qui replace P`var'_1 = mtP`var'_1 if P`var'_1 == .
+		
+			capture drop l`var'
+			gen l`var' = ln(P`var'*100)
+		}	
+		
+		save	`outdatadir'\tmpFADN1, replace
+		
+		
+		local price_adj_vlist1 = "`fgo_vlist' "
+		local price_adj_vlist2 = "`dccost_vlist' `occost_vlist' "
+		
+		foreach var in `farm_cont_panel_vlist' {
+			gen `var'_orig = `var'
+		}
+		
+		foreach var in `farmlogit_vlist' {
+			gen `var'_orig = `var'
+		}
+		
+		
+		*Convert dependent to Volume
+		foreach var in `price_adj_vlist1' {
+			qui replace `var' = `var'/P`var'
+		}
+		foreach var in `price_adj_vlist2' {
+			qui replace `var' = `var'/P`var'
+		}
+		
+		* Create Cost Totals - after price adjustment
+		qui gen dc_tot = 0
+		foreach var in `dccost_vlist' {
+			qui replace dc_tot = dc_tot + `var'
+		}
+		
+		qui gen oc_tot = 0
+		foreach var in `occost_vlist' {
+			qui replace oc_tot = oc_tot + `var'
+		}
+		
+		
+		* Create Cost Totals - after price adjustment
+		foreach var in `dccost_vlist' {
+			qui gen `var'_sh = `var'/dc_tot if dc_tot > 0
+		}
+		
+		foreach var in `occost_vlist' {
+			qui gen `var'_sh = `var'/oc_tot if oc_tot > 0
+		}
+		
+		capture gen farm = 1
+		
+		
+		*Dairy
+		gen fdairygo_lu_cond   =  daforare > 0 & daforare != . & year <= 2009
+		gen fdairylu_ha_cond   =  daforare > 0 & daforare != . & year <= 2009
+		gen dotomkgl_cond      =  daforare > 0 & daforare != . & year <= 2009
+		
+		*Cattle
+		gen fcatlego_lu_cond   =  cpforacs > 0 & cpforacs != . & year <= 2010
+		gen fcatlelu_ha_cond   =  cpforacs > 0 & cpforacs != . & year <= 2010
+		
+		*Sheep
+		gen fsheepgo_lu_cond   =  spforacs > 0 & spforacs != . & fsheeplu_ha != . & year <= 2009
+		gen fsheeplu_ha_cond   =  spforacs > 0 & spforacs != . & fsheeplu_ha != . & year <= 2009
+		
+		*Crops
+		gen cropgo_ha_cond   =  tillage_area > 0 & tillage_area != . & year <= 2009
+		
+		*Costs 
+		gen farmdc_ha_cond =  farm == 1 & farmdc_ha > 0 & farmdc_ha !=. & year <= 2010
+		gen oth_dc_ha_cond =  farm == 1 & oth_dc_ha > 0 & oth_dc_ha != . & year <= 2010
+		gen fdpurblk_ha_cond =  farm == 1 & fdpurblk_ha > 0 & fdpurblk_ha !=. & year <= 2009
+		gen fdpurcon_ha_cond =  farm == 1 & fdpurcon_ha > 0 & fdpurcon_ha !=. & year <= 2009
+		gen fdferfil_ha_cond =  farm == 1 & fdferfil_ha > 0 & fdferfil_ha !=. & year <= 2009
+		gen fdpursed_ha_cond =  farm == 1 & fdpursed_ha > 0 & fdpursed_ha !=. & year <= 2009
+		gen fdcrppro_ha_cond =  farm == 1 & fdcrppro_ha > 0 & fdcrppro_ha !=. & year <= 2010
+		gen fdvetmed_ha_cond =  farm == 1 & fdvetmed_ha > 0 & fdvetmed_ha !=. & year <= 2009
+		gen fdaifees_ha_cond =  farm == 1 & fdaifees_ha > 0 & fdaifees_ha !=. & year <= 2010
+		gen oth_oc_ha_cond =  farm == 1 & oth_oc > 0 & oth_oc != . & year <= 2009
+		gen focarelp_ha_cond =  farm == 1 & focarelp_ha > 0 & focarelp_ha !=. & year <= 2009
+		
+		*logit
+		gen hasreps_cond = farm == 1 & year <= 2009
+		gen fsubreps_cond = hasreps == 1 & year <= 2009
+		gen isofffarmy_cond = farm == 1 & year <= 2009
+		gen hassws_cond = farm == 1 & cpnolu > 0 & year <= 2009
+		
+		* REMOVED: code to replace ooinchld in 2005 for 2006 as
+		*    2005 missing
+
+		* REASON: ooinchild not in data
+		
+
+
+		******************
+		* SFP GRowth Rate
+		******************
+		mvencode _all, mv(0) override
+		
+		sort year
+		by year: egen ave_dirpayts = mean(dirpayts)
+		foreach year in `micro_data_year_list' {
+		
+			egen ttmp = max(ave_dirpayts) if year == `year'
+			qui replace ttmp = 0 if ttmp == .
+			egen tmp = max(ttmp)
+			scalar sc_av_dirpayts`year' = tmp[1]
+			drop tmp
+		}
+		
+
+				
+		*******************************************************
+		*------------------------------------------------------
+		*------------------------------------------------------
+		* End of code borrowed from NFSPrep.
+		*------------------------------------------------------
+		*------------------------------------------------------
+		*******************************************************
+
+
+		
+		* generate azone
+		tab(altitudezone), gen(azone)
+	
+
+		* value 4 = "not available" so drop those obs
+		drop if altitudezone >= 4
+	
+
+		* drop azone1 as it's the base case
+		drop azone1
+
+	
+		gen intwt = int(farmsrepresented)
+		
+
+		* get temperature, precipitation, and solar radiation
+		qui do sub_do/getweather.do
+
+
+		* long varnames sometimes cause problems
+		rename	mean_ann_min_temp 	min_temp
+		rename	feedforgrazinglivestock	fdgrzlvstk 
+		gen	fdgrzlvstk_lu	= fdgrzlvstk/dpnolu
+
+		note: Cleaned and merged FADN for $project project. 		
+		label data "Cleaned `cntry' FADN for $project project." 		
+		save `fadnoutdatadir'/data`i'.dta, replace
+			
+		
+		* next 3 lines gives listing of vars in the dataset for
+		*   quick reference
+	
+		describe, replace
+		outsheet using `fadnoutdatadir'/data`i'_varlist.csv ///
+		   , comma replace
+
+	}
+	
+
+
+	**************************************************************
+	*Out of top level loop
+	**************************************************************
+
+
+
+}
+
+
+
+***********************************************************************
+***********************************************************************
+* Out of databuild (if statement)
+***********************************************************************
+***********************************************************************
+
+
+
+***********************************************************************
+***********************************************************************
+* Ancillary commands.
+***********************************************************************
+***********************************************************************
+
+clear
+
+if "`standalone'" != "standalone"{
+
+	* Save those scalars that you were losing
+	scalar  sc_sim_error		= `save_sc_sim_error'
+	scalar  sc_start_yr 		= `save_sc_start_yr'
+	scalar 	sc_micro_data_yr 	= `save_sc_micro_data_yr'
+	scalar 	sim_yr1 		= `save_sim_yr1'
+
+	/* This file would have wiped out scalars created here as well
+		so run them again 	*/
+	do `dodir'/farmprices.do
+	do `dodir'/FarmScalarPrices
+
+	use `fadnoutdatadir'/data`i'.dta, replace
+}
+
+use `fadnoutdatadir'/data1, clear
+append using `fadnoutdatadir'/data2
+
+sort id year
+
+
+/* There's no leasing to others for Specialist Milk Producers in neither
+    IE nor NI. */
+tabstat leasedtoothersAA if country=="UKI", by(year)
+
+/* There's a number of merge code 1, but this is from the merge that 
+     takes place in getweather.do (merging in weather data) */
+tab _merge
+
+/* The merge code results from subregions 0 and 6, which don't match up     with NUTS codes in the weather data. Not a major concern here. */
+tab year if _merge==1
+tab year if [subregion == 0 | subregion == 6] 
+
+* Merge codes for FADN 4 and 5 saved under _mergeF45 
+codebook _mergeF45
+
+/* A single ob in 2001 in IE was missing from the FADN 4 data, but this
+      ob has a stockingdensity of 48.825, so clearly an outlier. The 
+      remaing obs are from 2009, which is expected since FADN 4 only
+      goes up to 2008 */
+tab year country if _mergeF45==1
+drop if stockingdensity > 10 // only 1 ob in IE and NI combined
+tab year country if _mergeF45==1

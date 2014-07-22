@@ -1,0 +1,243 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}C:\Users\03113752\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/.dta2013_06_29.txt
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}29 Jun 2013, 18:22:00
+{txt}
+{com}. di  "Job  Started  at  $S_TIME  on $S_DATE"
+{res}Job  Started  at  18:22:00  on 29 Jun 2013
+{txt}
+{com}. cmdlog using logs/$dataname$datestamp.cmd.txt, replace
+{txt}(cmdlog C:\Users\03113752\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/.dta2013_06_29.cmd.txt opened)
+
+{com}. 
+. 
+. * model you selected above is run here
+. di "`model1command'"
+{res}xtfrontier lnfdairygo_lu lnlandval_ha lnfdferfil_ha lndaforare lndpnolu_ha lnflabpaid lnflabunpd ogagehld lnfsizuaa lnfdratio azone2 azone3 hasreps teagasc France Ireland UnitedKingdom Bretagne NormandieHaute NormandieBasse Wales Bayern, ti
+{txt}
+{com}. `model1command' // <- needs a grass variable
+
+{txt}Iteration 0:{col 16}log likelihood = {res} 1922.1125{txt}  
+Iteration 1:{col 16}log likelihood = {res} 2437.1692{txt}  
+Iteration 2:{col 16}log likelihood = {res} 3046.3062{txt}  (not concave)
+Iteration 3:{col 16}log likelihood = {res} 3082.0375{txt}  (not concave)
+Iteration 4:{col 16}log likelihood = {res} 3085.1557{txt}  (not concave)
+Iteration 5:{col 16}log likelihood = {res}  3087.144{txt}  (not concave)
+Iteration 6:{col 16}log likelihood = {res} 3088.5309{txt}  (not concave)
+Iteration 7:{col 16}log likelihood = {res} 3089.5553{txt}  (not concave)
+Iteration 8:{col 16}log likelihood = {res} 3090.3552{txt}  (not concave)
+Iteration 9:{col 16}log likelihood = {res} 3091.0019{txt}  (not concave)
+Iteration 10:{col 16}log likelihood = {res} 3091.5445{txt}  (not concave)
+Iteration 11:{col 16}log likelihood = {res} 3092.0211{txt}  (not concave)
+Iteration 12:{col 16}log likelihood = {res} 3092.4489{txt}  (not concave)
+Iteration 13:{col 16}log likelihood = {res} 3092.8488{txt}  (not concave)
+Iteration 14:{col 16}log likelihood = {res} 3093.2295{txt}  (not concave)
+Iteration 15:{col 16}log likelihood = {res} 3093.5983{txt}  (not concave)
+Iteration 16:{col 16}log likelihood = {res} 3093.9604{txt}  (not concave)
+Iteration 17:{col 16}log likelihood = {res} 3094.3187{txt}  (not concave)
+Iteration 18:{col 16}log likelihood = {res} 3094.6752{txt}  (not concave)
+Iteration 19:{col 16}log likelihood = {res} 3095.0313{txt}  (not concave)
+Iteration 20:{col 16}log likelihood = {res} 3095.3879{txt}  (not concave)
+Iteration 21:{col 16}log likelihood = {res} 3095.7456{txt}  (not concave)
+Iteration 22:{col 16}log likelihood = {res} 3096.1048{txt}  (not concave)
+Iteration 23:{col 16}log likelihood = {res} 3096.4658{txt}  (not concave)
+Iteration 24:{col 16}log likelihood = {res} 3096.8288{txt}  (not concave)
+Iteration 25:{col 16}log likelihood = {res} 3097.1941{txt}  (not concave)
+Iteration 26:{col 16}log likelihood = {res} 3097.5615{txt}  (not concave)
+Iteration 27:{col 16}log likelihood = {res} 3097.9314{txt}  (not concave)
+Iteration 28:{col 16}log likelihood = {res} 3098.3037{txt}  (not concave)
+Iteration 29:{col 16}log likelihood = {res} 3098.6786{txt}  (not concave)
+Iteration 30:{col 16}log likelihood = {res}  3099.056{txt}  (not concave)
+Iteration 31:{col 16}log likelihood = {res} 3099.4361{txt}  (not concave)
+Iteration 32:{col 16}log likelihood = {res} 3099.8188{txt}  (not concave)
+Iteration 33:{col 16}log likelihood = {res} 3100.2042{txt}  (not concave)
+Iteration 34:{col 16}log likelihood = {res} 3100.5924{txt}  (not concave)
+Iteration 35:{col 16}log likelihood = {res} 3100.9834{txt}  (not concave)
+Iteration 36:{col 16}log likelihood = {res} 3101.3771{txt}  (not concave)
+Iteration 37:{col 16}log likelihood = {res} 3101.7738{txt}  (not concave)
+Iteration 38:{col 16}log likelihood = {res} 3102.1733{txt}  (not concave)
+Iteration 39:{col 16}log likelihood = {res} 3102.5757{txt}  (not concave)
+Iteration 40:{col 16}log likelihood = {res}  3102.981{txt}  (not concave)
+Iteration 41:{col 16}log likelihood = {res} 3103.3894{txt}  (not concave)
+Iteration 42:{col 16}log likelihood = {res} 3103.8006{txt}  (not concave)
+Iteration 43:{col 16}log likelihood = {res} 3104.2149{txt}  (not concave)
+Iteration 44:{col 16}log likelihood = {res} 3104.6322{txt}  (not concave)
+Iteration 45:{col 16}log likelihood = {res} 3105.0525{txt}  (not concave)
+Iteration 46:{col 16}log likelihood = {res} 3105.4759{txt}  (not concave)
+Iteration 47:{col 16}log likelihood = {res} 3105.9024{txt}  (not concave)
+Iteration 48:{col 16}log likelihood = {res}  3106.332{txt}  (not concave)
+Iteration 49:{col 16}log likelihood = {res} 3106.7647{txt}  (not concave)
+Iteration 50:{col 16}log likelihood = {res} 3107.2006{txt}  (not concave)
+Iteration 51:{col 16}log likelihood = {res} 3107.6397{txt}  (not concave)
+Iteration 52:{col 16}log likelihood = {res} 3108.0818{txt}  (not concave)
+Iteration 53:{col 16}log likelihood = {res} 3108.5273{txt}  (not concave)
+Iteration 54:{col 16}log likelihood = {res} 3108.9759{txt}  (not concave)
+Iteration 55:{col 16}log likelihood = {res} 3109.4278{txt}  (not concave)
+Iteration 56:{col 16}log likelihood = {res} 3109.8829{txt}  (not concave)
+Iteration 57:{col 16}log likelihood = {res} 3110.3414{txt}  (not concave)
+Iteration 58:{col 16}log likelihood = {res}  3110.803{txt}  (not concave)
+Iteration 59:{col 16}log likelihood = {res}  3111.268{txt}  (not concave)
+Iteration 60:{col 16}log likelihood = {res} 3111.7363{txt}  (not concave)
+Iteration 61:{col 16}log likelihood = {res} 3112.2079{txt}  (not concave)
+Iteration 62:{col 16}log likelihood = {res} 3112.6828{txt}  (not concave)
+Iteration 63:{col 16}log likelihood = {res} 3113.1612{txt}  (not concave)
+Iteration 64:{col 16}log likelihood = {res} 3113.6428{txt}  (not concave)
+Iteration 65:{col 16}log likelihood = {res} 3114.1279{txt}  (not concave)
+Iteration 66:{col 16}log likelihood = {res} 3114.6163{txt}  (not concave)
+Iteration 67:{col 16}log likelihood = {res} 3115.1082{txt}  (not concave)
+Iteration 68:{col 16}log likelihood = {res} 3115.6034{txt}  (not concave)
+Iteration 69:{col 16}log likelihood = {res} 3116.1021{txt}  (not concave)
+Iteration 70:{col 16}log likelihood = {res} 3116.6041{txt}  (not concave)
+Iteration 71:{col 16}log likelihood = {res} 3117.1096{txt}  (not concave)
+Iteration 72:{col 16}log likelihood = {res} 3117.6185{txt}  (not concave)
+Iteration 73:{col 16}log likelihood = {res} 3118.1309{txt}  (not concave)
+Iteration 74:{col 16}log likelihood = {res} 3118.6467{txt}  (not concave)
+Iteration 75:{col 16}log likelihood = {res}  3119.166{txt}  (not concave)
+Iteration 76:{col 16}log likelihood = {res} 3119.6887{txt}  (not concave)
+Iteration 77:{col 16}log likelihood = {res} 3120.2149{txt}  (not concave)
+Iteration 78:{col 16}log likelihood = {res} 3120.7444{txt}  (not concave)
+Iteration 79:{col 16}log likelihood = {res} 3121.2775{txt}  (not concave)
+Iteration 80:{col 16}log likelihood = {res}  3121.814{txt}  (not concave)
+Iteration 81:{col 16}log likelihood = {res}  3122.354{txt}  (not concave)
+Iteration 82:{col 16}log likelihood = {res} 3122.8973{txt}  (not concave)
+Iteration 83:{col 16}log likelihood = {res} 3123.4442{txt}  (not concave)
+Iteration 84:{col 16}log likelihood = {res} 3123.9944{txt}  (not concave)
+Iteration 85:{col 16}log likelihood = {res} 3124.5481{txt}  (not concave)
+Iteration 86:{col 16}log likelihood = {res} 3125.1051{txt}  (not concave)
+Iteration 87:{col 16}log likelihood = {res} 3125.6657{txt}  (not concave)
+Iteration 88:{col 16}log likelihood = {res} 3126.2294{txt}  (not concave)
+Iteration 89:{col 16}log likelihood = {res} 3126.7967{txt}  (not concave)
+Iteration 90:{col 16}log likelihood = {res} 3127.3672{txt}  (not concave)
+Iteration 91:{col 16}log likelihood = {res} 3127.9412{txt}  (not concave)
+Iteration 92:{col 16}log likelihood = {res} 3128.5184{txt}  (not concave)
+Iteration 93:{col 16}log likelihood = {res}  3129.099{txt}  (not concave)
+Iteration 94:{col 16}log likelihood = {res} 3129.6827{txt}  (not concave)
+Iteration 95:{col 16}log likelihood = {res} 3130.2698{txt}  (not concave)
+Iteration 96:{col 16}log likelihood = {res}   3130.86{txt}  (not concave)
+Iteration 97:{col 16}log likelihood = {res} 3131.4536{txt}  (not concave)
+Iteration 98:{col 16}log likelihood = {res} 3132.0501{txt}  (not concave)
+Iteration 99:{col 16}log likelihood = {res} 3132.6499{txt}  (not concave)
+Iteration 100:{col 16}log likelihood = {res} 3133.2527{txt}  (not concave)
+Iteration 101:{col 16}log likelihood = {res} 3133.8587{txt}  (not concave)
+Iteration 102:{col 16}log likelihood = {res} 3134.4675{txt}  (not concave)
+Iteration 103:{col 16}log likelihood = {res} 3135.0795{txt}  (not concave)
+Iteration 104:{col 16}log likelihood = {res} 3135.6943{txt}  (not concave)
+Iteration 105:{col 16}log likelihood = {res} 3136.3121{txt}  (not concave)
+Iteration 106:{col 16}log likelihood = {res} 3136.9325{txt}  (not concave)
+Iteration 107:{col 16}log likelihood = {res}  3137.556{txt}  (not concave)
+Iteration 108:{col 16}log likelihood = {res}  3138.182{txt}  (not concave)
+Iteration 109:{col 16}log likelihood = {res} 3138.8109{txt}  (not concave)
+Iteration 110:{col 16}log likelihood = {res} 3139.4421{txt}  (not concave)
+Iteration 111:{col 16}log likelihood = {res} 3140.0762{txt}  (not concave)
+Iteration 112:{col 16}log likelihood = {res} 3140.7125{txt}  (not concave)
+Iteration 113:{col 16}log likelihood = {res} 3141.3515{txt}  (not concave)
+Iteration 114:{col 16}log likelihood = {res} 3141.9927{txt}  (not concave)
+Iteration 115:{col 16}log likelihood = {res} 3142.6363{txt}  (not concave)
+Iteration 116:{col 16}log likelihood = {res} 3143.2819{txt}  (not concave)
+Iteration 117:{col 16}log likelihood = {res}   3143.93{txt}  (not concave)
+Iteration 118:{col 16}log likelihood = {res} 3144.5798{txt}  (not concave)
+Iteration 119:{col 16}log likelihood = {res} 3145.2319{txt}  (not concave)
+Iteration 120:{col 16}log likelihood = {res} 3145.8855{txt}  (not concave)
+Iteration 121:{col 16}log likelihood = {res} 3146.5413{txt}  (not concave)
+Iteration 122:{col 16}log likelihood = {res} 3147.1985{txt}  (not concave)
+Iteration 123:{col 16}log likelihood = {res} 3147.8576{txt}  (not concave)
+Iteration 124:{col 16}log likelihood = {res}  3148.518{txt}  (not concave)
+Iteration 125:{col 16}log likelihood = {res}   3149.18{txt}  (not concave)
+Iteration 126:{col 16}log likelihood = {res} 3149.8431{txt}  (not concave)
+Iteration 127:{col 16}log likelihood = {res} 3150.5077{txt}  (not concave)
+Iteration 128:{col 16}log likelihood = {res} 3151.1731{txt}  (not concave)
+Iteration 129:{col 16}log likelihood = {res} 3151.8399{txt}  (not concave)
+Iteration 130:{col 16}log likelihood = {res} 3152.5072{txt}  (not concave)
+Iteration 131:{col 16}log likelihood = {res} 3153.1756{txt}  (not concave)
+Iteration 132:{col 16}log likelihood = {res} 3153.8443{txt}  
+Iteration 133:{col 16}log likelihood = {res}  3156.751{txt}  (backed up)
+Iteration 134:{col 16}log likelihood = {res}  3198.105{txt}  
+Iteration 135:{col 16}log likelihood = {res} 3205.5944{txt}  
+Iteration 136:{col 16}log likelihood = {res} 3218.8298{txt}  
+Iteration 137:{col 16}log likelihood = {res} 3229.8052{txt}  
+Iteration 138:{col 16}log likelihood = {res}  3231.108{txt}  
+Iteration 139:{col 16}log likelihood = {res} 3231.2034{txt}  
+Iteration 140:{col 16}log likelihood = {res} 3231.2164{txt}  
+Iteration 141:{col 16}log likelihood = {res} 3231.2185{txt}  
+Iteration 142:{col 16}log likelihood = {res} 3231.2189{txt}  
+Iteration 143:{col 16}log likelihood = {res} 3231.2189{txt}  
+
+Time-invariant inefficiency model{col 49}Number of obs{col 68}={col 70}{res}     8551
+{txt}Group variable: {res}pid{col 49}{txt}Number of groups{col 68}={col 70}{res}     2962
+
+{txt}{col 49}Obs per group: min{col 68}={col 70}{res}        1
+{txt}{col 64}avg{col 68}={col 70}{res}      2.9
+{txt}{col 64}max{col 68}={col 70}{res}        9
+
+{txt}{col 49}Wald chi2({res}21{txt}){col 68}={col 70}{res}  1915.45
+{txt}Log likelihood  = {res} 3231.2189{col 49}{txt}Prob > chi2{col 68}={res}{col 73}0.0000
+
+{txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1} lnfdairygo_lu{col 16}{c |}      Coef.{col 28}   Std. Err.{col 40}      z{col 48}   P>|z|{col 56}     [95% Con{col 69}f. Interval]
+{hline 15}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 2}lnlandval_ha {c |}{col 16}{res}{space 2} .0119993{col 28}{space 2}  .002722{col 39}{space 1}    4.41{col 48}{space 3}0.000{col 56}{space 4} .0066642{col 69}{space 3} .0173343
+{txt}{space 1}lnfdferfil_ha {c |}{col 16}{res}{space 2} .0566403{col 28}{space 2} .0038167{col 39}{space 1}   14.84{col 48}{space 3}0.000{col 56}{space 4} .0491597{col 69}{space 3} .0641208
+{txt}{space 4}lndaforare {c |}{col 16}{res}{space 2} .0219881{col 28}{space 2} .0142496{col 39}{space 1}    1.54{col 48}{space 3}0.123{col 56}{space 4}-.0059406{col 69}{space 3} .0499169
+{txt}{space 3}lndpnolu_ha {c |}{col 16}{res}{space 2} .0128161{col 28}{space 2} .0110165{col 39}{space 1}    1.16{col 48}{space 3}0.245{col 56}{space 4} -.008776{col 69}{space 3} .0344081
+{txt}{space 4}lnflabpaid {c |}{col 16}{res}{space 2} .0135025{col 28}{space 2} .0018983{col 39}{space 1}    7.11{col 48}{space 3}0.000{col 56}{space 4} .0097818{col 69}{space 3} .0172232
+{txt}{space 4}lnflabunpd {c |}{col 16}{res}{space 2} .0165312{col 28}{space 2} .0063896{col 39}{space 1}    2.59{col 48}{space 3}0.010{col 56}{space 4} .0040077{col 69}{space 3} .0290546
+{txt}{space 6}ogagehld {c |}{col 16}{res}{space 2}-.0004876{col 28}{space 2} .0002676{col 39}{space 1}   -1.82{col 48}{space 3}0.068{col 56}{space 4}-.0010122{col 69}{space 3} .0000369
+{txt}{space 5}lnfsizuaa {c |}{col 16}{res}{space 2} .0655907{col 28}{space 2} .0165535{col 39}{space 1}    3.96{col 48}{space 3}0.000{col 56}{space 4} .0331465{col 69}{space 3} .0980349
+{txt}{space 5}lnfdratio {c |}{col 16}{res}{space 2}-.0044877{col 28}{space 2} .0018951{col 39}{space 1}   -2.37{col 48}{space 3}0.018{col 56}{space 4}-.0082021{col 69}{space 3}-.0007733
+{txt}{space 8}azone2 {c |}{col 16}{res}{space 2}  -.02546{col 28}{space 2} .0126281{col 39}{space 1}   -2.02{col 48}{space 3}0.044{col 56}{space 4}-.0502105{col 69}{space 3}-.0007095
+{txt}{space 8}azone3 {c |}{col 16}{res}{space 2} .0298477{col 28}{space 2} .0228266{col 39}{space 1}    1.31{col 48}{space 3}0.191{col 56}{space 4}-.0148915{col 69}{space 3} .0745869
+{txt}{space 7}hasreps {c |}{col 16}{res}{space 2} .0219136{col 28}{space 2} .0049437{col 39}{space 1}    4.43{col 48}{space 3}0.000{col 56}{space 4} .0122241{col 69}{space 3} .0316031
+{txt}{space 7}teagasc {c |}{col 16}{res}{space 2} 2.88e-06{col 28}{space 2} 2.47e-06{col 39}{space 1}    1.16{col 48}{space 3}0.244{col 56}{space 4}-1.96e-06{col 69}{space 3} 7.71e-06
+{txt}{space 8}France {c |}{col 16}{res}{space 2}-.0668353{col 28}{space 2}  .022623{col 39}{space 1}   -2.95{col 48}{space 3}0.003{col 56}{space 4}-.1111755{col 69}{space 3} -.022495
+{txt}{space 7}Ireland {c |}{col 16}{res}{space 2}-.4061416{col 28}{space 2} .0135436{col 39}{space 1}  -29.99{col 48}{space 3}0.000{col 56}{space 4}-.4326865{col 69}{space 3}-.3795966
+{txt}{space 1}UnitedKingdom {c |}{col 16}{res}{space 2}-.2272834{col 28}{space 2} .0103632{col 39}{space 1}  -21.93{col 48}{space 3}0.000{col 56}{space 4}-.2475949{col 69}{space 3} -.206972
+{txt}{space 6}Bretagne {c |}{col 16}{res}{space 2} .0173938{col 28}{space 2} .0414614{col 39}{space 1}    0.42{col 48}{space 3}0.675{col 56}{space 4} -.063869{col 69}{space 3} .0986565
+{txt}NormandieHaute {c |}{col 16}{res}{space 2}-.1135694{col 28}{space 2} .1194663{col 39}{space 1}   -0.95{col 48}{space 3}0.342{col 56}{space 4}-.3477189{col 69}{space 3} .1205802
+{txt}NormandieBasse {c |}{col 16}{res}{space 2}-.0813346{col 28}{space 2}  .040095{col 39}{space 1}   -2.03{col 48}{space 3}0.043{col 56}{space 4}-.1599194{col 69}{space 3}-.0027498
+{txt}{space 9}Wales {c |}{col 16}{res}{space 2}-.0943415{col 28}{space 2} .0143957{col 39}{space 1}   -6.55{col 48}{space 3}0.000{col 56}{space 4}-.1225564{col 69}{space 3}-.0661265
+{txt}{space 8}Bayern {c |}{col 16}{res}{space 2} .0026891{col 28}{space 2} .0207902{col 39}{space 1}    0.13{col 48}{space 3}0.897{col 56}{space 4} -.038059{col 69}{space 3} .0434371
+{txt}{space 9}_cons {c |}{col 16}{res}{space 2}    7.735{col 28}{space 2} 2.373922{col 39}{space 1}    3.26{col 48}{space 3}0.001{col 56}{space 4} 3.082198{col 69}{space 3}  12.3878
+{txt}{hline 15}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+           /mu {c |}{col 16}{res}{space 2} .9682468{col 28}{space 2} 2.372891{col 39}{space 1}    0.41{col 48}{space 3}0.683{col 56}{space 4}-3.682534{col 69}{space 3} 5.619027
+{txt}     /lnsigma2 {c |}{col 16}{res}{space 2}-3.030968{col 28}{space 2} .0230407{col 39}{space 1} -131.55{col 48}{space 3}0.000{col 56}{space 4}-3.076127{col 69}{space 3}-2.985809
+{txt}    /ilgtgamma {c |}{col 16}{res}{space 2} .8407527{col 28}{space 2} .0413052{col 39}{space 1}   20.35{col 48}{space 3}0.000{col 56}{space 4}  .759796{col 69}{space 3} .9217093
+{txt}{hline 15}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}        sigma2{col 16}{c |}{res}{space 2} .0482689{col 28}{space 2} .0011122{col 56}{space 4} .0461376{col 69}{space 3} .0504986
+{col 1}{txt}         gamma{col 16}{c |}{res}{space 2} .6986237{col 28}{space 2} .0086967{col 56}{space 4} .6813094{col 69}{space 3} .7153903
+{col 1}{txt}      sigma_u2{col 16}{c |}{res}{space 2} .0337218{col 28}{space 2}  .001126{col 56}{space 4} .0315149{col 69}{space 3} .0359286
+{col 1}{txt}      sigma_v2{col 16}{c |}{res}{space 2} .0145471{col 28}{space 2} .0002794{col 56}{space 4} .0139994{col 69}{space 3} .0150948
+{txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. 
+. 
+. * store estimates and predict ind. TE scores
+. estimates store `model1name'
+{txt}
+{com}. capture drop te_`model1name'
+{txt}
+{com}. predict te_`model1name', `predict_opts'
+{txt}
+{com}. 
+. 
+. * constructs ind. level CI's for TE scores
+. frontier_teci te_`model1name' 
+{err}te_bc95_l already defined
+{txt}{search r(110):r(110);}
+
+end of do-file
+
+{search r(110):r(110);}
+
+{com}. frontier_teci te_bc95_ci
+
+. frontier_teci te_bc95_ci
+{err}te_bc95_ci_l already defined
+{txt}{search r(110):r(110);}
+
+{com}. do msward_2013_06_29
+{txt}
+{com}. capture log close
+{smcl}
+{com}{sf}{ul off}

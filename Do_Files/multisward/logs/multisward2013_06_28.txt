@@ -1,0 +1,348 @@
+{smcl}
+{txt}{sf}{ul off}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_06_28.txt
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}28 Jun 2013, 15:13:07
+{txt}
+{com}. di  "Job  Started  at  $S_TIME  on $S_DATE"
+{res}Job  Started  at  15:13:07  on 28 Jun 2013
+{txt}
+{com}. cmdlog using logs/$dataname$datestamp.cmd.txt, replace
+{txt}(note: file G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_06_28.cmd.txt not found)
+(cmdlog G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_06_28.cmd.txt opened)
+
+{com}. 
+. * report the model parameters you selected in the log
+. macro list
+{txt}{p 0 16}
+S_FNDATE:{space 7}{res}{res}28 Jun 2013 15:13
+{p_end}
+{txt}{p 0 16}
+S_FN:{space 11}{res}{res}G:\Data/data_FADNPanelAnalysis/OutData/multisward/multisward.dta
+{p_end}
+{txt}{p 0 16}
+fdairygo_lu_vlist1:{break}
+{res}lnfdairygo_lu lnlandval_ha lnfdferfil_ha lndaforare lndpnolu_ha lnflabpaid lnflabunpd ogagehld lnfsizuaa lnfdratio azone2 azone3 hasreps teagasc
+{p_end}
+{txt}{p 0 16}
+datestamp:{space 6}{res}{res}2013_06_28
+{p_end}
+{txt}{p 0 16}
+project:{space 8}{res}{res}multisward
+{p_end}
+{txt}{p 0 16}
+datadir:{space 8}{res}{res}G:\Data
+{p_end}
+{txt}{p 0 16}
+dataname:{space 7}{res}{res}multisward
+{p_end}
+{txt}{p 0 16}
+newvars:{space 8}{res}{res}*
+{p_end}
+{txt}{p 0 16}
+oldvars:{space 8}{res}{res}*
+{p_end}
+{txt}{p 0 16}
+sectors:{space 8}{res}{res}fffadnsy==4110
+{p_end}
+{txt}{p 0 16}
+countrylabels:{space 2}{res}{res}msname
+{p_end}
+{txt}{p 0 16}
+ms:{space 13}{res}{res}France Germany Ireland UnitedKingdom
+{p_end}
+{txt}{p 0 16}
+databuild:{space 6}{res}{res}1
+{p_end}
+{txt}{p 0 16}
+S_level:{space 8}{res}{res}95
+{p_end}
+{txt}{p 0 16}
+S_ADO:{space 10}{res}{res}UPDATES;BASE;SITE;.;PERSONAL;PLUS;OLDPLACE
+{p_end}
+{txt}{p 0 16}
+S_StataSE:{space 6}{res}{res}SE
+{p_end}
+{txt}{p 0 16}
+S_FLAVOR:{space 7}{res}{res}Intercooled
+{p_end}
+{txt}{p 0 16}
+S_OS:{space 11}{res}{res}Windows
+{p_end}
+{txt}{p 0 16}
+S_MACH:{space 9}{res}{res}PC
+{p_end}
+{txt}{p 0 16}
+_filelist:{space 6}{res}{res}"data1.dta" "data2.dta" "data3.dta" "data4.dta"
+{p_end}
+{txt}{p 0 16}
+_fadn2dir:{space 6}{res}{res}G:\Data/data_FADNPanelAnalysis/OrigData/FADN_2/TEAGSC
+{p_end}
+{txt}{p 0 16}
+_fadn9907dir:{space 3}{res}{res}G:\Data/data_FADNPanelAnalysis/OrigData/eupanel9907
+{p_end}
+{txt}{p 0 16}
+_origdatadir:{space 3}{res}{res}G:\Data/data_FADNPanelAnalysis/OrigData
+{p_end}
+{txt}{p 0 16}
+_nfspaneldir:{space 3}{res}{res}G:\Data/data_NFSPanelAnalysis
+{p_end}
+{txt}{p 0 16}
+_fadnoutdatadir:{break}
+{res}G:\Data/data_FADNPanelAnalysis/OutData/multisward
+{p_end}
+{txt}{p 0 16}
+_fadnpaneldir:{space 2}{res}{res}G:\Data/data_FADNPanelAnalysis
+{p_end}
+{txt}{p 0 16}
+_predict_opts:{space 2}{res}{res}jlms
+{p_end}
+{txt}{p 0 16}
+_model1name:{space 4}{res}{res}bc95
+{p_end}
+{txt}{p 0 16}
+_model1command:{space 1}{res}{res}sfpanel lndotomkgl  lnfsizuaa lndaforare lnflabpaid lnflabunpd lndpnolu azone2 azone3 hasreps ogagehld , model(bc95)
+{p_end}
+{txt}{p 0 16}
+_location_vlist:{break}
+{res}France Ireland UK Bretagne NormandieHaute NormandieBasse Wales Bayern
+{p_end}
+{txt}{p 0 16}
+_indep_vlist:{space 3}{res}{res}lnfsizuaa lndaforare lnflabpaid lnflabunpd lndpnolu azone2 azone3 hasreps ogagehld
+{p_end}
+{txt}{p 0 16}
+_dep_vlist:{space 5}{res}{res}lndotomkgl 
+{p_end}
+{txt}
+{com}. 
+. 
+. 
+. * model you selected above is run here
+. di "`model1command'"
+{res}sfpanel lndotomkgl  lnfsizuaa lndaforare lnflabpaid lnflabunpd lndpnolu azone2 azone3 hasreps ogagehld , model(bc95)
+{txt}
+{com}. `model1command' // <- needs a grass variable
+
+{res}
+{txt}initial:{col 16}Log likelihood = {res: 1230.5079}
+Iteration 0:{space 3}Log likelihood = {res: 1230.5079}  
+Iteration 1:{space 3}Log likelihood = {res: 1233.1489}  (backed up)
+Iteration 2:{space 3}Log likelihood = {res: 1235.0639}  (backed up)
+Iteration 3:{space 3}Log likelihood = {res: 1266.0289}  (backed up)
+Iteration 4:{space 3}Log likelihood = {res: 1384.1787}  (backed up)
+Iteration 5:{space 3}Log likelihood = {res:  1391.595}  (backed up)
+Iteration 6:{space 3}Log likelihood = {res: 1392.0417}  (backed up)
+Iteration 7:{space 3}Log likelihood = {res: 1392.3189}  (backed up)
+Iteration 8:{space 3}Log likelihood = {res: 1399.7595}  (backed up)
+Iteration 9:{space 3}Log likelihood = {res: 1400.6788}  (backed up)
+Iteration 10:{space 2}Log likelihood = {res: 1401.0867}  (backed up)
+Iteration 11:{space 2}Log likelihood = {res: 1401.7969}  (backed up)
+Iteration 12:{space 2}Log likelihood = {res: 1402.1868}  (backed up)
+Iteration 13:{space 2}Log likelihood = {res: 1461.3987}  
+Iteration 14:{space 2}Log likelihood = {res: 1469.5799}  
+Iteration 15:{space 2}Log likelihood = {res: 1472.3094}  
+Iteration 16:{space 2}Log likelihood = {res:  1473.339}  
+Iteration 17:{space 2}Log likelihood = {res: 1473.3936}  
+Iteration 18:{space 2}Log likelihood = {res: 1473.3949}  
+Iteration 19:{space 2}Log likelihood = {res: 1473.3954}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 20:{space 2}Log likelihood = {res: 1473.3992}  
+Iteration 21:{space 2}Log likelihood = {res: 1473.3997}  (backed up)
+Iteration 22:{space 2}Log likelihood = {res: 1473.3997}  (backed up)
+Iteration 23:{space 2}Log likelihood = {res: 1473.3997}  (backed up)
+Iteration 24:{space 2}Log likelihood = {res: 1473.3997}  (backed up)
+Iteration 25:{space 2}Log likelihood = {res: 1473.3997}  (backed up)
+Iteration 26:{space 2}Log likelihood = {res: 1473.3998}  (backed up)
+Iteration 27:{space 2}Log likelihood = {res: 1473.3998}  (backed up)
+Iteration 28:{space 2}Log likelihood = {res: 1473.3998}  (backed up)
+Iteration 29:{space 2}Log likelihood = {res: 1473.3998}  (backed up)
+Iteration 30:{space 2}Log likelihood = {res: 1473.3999}  (backed up)
+Iteration 31:{space 2}Log likelihood = {res: 1473.3999}  (backed up)
+Iteration 32:{space 2}Log likelihood = {res: 1473.3999}  (backed up)
+Iteration 33:{space 2}Log likelihood = {res: 1473.4004}  
+Iteration 34:{space 2}Log likelihood = {res: 1473.4029}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 35:{space 2}Log likelihood = {res: 1473.4045}  
+Iteration 36:{space 2}Log likelihood = {res: 1473.4047}  (backed up)
+Iteration 37:{space 2}Log likelihood = {res: 1473.4047}  (backed up)
+Iteration 38:{space 2}Log likelihood = {res: 1473.4047}  (backed up)
+Iteration 39:{space 2}Log likelihood = {res: 1473.4047}  (backed up)
+Iteration 40:{space 2}Log likelihood = {res: 1473.4047}  (backed up)
+Iteration 41:{space 2}Log likelihood = {res: 1473.4047}  (backed up)
+Iteration 42:{space 2}Log likelihood = {res: 1473.4047}  (backed up)
+Iteration 43:{space 2}Log likelihood = {res: 1473.4047}  (backed up)
+Iteration 44:{space 2}Log likelihood = {res: 1473.4047}  (backed up)
+Iteration 45:{space 2}Log likelihood = {res: 1473.4047}  (backed up)
+Iteration 46:{space 2}Log likelihood = {res: 1473.4048}  
+Iteration 47:{space 2}Log likelihood = {res:  1473.405}  (backed up)
+Iteration 48:{space 2}Log likelihood = {res: 1473.4052}  (backed up)
+Iteration 49:{space 2}Log likelihood = {res: 1473.4061}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 50:{space 2}Log likelihood = {res:  1473.407}  
+Iteration 51:{space 2}Log likelihood = {res: 1473.4071}  (backed up)
+Iteration 52:{space 2}Log likelihood = {res: 1473.4071}  (backed up)
+Iteration 53:{space 2}Log likelihood = {res: 1473.4071}  (backed up)
+Iteration 54:{space 2}Log likelihood = {res: 1473.4071}  (backed up)
+Iteration 55:{space 2}Log likelihood = {res: 1473.4072}  (backed up)
+Iteration 56:{space 2}Log likelihood = {res: 1473.4072}  (backed up)
+Iteration 57:{space 2}Log likelihood = {res: 1473.4072}  (backed up)
+Iteration 58:{space 2}Log likelihood = {res: 1473.4072}  (backed up)
+Iteration 59:{space 2}Log likelihood = {res: 1473.4072}  (backed up)
+Iteration 60:{space 2}Log likelihood = {res: 1473.4072}  (backed up)
+Iteration 61:{space 2}Log likelihood = {res: 1473.4072}  (backed up)
+Iteration 62:{space 2}Log likelihood = {res: 1473.4072}  (backed up)
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 63:{space 2}Log likelihood = {res: 1473.4072}  
+Iteration 64:{space 2}Log likelihood = {res: 1473.4074}  (backed up)
+Iteration 65:{space 2}Log likelihood = {res: 1473.4074}  (backed up)
+Iteration 66:{space 2}Log likelihood = {res: 1473.4074}  (backed up)
+Iteration 67:{space 2}Log likelihood = {res: 1473.4075}  (backed up)
+Iteration 68:{space 2}Log likelihood = {res: 1473.4075}  (backed up)
+Iteration 69:{space 2}Log likelihood = {res: 1473.4075}  (backed up)
+Iteration 70:{space 2}Log likelihood = {res: 1473.4075}  (backed up)
+Iteration 71:{space 2}Log likelihood = {res: 1473.4075}  (backed up)
+Iteration 72:{space 2}Log likelihood = {res: 1473.4075}  (backed up)
+Iteration 73:{space 2}Log likelihood = {res: 1473.4075}  (backed up)
+Iteration 74:{space 2}Log likelihood = {res: 1473.4075}  (backed up)
+Iteration 75:{space 2}Log likelihood = {res: 1473.4075}  (backed up)
+Iteration 76:{space 2}Log likelihood = {res: 1473.4076}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 77:{space 2}Log likelihood = {res: 1473.4077}  
+Iteration 78:{space 2}Log likelihood = {res: 1473.4078}  (backed up)
+Iteration 79:{space 2}Log likelihood = {res: 1473.4078}  (backed up)
+Iteration 80:{space 2}Log likelihood = {res: 1473.4078}  (backed up)
+Iteration 81:{space 2}Log likelihood = {res: 1473.4078}  (backed up)
+Iteration 82:{space 2}Log likelihood = {res: 1473.4078}  (backed up)
+Iteration 83:{space 2}Log likelihood = {res: 1473.4078}  (backed up)
+Iteration 84:{space 2}Log likelihood = {res: 1473.4078}  (backed up)
+Iteration 85:{space 2}Log likelihood = {res: 1473.4078}  (backed up)
+Iteration 86:{space 2}Log likelihood = {res: 1473.4078}  (backed up)
+Iteration 87:{space 2}Log likelihood = {res: 1473.4078}  (backed up)
+Iteration 88:{space 2}Log likelihood = {res: 1473.4078}  (backed up)
+Iteration 89:{space 2}Log likelihood = {res: 1473.4078}  (backed up)
+Iteration 90:{space 2}Log likelihood = {res: 1473.4078}  
+
+Inefficiency effects model (truncated-normal){col 54}Number of obs {col 68}={col 70}{res}    10288
+{txt}Group variable: {res}pid{txt}{col 51}Number of groups{col 68}={col 70}{res}     3469
+{txt}Time variable: {res}year{txt}{col 49}Obs per group: min{col 68}={col 70}{res}        1
+{col 64}{txt}avg{col 68}={col 70}{res}      3.0
+{col 64}{txt}max{col 68}={col 70}{res}        9
+
+{txt}{col 54}Prob > chi2   = {res}   0.0000
+{txt}Log likelihood = {res} 1473.4078{txt}{col 54}Wald chi2({res}9{txt})  = {res}113186.62
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}  lndotomkgl{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      z{col 46}   P>|z|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Frontier     {txt}{c |}
+{space 3}lnfsizuaa {c |}{col 14}{res}{space 2} .0347781{col 26}{space 2} .0088275{col 37}{space 1}    3.94{col 46}{space 3}0.000{col 54}{space 4} .0174765{col 67}{space 3} .0520798
+{txt}{space 2}lndaforare {c |}{col 14}{res}{space 2}-.0740751{col 26}{space 2} .0102784{col 37}{space 1}   -7.21{col 46}{space 3}0.000{col 54}{space 4}-.0942203{col 67}{space 3}  -.05393
+{txt}{space 2}lnflabpaid {c |}{col 14}{res}{space 2}  .033861{col 26}{space 2} .0015416{col 37}{space 1}   21.96{col 46}{space 3}0.000{col 54}{space 4} .0308395{col 67}{space 3} .0368824
+{txt}{space 2}lnflabunpd {c |}{col 14}{res}{space 2}  .034701{col 26}{space 2} .0049166{col 37}{space 1}    7.06{col 46}{space 3}0.000{col 54}{space 4} .0250646{col 67}{space 3} .0443375
+{txt}{space 4}lndpnolu {c |}{col 14}{res}{space 2} 1.094146{col 26}{space 2} .0070656{col 37}{space 1}  154.86{col 46}{space 3}0.000{col 54}{space 4} 1.080298{col 67}{space 3} 1.107994
+{txt}{space 6}azone2 {c |}{col 14}{res}{space 2} .0203764{col 26}{space 2} .0063779{col 37}{space 1}    3.19{col 46}{space 3}0.001{col 54}{space 4} .0078759{col 67}{space 3} .0328768
+{txt}{space 6}azone3 {c |}{col 14}{res}{space 2} .0082388{col 26}{space 2} .0113301{col 37}{space 1}    0.73{col 46}{space 3}0.467{col 54}{space 4}-.0139678{col 67}{space 3} .0304455
+{txt}{space 5}hasreps {c |}{col 14}{res}{space 2}-.0048232{col 26}{space 2} .0046209{col 37}{space 1}   -1.04{col 46}{space 3}0.297{col 54}{space 4}  -.01388{col 67}{space 3} .0042336
+{txt}{space 4}ogagehld {c |}{col 14}{res}{space 2}-.0013673{col 26}{space 2} .0001945{col 37}{space 1}   -7.03{col 46}{space 3}0.000{col 54}{space 4}-.0017485{col 67}{space 3} -.000986
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2} 5.881021{col 26}{space 2} .0401704{col 37}{space 1}  146.40{col 46}{space 3}0.000{col 54}{space 4} 5.802289{col 67}{space 3} 5.959754
+{txt}{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Mu           {txt}{c |}
+{space 7}_cons {c |}{col 14}{res}{space 2}-3.139147{col 26}{space 2} 3.194711{col 37}{space 1}   -0.98{col 46}{space 3}0.326{col 54}{space 4}-9.400665{col 67}{space 3} 3.122371
+{txt}{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Usigma       {txt}{c |}
+{space 7}_cons {c |}{col 14}{res}{space 2}-.6469472{col 26}{space 2}  .877346{col 37}{space 1}   -0.74{col 46}{space 3}0.461{col 54}{space 4}-2.366514{col 67}{space 3} 1.072619
+{txt}{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Vsigma       {txt}{c |}
+{space 7}_cons {c |}{col 14}{res}{space 2}-3.704649{col 26}{space 2} .0488804{col 37}{space 1}  -75.79{col 46}{space 3}0.000{col 54}{space 4}-3.800453{col 67}{space 3}-3.608845
+{txt}{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{col 1}{text}     sigma_u{col 14}{c |}{result}{space 2} .7236311{col 26}{space 2} .3174374{col 37}{space 1}    2.28{col 46}{space 3}0.023{col 55}{space 3} .3062796{col 67}{space 3} 1.709686
+{col 1}{text}     sigma_v{col 14}{c |}{result}{space 2} .1568721{col 26}{space 2}  .003834{col 37}{space 1}   40.92{col 46}{space 3}0.000{col 55}{space 3} .1495347{col 67}{space 3} .1645694
+{col 1}{text}      lambda{col 14}{c |}{result}{space 2} 4.612874{col 26}{space 2}  .314626{col 37}{space 1}   14.66{col 46}{space 3}0.000{col 55}{space 3} 3.996218{col 67}{space 3} 5.229529
+{txt}{hline 13}{c BT}{hline 64}
+
+{com}. estimates store `model1name'
+{txt}
+{com}. predict te_`model1name', `predict_opts'
+{txt}(11645 missing values generated)
+(11645 missing values generated)
+(11645 missing values generated)
+
+{com}. 
+. 
+. 
+. save `fadnoutdatadir'/SFA_post, replace
+{txt}file G:\Data/data_FADNPanelAnalysis/OutData/multisward/SFA_post.dta saved
+
+{com}. 
+. ********************************************************
+. ********************************************************
+. * End of MODELLING section              
+. ********************************************************
+. ********************************************************
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. ********************************************************
+. ********************************************************
+. * GENERATING DESCRIPTIVES 
+. ********************************************************
+. ********************************************************
+. 
+. * for supporting discussion of positive sign on hasreps in
+. * production function (unexpected)
+. corr `dep_vlist' `indep_vlist'
+{txt}(obs=10288)
+
+             {c |} lndoto~l lnfsiz~a lndafo~e lnfla~id lnfla~pd lndpnolu   azone2   azone3  hasreps ogagehld
+{hline 13}{c +}{hline 90}
+  lndotomkgl {c |}{res}   1.0000
+   {txt}lnfsizuaa {c |}{res}   0.7503   1.0000
+  {txt}lndaforare {c |}{res}   0.7984   0.9222   1.0000
+  {txt}lnflabpaid {c |}{res}   0.5849   0.5620   0.5412   1.0000
+  {txt}lnflabunpd {c |}{res}   0.2380   0.2220   0.2038  -0.0622   1.0000
+    {txt}lndpnolu {c |}{res}   0.9526   0.7852   0.8464   0.5664   0.2414   1.0000
+      {txt}azone2 {c |}{res}  -0.1467  -0.0260  -0.0735   0.0112  -0.0117  -0.1701   1.0000
+      {txt}azone3 {c |}{res}  -0.1440  -0.0864  -0.0684   0.0022  -0.0140  -0.1572  -0.0754   1.0000
+     {txt}hasreps {c |}{res}  -0.1013   0.0604   0.0439   0.0601   0.0025  -0.1093   0.2626   0.2138   1.0000
+    {txt}ogagehld {c |}{res}   0.0033  -0.0032   0.0031   0.0288   0.1462   0.0229  -0.0479  -0.0142  -0.0648   1.0000
+
+{txt}
+{com}. 
+. /*
+> * These do files generate output datasets and graphs. 
+> 
+> *qui do sub_do/graphs.do 
+> *qui do sub_do/spreadsheets.do // summary stats 
+> */
+. ********************************************************
+. ********************************************************
+. * End of GENERATING DESCRIPTIVES section
+. ********************************************************
+. ********************************************************
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. ********************************************************
+. ********************************************************
+. * CLEANING UP             
+. ********************************************************
+. ********************************************************
+. macro drop _all
+{txt}
+{com}. 
+. 
+. *clear
+. capture erase blank.dta
+{txt}
+{com}. capture log close
+{smcl}
+{com}{sf}{ul off}

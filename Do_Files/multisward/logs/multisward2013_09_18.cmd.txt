@@ -1,0 +1,6 @@
+tabstat dairyproducts totalspecificcosts dpnolu fsizuaa daforare labourinputhours fdferfil fdratio buildings machinery if year==2007
+tabstat dairyproducts totalspecificcosts dpnolu fsizuaa daforare labourinputhours fdferfil fdratio buildings machinery if year==2007, over(country)
+tabstat dairyproducts totalspecificcosts dpnolu fsizuaa daforare labourinputhours fdferfil fdratio buildings machinery if year==2007, by(country)
+tabstat dairyproducts totalspecificcosts dpnolu fsizuaa daforare labourinputhours fdferfil fdratio buildings machinery if year==2007, by(country) col(stats)
+tabstat feedforgrazinglivestockpurch if year==2007, by(country)
+exit, clear

@@ -1,0 +1,9 @@
+ereturn list
+matrix list e(cmdline)
+di `e(cmdline)'
+di "`e(cmdline)'"
+sfpanel lntotalinputs lntotaloutput lnPFERTILISERSANDSOILIMPROVERS lnPMotorfuels
+
+                i.countrycode2 year if country=="IRE", model(bc95) cost d(tnormal)
+exit
+exit, clear

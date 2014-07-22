@@ -1,0 +1,509 @@
+{smcl}
+{txt}{sf}{ul off}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_09_23.txt
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}23 Sep 2013, 12:17:58
+{txt}
+{com}. di  "Job  Started  at  $S_TIME  on $S_DATE"
+{res}Job  Started  at  12:17:58  on 23 Sep 2013
+{txt}
+{com}. cmdlog using logs/$project$datestamp.cmd.txt, replace
+{txt}(note: file G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_09_23.cmd.txt not found)
+(cmdlog G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_09_23.cmd.txt opened)
+
+{com}. 
+. 
+. gen TREND =year-1998
+{txt}
+{com}. 
+. 
+. preserve
+{txt}
+{com}. 
+. 
+. drop country
+{txt}
+{com}. gen int country = countrycode2
+{txt}
+{com}. keep pid year country `dep_vlist' `indep_vlist' `z_vlist' TREND
+{txt}
+{com}. 
+. outsheet _all using `fadnoutdatadir'/exported_data.csv, comma replace nolabel
+{txt}
+{com}. save `fadnoutdatadir'/exported_data.dta, replace nolabel
+{txt}file G:\\Data/data_FADNPanelAnalysis/OutData/multisward/exported_data.dta saved
+
+{com}. 
+. restore
+{txt}
+{com}. 
+. 
+. tab count by region, by(year)
+{err}count ambiguous abbreviation
+{txt}{search r(111):r(111);}
+
+end of do-file
+
+{search r(111):r(111);}
+
+{com}. tab pid if year ==2007, by(region)
+{err}option by() not allowed
+{txt}{search r(198):r(198);}
+
+{com}. tab pid region
+{err}too many values
+{txt}{search r(134):r(134);}
+
+{com}. help tab
+
+. tab pid grassregion
+{err}too many values
+{txt}{search r(134):r(134);}
+
+{com}. tab pid year if region=="Bretagne"
+{err}type mismatch
+{txt}{search r(109):r(109);}
+
+{com}. codebook region
+
+{txt}{hline}
+{res}region{right:a1}
+{txt}{hline}
+
+{col 19}type:  numeric ({res}int{txt})
+{ralign 22:label}:  {res:region}
+
+{col 18}range:  [{res}10{txt},{res}441{txt}]{col 55}units:  {res}1
+{col 10}{txt}unique values:  {res}40{col 51}{txt}missing .:  {res}0{txt}/{res}21960
+
+{txt}{ralign 23: examples:}{col 26}{res}60{col 32}{txt}Hessen
+{ralign 23: }{col 26}{res}90{col 32}{txt}Bayern
+{ralign 23: }{col 26}{res}183{col 32}{txt}MidiPyrénées
+{ralign 23: }{col 26}{res}411{col 32}{txt}EnglandNorth
+
+{com}. codebook grassregion
+
+{txt}{hline}
+{res}grassregion{right:(unlabeled)}
+{txt}{hline}
+
+{col 19}type:  numeric ({res}float{txt})
+{ralign 22:label}:  {res:grassregion}
+
+{col 18}range:  [{res}1{txt},{res}7{txt}]{col 55}units:  {res}1
+{col 10}{txt}unique values:  {res}7{col 51}{txt}missing .:  {res}0{txt}/{res}21960
+
+{txt}{col 13}tabulation:  Freq.   Numeric  Label
+{col 24}{res}    416{col 33}       1{col 43}{txt}Bretagne
+{col 24}{res}     74{col 33}       2{col 43}{txt}NormandieHaute
+{col 24}{res}    539{col 33}       3{col 43}{txt}NormandieBasse
+{col 24}{res}    971{col 33}       4{col 43}{txt}Wales
+{col 24}{res}   2823{col 33}       5{col 43}{txt}Ireland
+{col 24}{res}   3588{col 33}       6{col 43}{txt}Bayern
+{col 24}{res}  13549{col 33}       7{col 43}{txt}Other
+
+{com}. tabstat pid if year==2007, by(grassregion)
+
+{txt}Summary for variables: pid
+{col 6}by categories of: grassregion 
+
+{ralign 14:grassregion} {...}
+{c |}      mean
+{hline 15}{c +}{hline 10}
+{ralign 14:Bretagne} {...}
+{c |}{...}
+ {res}  3209.71
+{txt}{ralign 14:NormandieHaute} {...}
+{c |}{...}
+ {res} 2523.833
+{txt}{ralign 14:NormandieBasse} {...}
+{c |}{...}
+ {res} 2640.783
+{txt}{ralign 14:Wales} {...}
+{c |}{...}
+ {res} 5762.766
+{txt}{ralign 14:Ireland} {...}
+{c |}{...}
+ {res} 4064.316
+{txt}{ralign 14:Bayern} {...}
+{c |}{...}
+ {res}  1792.15
+{txt}{ralign 14:Other} {...}
+{c |}{...}
+ {res} 2735.706
+{txt}{hline 15}{c +}{hline 10}
+{ralign 14:Total} {...}
+{c |}{...}
+ {res} 2913.306
+{txt}{hline 15}{c BT}{hline 10}
+
+{com}. tabstat pid if year==2007, by(grassregion) stats(count)
+
+{txt}Summary for variables: pid
+{col 6}by categories of: grassregion 
+
+{ralign 14:grassregion} {...}
+{c |}         N
+{hline 15}{c +}{hline 10}
+{ralign 14:Bretagne} {...}
+{c |}{...}
+ {res}       69
+{txt}{ralign 14:NormandieHaute} {...}
+{c |}{...}
+ {res}        6
+{txt}{ralign 14:NormandieBasse} {...}
+{c |}{...}
+ {res}       60
+{txt}{ralign 14:Wales} {...}
+{c |}{...}
+ {res}       94
+{txt}{ralign 14:Ireland} {...}
+{c |}{...}
+ {res}      294
+{txt}{ralign 14:Bayern} {...}
+{c |}{...}
+ {res}      334
+{txt}{ralign 14:Other} {...}
+{c |}{...}
+ {res}     1315
+{txt}{hline 15}{c +}{hline 10}
+{ralign 14:Total} {...}
+{c |}{...}
+ {res}     2172
+{txt}{hline 15}{c BT}{hline 10}
+
+{com}. tabstat pid if year==2007, by(grassregion) over(year)stats(count)
+{err}option over() not allowed
+{txt}{search r(198):r(198);}
+
+{com}. tabstat pid if year==2007, by(grassregion) over(year) stats(count)
+{err}option over() not allowed
+{txt}{search r(198):r(198);}
+
+{com}. egen greg_yr = concatenate(grassregion, "_", year)
+{err}unknown egen function concatenate()
+{txt}{search r(133):r(133);}
+
+{com}. help concatenate
+
+. help  str_func
+
+. help string functions
+
+. tabstat pid if year==1999, by(grassregion) stats(count)
+
+{txt}Summary for variables: pid
+{col 6}by categories of: grassregion 
+
+{ralign 14:grassregion} {...}
+{c |}         N
+{hline 15}{c +}{hline 10}
+{ralign 14:Bretagne} {...}
+{c |}{...}
+ {res}        8
+{txt}{ralign 14:NormandieHaute} {...}
+{c |}{...}
+ {res}       10
+{txt}{ralign 14:NormandieBasse} {...}
+{c |}{...}
+ {res}       96
+{txt}{ralign 14:Wales} {...}
+{c |}{...}
+ {res}      133
+{txt}{ralign 14:Ireland} {...}
+{c |}{...}
+ {res}      269
+{txt}{ralign 14:Bayern} {...}
+{c |}{...}
+ {res}      404
+{txt}{ralign 14:Other} {...}
+{c |}{...}
+ {res}     1902
+{txt}{hline 15}{c +}{hline 10}
+{ralign 14:Total} {...}
+{c |}{...}
+ {res}     2822
+{txt}{hline 15}{c BT}{hline 10}
+
+{com}. tabstat pid if year==2000, by(grassregion) stats(count)
+
+{txt}Summary for variables: pid
+{col 6}by categories of: grassregion 
+
+{ralign 14:grassregion} {...}
+{c |}         N
+{hline 15}{c +}{hline 10}
+{ralign 14:Bretagne} {...}
+{c |}{...}
+ {res}        8
+{txt}{ralign 14:NormandieHaute} {...}
+{c |}{...}
+ {res}        9
+{txt}{ralign 14:NormandieBasse} {...}
+{c |}{...}
+ {res}       94
+{txt}{ralign 14:Wales} {...}
+{c |}{...}
+ {res}      128
+{txt}{ralign 14:Ireland} {...}
+{c |}{...}
+ {res}      310
+{txt}{ralign 14:Bayern} {...}
+{c |}{...}
+ {res}      405
+{txt}{ralign 14:Other} {...}
+{c |}{...}
+ {res}     1589
+{txt}{hline 15}{c +}{hline 10}
+{ralign 14:Total} {...}
+{c |}{...}
+ {res}     2543
+{txt}{hline 15}{c BT}{hline 10}
+
+{com}. tabstat pid if year==2001, by(grassregion) stats(count)
+
+{txt}Summary for variables: pid
+{col 6}by categories of: grassregion 
+
+{ralign 14:grassregion} {...}
+{c |}         N
+{hline 15}{c +}{hline 10}
+{ralign 14:Bretagne} {...}
+{c |}{...}
+ {res}        1
+{txt}{ralign 14:NormandieHaute} {...}
+{c |}{...}
+ {res}       12
+{txt}{ralign 14:NormandieBasse} {...}
+{c |}{...}
+ {res}      100
+{txt}{ralign 14:Wales} {...}
+{c |}{...}
+ {res}       87
+{txt}{ralign 14:Ireland} {...}
+{c |}{...}
+ {res}      357
+{txt}{ralign 14:Bayern} {...}
+{c |}{...}
+ {res}      453
+{txt}{ralign 14:Other} {...}
+{c |}{...}
+ {res}     1538
+{txt}{hline 15}{c +}{hline 10}
+{ralign 14:Total} {...}
+{c |}{...}
+ {res}     2548
+{txt}{hline 15}{c BT}{hline 10}
+
+{com}. tabstat pid if year==2002, by(grassregion) stats(count)
+
+{txt}Summary for variables: pid
+{col 6}by categories of: grassregion 
+
+{ralign 14:grassregion} {...}
+{c |}         N
+{hline 15}{c +}{hline 10}
+{ralign 14:Bretagne} {...}
+{c |}{...}
+ {res}        1
+{txt}{ralign 14:NormandieHaute} {...}
+{c |}{...}
+ {res}        7
+{txt}{ralign 14:NormandieBasse} {...}
+{c |}{...}
+ {res}        1
+{txt}{ralign 14:Wales} {...}
+{c |}{...}
+ {res}       90
+{txt}{ralign 14:Ireland} {...}
+{c |}{...}
+ {res}      327
+{txt}{ralign 14:Bayern} {...}
+{c |}{...}
+ {res}      457
+{txt}{ralign 14:Other} {...}
+{c |}{...}
+ {res}     1559
+{txt}{hline 15}{c +}{hline 10}
+{ralign 14:Total} {...}
+{c |}{...}
+ {res}     2442
+{txt}{hline 15}{c BT}{hline 10}
+
+{com}. tabstat pid if year==2003, by(grassregion) stats(count)
+
+{txt}Summary for variables: pid
+{col 6}by categories of: grassregion 
+
+{ralign 14:grassregion} {...}
+{c |}         N
+{hline 15}{c +}{hline 10}
+{ralign 14:Bretagne} {...}
+{c |}{...}
+ {res}      118
+{txt}{ralign 14:NormandieHaute} {...}
+{c |}{...}
+ {res}        2
+{txt}{ralign 14:NormandieBasse} {...}
+{c |}{...}
+ {res}       44
+{txt}{ralign 14:Wales} {...}
+{c |}{...}
+ {res}      138
+{txt}{ralign 14:Ireland} {...}
+{c |}{...}
+ {res}      340
+{txt}{ralign 14:Bayern} {...}
+{c |}{...}
+ {res}      441
+{txt}{ralign 14:Other} {...}
+{c |}{...}
+ {res}     1500
+{txt}{hline 15}{c +}{hline 10}
+{ralign 14:Total} {...}
+{c |}{...}
+ {res}     2583
+{txt}{hline 15}{c BT}{hline 10}
+
+{com}. tabstat pid if year==2004, by(grassregion) stats(count)
+
+{txt}Summary for variables: pid
+{col 6}by categories of: grassregion 
+
+{ralign 14:grassregion} {...}
+{c |}         N
+{hline 15}{c +}{hline 10}
+{ralign 14:Bretagne} {...}
+{c |}{...}
+ {res}       35
+{txt}{ralign 14:NormandieHaute} {...}
+{c |}{...}
+ {res}        8
+{txt}{ralign 14:NormandieBasse} {...}
+{c |}{...}
+ {res}       72
+{txt}{ralign 14:Wales} {...}
+{c |}{...}
+ {res}      110
+{txt}{ralign 14:Ireland} {...}
+{c |}{...}
+ {res}      321
+{txt}{ralign 14:Bayern} {...}
+{c |}{...}
+ {res}      380
+{txt}{ralign 14:Other} {...}
+{c |}{...}
+ {res}     1492
+{txt}{hline 15}{c +}{hline 10}
+{ralign 14:Total} {...}
+{c |}{...}
+ {res}     2418
+{txt}{hline 15}{c BT}{hline 10}
+
+{com}. tabstat pid if year==2005, by(grassregion) stats(count)
+
+{txt}Summary for variables: pid
+{col 6}by categories of: grassregion 
+
+{ralign 14:grassregion} {...}
+{c |}         N
+{hline 15}{c +}{hline 10}
+{ralign 14:Bretagne} {...}
+{c |}{...}
+ {res}       80
+{txt}{ralign 14:NormandieHaute} {...}
+{c |}{...}
+ {res}        9
+{txt}{ralign 14:NormandieBasse} {...}
+{c |}{...}
+ {res}       54
+{txt}{ralign 14:Wales} {...}
+{c |}{...}
+ {res}       97
+{txt}{ralign 14:Ireland} {...}
+{c |}{...}
+ {res}      312
+{txt}{ralign 14:Bayern} {...}
+{c |}{...}
+ {res}      356
+{txt}{ralign 14:Other} {...}
+{c |}{...}
+ {res}     1382
+{txt}{hline 15}{c +}{hline 10}
+{ralign 14:Total} {...}
+{c |}{...}
+ {res}     2290
+{txt}{hline 15}{c BT}{hline 10}
+
+{com}. tabstat pid if year==2006, by(grassregion) stats(count)
+
+{txt}Summary for variables: pid
+{col 6}by categories of: grassregion 
+
+{ralign 14:grassregion} {...}
+{c |}         N
+{hline 15}{c +}{hline 10}
+{ralign 14:Bretagne} {...}
+{c |}{...}
+ {res}       96
+{txt}{ralign 14:NormandieHaute} {...}
+{c |}{...}
+ {res}       11
+{txt}{ralign 14:NormandieBasse} {...}
+{c |}{...}
+ {res}       18
+{txt}{ralign 14:Wales} {...}
+{c |}{...}
+ {res}       94
+{txt}{ralign 14:Ireland} {...}
+{c |}{...}
+ {res}      293
+{txt}{ralign 14:Bayern} {...}
+{c |}{...}
+ {res}      358
+{txt}{ralign 14:Other} {...}
+{c |}{...}
+ {res}     1272
+{txt}{hline 15}{c +}{hline 10}
+{ralign 14:Total} {...}
+{c |}{...}
+ {res}     2142
+{txt}{hline 15}{c BT}{hline 10}
+
+{com}. tabstat pid if year==2007, by(grassregion) stats(count)
+
+{txt}Summary for variables: pid
+{col 6}by categories of: grassregion 
+
+{ralign 14:grassregion} {...}
+{c |}         N
+{hline 15}{c +}{hline 10}
+{ralign 14:Bretagne} {...}
+{c |}{...}
+ {res}       69
+{txt}{ralign 14:NormandieHaute} {...}
+{c |}{...}
+ {res}        6
+{txt}{ralign 14:NormandieBasse} {...}
+{c |}{...}
+ {res}       60
+{txt}{ralign 14:Wales} {...}
+{c |}{...}
+ {res}       94
+{txt}{ralign 14:Ireland} {...}
+{c |}{...}
+ {res}      294
+{txt}{ralign 14:Bayern} {...}
+{c |}{...}
+ {res}      334
+{txt}{ralign 14:Other} {...}
+{c |}{...}
+ {res}     1315
+{txt}{hline 15}{c +}{hline 10}
+{ralign 14:Total} {...}
+{c |}{...}
+ {res}     2172
+{txt}{hline 15}{c BT}{hline 10}
+
+{com}. 

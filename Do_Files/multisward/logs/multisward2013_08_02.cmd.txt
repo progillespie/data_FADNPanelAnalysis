@@ -1,0 +1,9 @@
+help di
+di clock()
+di clock($S_TIME)
+di Clock($S_TIME)
+help datetag
+findit datetag
+findit hrtag
+clear, exit
+exit, clear

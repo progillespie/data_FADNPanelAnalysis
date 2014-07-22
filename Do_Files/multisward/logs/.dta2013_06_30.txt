@@ -1,0 +1,190 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/.dta2013_06_30.txt
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}30 Jun 2013, 14:27:50
+{txt}
+{com}. di  "Job  Started  at  $S_TIME  on $S_DATE"
+{res}Job  Started  at  14:27:50  on 30 Jun 2013
+{txt}
+{com}. cmdlog using logs/$dataname$datestamp.cmd.txt, replace
+{txt}(cmdlog G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/.dta2013_06_30.cmd.txt opened)
+
+{com}. 
+. 
+. * model you selected above is run here
+. di "`model1command'"
+{res}xtfrontier lnfdairygo_lu lnlandval_ha lnfdferfil_ha lndaforare lndpnolu_ha lnflabpaid lnflabunpd ogagehld lnfsizuaa lnfdratio azone2 azone3 hasreps teagasc France Ireland UnitedKingdom Bretagne NormandieHaute NormandieBasse Wales Bayern, ti
+{txt}
+{com}. qui `model1command' // <- needs a grass variable
+{txt}
+{com}. 
+. 
+. * store estimates and predict ind. TE scores
+. qui estimates store `model1name'
+{txt}
+{com}. qui capture drop te_`model1name'
+{txt}
+{com}. qui predict te_`model1name', `predict_opts'
+{txt}
+{com}. 
+. 
+. * constructs ind. level CI's for TE scores
+. qui frontier_teci te_`model1name'_ci 
+{txt}
+{com}. 
+. 
+. save `fadnoutdatadir'/$datanameSFA_post, replace
+{txt}file G:\\Data/data_FADNPanelAnalysis/OutData/multisward/.dta saved
+
+{com}. 
+. 
+. ********************************************************
+. ********************************************************
+. * End of MODELLING section              
+. ********************************************************
+. ********************************************************
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. ********************************************************
+. ********************************************************
+. * GENERATING DESCRIPTIVES 
+. ********************************************************
+. ********************************************************
+. 
+. 
+. * for supporting discussion of positive sign on hasreps in
+. * production function (unexpected)
+. corr `dep_vlist' `indep_vlist'
+{txt}(obs=8543)
+
+             {c |} lnfdai~u lnland~a lnfdfe~a lndafo~e lndpno~a lnfla~id lnfla~pd
+{hline 13}{c +}{hline 63}
+lnfdairygo~u {c |}{res}   1.0000
+{txt}lnlandval_ha {c |}{res}  -0.1831   1.0000
+{txt}lnfdferfil~a {c |}{res}  -0.0856   0.2677   1.0000
+  {txt}lndaforare {c |}{res}   0.2269  -0.2726  -0.0760   1.0000
+ {txt}lndpnolu_ha {c |}{res}  -0.0442   0.3547   0.4723  -0.0884   1.0000
+  {txt}lnflabpaid {c |}{res}   0.3603  -0.1641  -0.0861   0.5466   0.0226   1.0000
+  {txt}lnflabunpd {c |}{res}   0.0680  -0.0294   0.0350   0.2131   0.0197  -0.0622   1.0000
+    {txt}ogagehld {c |}{res}  -0.0914   0.1178   0.0736   0.0267   0.0313   0.0400   0.1491
+   {txt}lnfsizuaa {c |}{res}   0.2611  -0.3320  -0.1287   0.9228  -0.3129   0.5710   0.2258
+   {txt}lnfdratio {c |}{res}  -0.0826  -0.0255  -0.0563  -0.0385  -0.1323  -0.0039  -0.0142
+      {txt}azone2 {c |}{res}   0.1360  -0.1245  -0.2492  -0.0844  -0.2218   0.0259  -0.0033
+      {txt}azone3 {c |}{res}   0.0716  -0.1115  -0.2131  -0.0689  -0.1005  -0.0044  -0.0020
+     {txt}hasreps {c |}{res}   0.1058  -0.1096  -0.3070   0.0271  -0.2478   0.0462   0.0174
+     {txt}teagasc {c |}{res}  -0.0115   0.0366   0.0221   0.0054  -0.0049  -0.0079   0.0043
+
+             {txt}{c |} ogagehld lnfsiz~a lnfdra~o   azone2   azone3  hasreps  teagasc
+{hline 13}{c +}{hline 63}
+    ogagehld {c |}{res}   1.0000
+   {txt}lnfsizuaa {c |}{res}   0.0178   1.0000
+   {txt}lnfdratio {c |}{res}  -0.0438  -0.0005   1.0000
+      {txt}azone2 {c |}{res}  -0.0501  -0.0292   0.1765   1.0000
+      {txt}azone3 {c |}{res}  -0.0103  -0.0823   0.0622  -0.0674   1.0000
+     {txt}hasreps {c |}{res}  -0.0626   0.0521   0.1414   0.2726   0.1971   1.0000
+     {txt}teagasc {c |}{res}   0.0154   0.0049   0.0219  -0.0169  -0.0082   0.0020   1.0000
+
+{txt}
+{com}. 
+. 
+. * some descriptives of the TE scores
+. tabstat te_`model1name', stats(mean sem) by(country)
+
+{txt}Summary for variables: te_bc95
+{col 6}by categories of: country (a24)
+
+{ralign 7:country} {...}
+{c |}      mean  se(mean)
+{hline 8}{c +}{hline 20}
+{ralign 7:DEU} {...}
+{c |}{...}
+ {res} .7718818  .0019859
+{txt}{ralign 7:FRA} {...}
+{c |}{...}
+ {res} .8049156  .0027366
+{txt}{ralign 7:IRE} {...}
+{c |}{...}
+ {res} .5898503  .0039999
+{txt}{ralign 7:UKI} {...}
+{c |}{...}
+ {res} .5077438  .0026912
+{txt}{hline 8}{c +}{hline 20}
+{ralign 7:Total} {...}
+{c |}{...}
+ {res} .6917264  .0015623
+{txt}{hline 8}{c BT}{hline 20}
+
+{com}. 
+. 
+. ********************************************************
+. ********************************************************
+. * End of GENERATING DESCRIPTIVES section
+. ********************************************************
+. ********************************************************
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. ********************************************************
+. ********************************************************
+. * CLEANING UP             
+. ********************************************************
+. ********************************************************
+. * report the model parameters you selected in the log
+. macro list _dep_vlist _indep_vlist _location_vlist _model1command _model1name _predict_opts databuild ms sectors dataname datadir project 
+{txt}{p 0 16}
+_dep_vlist:{space 5}{res}{res}lnfdairygo_lu
+{p_end}
+{txt}{p 0 16}
+_indep_vlist:{space 3}{res}{res}lnlandval_ha lnfdferfil_ha lndaforare lndpnolu_ha lnflabpaid lnflabunpd ogagehld lnfsizuaa lnfdratio azone2 azone3 hasreps teagasc
+{p_end}
+{txt}{p 0 16}
+_location_vlist:{break}
+{res}France Ireland UnitedKingdom Bretagne NormandieHaute NormandieBasse Wales Bayern
+{p_end}
+{txt}{p 0 16}
+_model1command:{space 1}{res}{res}xtfrontier lnfdairygo_lu lnlandval_ha lnfdferfil_ha lndaforare lndpnolu_ha lnflabpaid lnflabunpd ogagehld lnfsizuaa lnfdratio azone2 azone3 hasreps teagasc France Ireland UnitedKingdom Bretagne NormandieHaute NormandieBasse Wales Bayern, ti
+{p_end}
+{txt}{p 0 16}
+_model1name:{space 4}{res}{res}bc95
+{p_end}
+{txt}{p 0 16}
+_predict_opts:{space 2}{res}{res}te
+{p_end}
+{txt}{p 0 16}
+databuild:{space 6}{res}{res}1
+{p_end}
+{txt}{p 0 16}
+ms:{space 13}{res}{res}France Germany Ireland UnitedKingdom
+{p_end}
+{txt}{p 0 16}
+sectors:{space 8}{res}{res}fffadnsy==4110
+{p_end}
+{txt}{p 0 16}
+dataname:{space 7}{res}{res}.dta
+{p_end}
+{txt}{p 0 16}
+datadir:{space 8}{res}{res}G:\\Data
+{p_end}
+{txt}{p 0 16}
+project:{space 8}{res}{res}multisward
+{p_end}
+{txt}
+{com}. 
+. 
+. *clear
+. capture erase blank.dta
+{txt}
+{com}. capture log close
+{smcl}
+{com}{sf}{ul off}

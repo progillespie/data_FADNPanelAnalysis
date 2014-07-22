@@ -1,0 +1,180 @@
+% Header
+\documentclass{article}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{datetime}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\hrule
+\begin{quote}
+  \begin{flushleft}
+    Patrick R. Gillespie\\
+    Walsh Fellow\\
+    Teagasc, REDP\\
+    Athenry, Co Galway, Ireland\\
+    patrick.gillespie@teagasc.ie\\
+  \end{flushleft}
+\end{quote}
+\hrule
+\begin{flushleft}
+  \textbf{\jobname.Rnw}\\
+  \today at \currenttime
+\end{flushleft}
+\hrule
+\vspace{1cm}
+
+\begin{flushleft}
+\subsection*{Clearing and loading}
+<<echo=T, results='markup'>>=
+rm(list=ls()) 
+paneldir <- "/media/MyPassport/Data/data_NFSPanelAnalysis/"
+#paneldir <- "G:\\Data/data_NFSPanelAnalysi/"
+source(paste(paneldir, "code_R/dirstruct.R", sep='')) 
+setwd(Rdir)
+library(foreign) #...for the ability to read .dta files
+library(data.table) #... useful for big datasets (makes manipulation faster & easier)
+library(xtable) #... to get nice looking tables.
+@
+ 
+\subsection*{Data import and set up}
+
+Next code chunk does the following:
+\begin{itemize}
+  \item {Read the NFS dataset into a data.table (type of data.frame - useful for large datasets) and ID the key
+        variables (like subscripts for the data). Sorts by those too.}
+  \item {Select only Specialist Dairying}
+  \item {Tabulate farm numbers by year}
+\end{itemize}
+<<echo=TRUE, results='markup'>>=
+nfs <- data.table(read.dta(paste(nfsdatadir, "nfs_data.dta", sep='')), key="fffadnsy")
+nfs <- nfs[fffadnsy==411]
+setkey(nfs, farmcode, year) # reset key
+nfs.farms <- nfs[year>1998 & year<2008, length(farmcode), by=year] 
+@
+
+Then do the following for the FADN data to get a comparable dataset: 
+\begin{itemize}
+  \item{Load the Irish FADN dataset}
+  \item{Select Specialist Dairying (A30==4110)}
+  \item{Tabulate farm numbers by year}
+\end{itemize}
+<<echo=TRUE, results='markup'>>=
+fadn <- data.table(read.csv(paste(fadndir9907, "Ireland.csv", sep='')), key="A30")
+fadn <- fadn[A30==4110]
+setkey(fadn, Farm.Code, YEAR) # reset key
+fadn.farms <- fadn[, length(Farm.Code), by=YEAR]
+@
+
+\subsection*{Comparison of datasets}
+\subsubsection*{Farm numbers by year}
+Compare farm numbers to choose an easier year for individual variable comparison... 
+
+<<echo=FALSE, results='asis'>>=
+xtable(data.frame(NFS=nfs.farms$V1, FADN=fadn.farms$V1, row.names=nfs.farms$year), "Sampled Specialist Dairy farms by year")
+@
+
+... which shows that the years 2004 and 2005 were exactly the same size as unweighted samples. Gives some confidence that there's no difference in the system code (and there shouldn't be any difference). 
+
+FADN weights differ from NFS weights, so I can't compare weighted samples. 
+
+I'll select one year to compare, say 2005,  as I'd guess the two should be most similar in the most recent year that matches up the sampled farms. 
+
+\textbf{nidy_means.Rnw} calculated means for all variables in each dataset, stored them two vectors, and compared them.
+
+\textbf{nidy_1farm} did the comparison on an element by element basis \emph{i.e.} the individual values of each variable, for a single farm.
+
+This time I'll read in the key Brian Moran gave me (NFS variables names only) and try to match the 163 variables in the FADN as best I can by reading the descriptions. Afterwards, I'll run some descriptive statistics to see if they match up well. 
+
+<<echo=TRUE, results='markup'>>=
+# create two new data tables for just the 2005 year
+nfs05 <- nfs[year==2005]  
+fadn05 <-fadn[YEAR==2005]
+
+# set the key for each to the farm size variables in each dataset (which I think match up)
+setkey(nfs05, fsizuaa)
+setkey(fadn05, Total.UAA)
+
+# now read in the key (saved the Enterprise sheet from the full spreadsheet as a csv in NFSPanelAnalysis for reading in.)
+nfskey <- data.table(read.csv("nfskey.csv")) # includes rows and columns I don't need
+sr <- grep("Farm code", nfskey$ENTREPRISE.LAYOUT, ignore.case=T) # starting row
+er <- length(nfskey$ENTREPRISE.LAYOUT) # ending row
+nfskey <- nfskey[sr:er, list(ENTREPRISE.LAYOUT, X)] # select starting to ending row, cols 1 to 2 (note that the typo in "ENTREPRISE.LAYOUT" is in the csv, hence it is "correct" here)
+setnames(nfskey, c("ENTREPRISE.LAYOUT", "X"),c("labels", "varnames"))  # rename columns
+nfskey <- nfskey[varnames!=""]
+fadn.names <- names(fadn05)
+viewData(nfskey)
+@
+
+
+<<echo=FALSE, results='asis'>>=
+xtable(nfskey)
+xtable(fadn.names)
+@
+
+
+
+% <<echo=TRUE, results='markup'>>=
+% # create a logical vector for the comparison of total uaa
+% nfs05$in.range <- nfs05$fsizuaa >= .99*fadn05$Total.UAA & nfs05$fsizuaa <= 1.01*fadn05$Total.UAA
+% # copy the UAA variable and fadn farmcode from the fadn to the nfs data
+% nfs05$Total.UAA <- fadn05$Total.UAA
+% nfs05$Farm.Code <- fadn05$Farm.Code
+% # have a look at the data to double check it's what we expect
+% View(nfs05[in.range==TRUE,list(in.range, farmcode, fsizuaa, Farm.Code,  Total.UAA)])
+% #viewData(nfs05[in.range==TRUE,list(in.range, farmcode, fsizuaa, Farm.Code,  Total.UAA)]) # for viewing data within the GUI if you are using the most recent version of RStudio
+% 
+% # count of farmcodes with matching UAA in both datasets
+% length(nfs05[in.range==TRUE, farmcode])
+% 
+% # select one of these farmcodes to compare variable by variable for potential variable matches (creating a key). 
+% nfs.in.range <- nfs05[in.range==TRUE]
+% nfs.farm <- nfs.in.range[1] 
+% length(names(nfs.farm)) # number of variables starting out
+% nums <- nfs.farm[,sapply(.SD, is.numeric)] # numeric variables
+% nfs.farm <- nfs.farm[,nums==T, with=F] # select only those variables
+% length(names(nfs.farm)) # number of variables after selection
+% over0 <- nfs.farm[,sapply(.SD, function(x) x>0)] # variables with value > 0
+% nfs.farm <- nfs.farm[, over0==T, with=F] # select only those variables
+% length(names(nfs.farm)) # number of variables after selection
+% 
+% # store the corresponding farm ID's for each dataset
+% farmcode.sel <- nfs.farm[,farmcode]
+% Farm.Code.sel <- nfs.farm[,Farm.Code]
+% 
+% 
+% # extract corresponding row from FADN
+% fadn.farm <- fadn05[Farm.Code== Farm.Code.sel]
+% length(names(fadn.farm)) # number of variables starting out
+% nums <- fadn.farm[,sapply(.SD, is.numeric)] # numeric variables
+% fadn.farm <- fadn.farm[,nums==T, with=F]
+% length(names(fadn.farm)) # number of variables after selection
+% over0 <- fadn.farm[,sapply(.SD, function(x) x>0)] # variables with value > 0
+% fadn.farm <- fadn.farm[,over0==T, with=F]
+% length(names(fadn.farm)) # number of variables after selection
+% 
+% 
+% # transpose both and search fadn column for possible matches for each value of the NFS column
+% #nfs.farm <- data.table(na.omit(data.frame(nfs.names = names(nfs.farm), values=t(nfs.farm), row.names=NULL, stringsAsFactors=F)), key="values")
+% 
+% fadn.farm <- data.table(na.omit(data.frame(fadn.names = names(fadn.farm), values = t(fadn.farm), row.names=NULL, stringsAsFactors=F)), key="values")
+% 
+% # creates a logical matrix for potential matches
+% key <- nfs.farm[,sapply(.SD, function(x) ifelse(x >= .98*fadn.farm$values & x <= 1.02*fadn.farm$values, fadn.farm$fadn.name, NA))] # ], fadn.names=fadn.farm$fadn.names),by=nfs.names]
+% 
+% # now collapse that to a list of names of fadn variable names for each nfs variable name
+% 
+% key2 <- data.table(key)
+% key2 <- key2[, sapply(.SD, function(x) list(na.omit(x)))]
+% viewData(key2)
+% 
+% 
+% save(key2, file="key2.Rdata")
+% 
+% @
+% 
+% The output gives a data table with nfs varnames as the header row and fadn varnames that possibly match in the values. This data structure must have equal column lengths, so the lists of fadn names are repeated until all column lengths are the same. Nonetheless, this is a much more compact way of browsing the likely matches. 
+% 
+% Unfortunately, this technique did not prove effective. I'm now giving up this approach as I don't think that it will ever be fruitful in any sort of reasonable time. I will simply hardcode from the list Brian gave me, and from hard graft.
+
+\end{flushleft}
+\end{document}

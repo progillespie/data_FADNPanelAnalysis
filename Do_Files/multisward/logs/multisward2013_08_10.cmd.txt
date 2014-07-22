@@ -1,0 +1,6 @@
+predict xb
+tw sc v xb, yline(0, lwidth(thick) lcol(red)) saving(heteroscedasticity
+tw sc v xb, yline(0, lwidth(thick) lcol(red)) saving(heteroscedasticity)
+hettest
+whitetest
+exit, clear

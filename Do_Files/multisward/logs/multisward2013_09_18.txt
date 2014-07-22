@@ -1,0 +1,967 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_09_18.txt
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}18 Sep 2013, 16:11:49
+{txt}
+{com}. di  "Job  Started  at  $S_TIME  on $S_DATE"
+{res}Job  Started  at  16:11:49  on 18 Sep 2013
+{txt}
+{com}. cmdlog using logs/$project$datestamp.cmd.txt, replace
+{txt}(cmdlog G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_09_18.cmd.txt opened)
+
+{com}. 
+. 
+. gen TREND =year-1998
+{txt}
+{com}. 
+. 
+. preserve
+{txt}
+{com}. 
+. 
+. drop country
+{txt}
+{com}. gen int country = countrycode2
+{txt}
+{com}. keep pid year country `dep_vlist' `indep_vlist' `z_vlist' TREND
+{txt}
+{com}. 
+. outsheet _all using `fadnoutdatadir'/exported_data.csv, comma replace nolabel
+{txt}
+{com}. save `fadnoutdatadir'/exported_data.dta, replace nolabel
+{txt}file G:\\Data/data_FADNPanelAnalysis/OutData/multisward/exported_data.dta saved
+
+{com}. 
+. restore
+{txt}
+{com}. 
+. 
+. 
+. * ===================
+. * MODEL COMMANDS HERE
+. * ===================
+. 
+. *bysort country: sfpanel `dep_vlist' `indep_vlist' TREND, model(bc95) cost d(tnormal) emean(`z_vlist')
+. 
+. sfpanel `dep_vlist' `indep_vlist' TREND if country=="DEU", model(bc95) d(tnormal) emean(`z_vlist')
+
+{res}
+{txt}initial:{col 16}Log likelihood = {res:-27774.207}
+Iteration 0:{space 3}Log likelihood = {res:-27774.207}  
+Iteration 1:{space 3}Log likelihood = {res:-16668.892}  (backed up)
+Iteration 2:{space 3}Log likelihood = {res:-13162.798}  (backed up)
+Iteration 3:{space 3}Log likelihood = {res:-12500.513}  (backed up)
+Iteration 4:{space 3}Log likelihood = {res:-12218.566}  (backed up)
+Iteration 5:{space 3}Log likelihood = {res:-12129.736}  (backed up)
+Iteration 6:{space 3}Log likelihood = {res:-12094.941}  (backed up)
+Iteration 7:{space 3}Log likelihood = {res:-12075.523}  (backed up)
+Iteration 8:{space 3}Log likelihood = {res:-12067.148}  (backed up)
+Iteration 9:{space 3}Log likelihood = {res: -12039.11}  (backed up)
+Iteration 10:{space 2}Log likelihood = {res:-12030.909}  (backed up)
+Iteration 11:{space 2}Log likelihood = {res:-12008.303}  (backed up)
+Iteration 12:{space 2}Log likelihood = {res:-11848.375}  (backed up)
+Iteration 13:{space 2}Log likelihood = {res:-10466.467}  (backed up)
+Iteration 14:{space 2}Log likelihood = {res:-9005.3881}  (backed up)
+Iteration 15:{space 2}Log likelihood = {res:-8941.1607}  (backed up)
+Iteration 16:{space 2}Log likelihood = {res:-7591.9572}  
+Iteration 17:{space 2}Log likelihood = {res: -3847.938}  
+Iteration 18:{space 2}Log likelihood = {res:-3693.3904}  
+Iteration 19:{space 2}Log likelihood = {res:-2342.7169}  
+Iteration 20:{space 2}Log likelihood = {res:-1593.0277}  
+Iteration 21:{space 2}Log likelihood = {res:  8.871007}  
+Iteration 22:{space 2}Log likelihood = {res: 1196.2283}  
+Iteration 23:{space 2}Log likelihood = {res: 1286.8729}  
+Iteration 24:{space 2}Log likelihood = {res: 1781.5439}  
+Iteration 25:{space 2}Log likelihood = {res: 1942.7004}  
+Iteration 26:{space 2}Log likelihood = {res: 2144.7166}  
+Iteration 27:{space 2}Log likelihood = {res:  2593.725}  
+Iteration 28:{space 2}Log likelihood = {res: 2679.8202}  
+Iteration 29:{space 2}Log likelihood = {res: 2776.0635}  
+Iteration 30:{space 2}Log likelihood = {res:   2871.95}  
+Iteration 31:{space 2}Log likelihood = {res: 2917.3576}  
+Iteration 32:{space 2}Log likelihood = {res: 2946.9339}  
+Iteration 33:{space 2}Log likelihood = {res: 2952.6817}  
+Iteration 34:{space 2}Log likelihood = {res: 2973.8173}  
+Iteration 35:{space 2}Log likelihood = {res: 2985.6197}  
+Iteration 36:{space 2}Log likelihood = {res: 2996.3478}  
+Iteration 37:{space 2}Log likelihood = {res: 3001.7261}  
+Iteration 38:{space 2}Log likelihood = {res: 3005.7466}  
+Iteration 39:{space 2}Log likelihood = {res: 3006.8607}  
+Iteration 40:{space 2}Log likelihood = {res: 3007.0979}  
+Iteration 41:{space 2}Log likelihood = {res: 3007.2776}  
+Iteration 42:{space 2}Log likelihood = {res: 3007.4492}  
+Iteration 43:{space 2}Log likelihood = {res: 3007.4616}  
+Iteration 44:{space 2}Log likelihood = {res: 3007.4632}  
+Iteration 45:{space 2}Log likelihood = {res: 3007.4675}  
+Iteration 46:{space 2}Log likelihood = {res: 3007.5433}  
+Iteration 47:{space 2}Log likelihood = {res: 3007.9807}  
+Iteration 48:{space 2}Log likelihood = {res: 3008.4354}  
+Iteration 49:{space 2}Log likelihood = {res: 3008.5948}  
+Iteration 50:{space 2}Log likelihood = {res: 3008.8877}  
+Iteration 51:{space 2}Log likelihood = {res: 3009.0369}  
+Iteration 52:{space 2}Log likelihood = {res: 3009.2848}  
+Iteration 53:{space 2}Log likelihood = {res: 3009.4162}  
+Iteration 54:{space 2}Log likelihood = {res: 3010.3563}  
+Iteration 55:{space 2}Log likelihood = {res: 3010.3889}  
+Iteration 56:{space 2}Log likelihood = {res: 3010.5225}  
+Iteration 57:{space 2}Log likelihood = {res:  3010.642}  
+Iteration 58:{space 2}Log likelihood = {res: 3010.8766}  
+Iteration 59:{space 2}Log likelihood = {res: 3010.9335}  
+Iteration 60:{space 2}Log likelihood = {res: 3011.0555}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 61:{space 2}Log likelihood = {res: 3011.0977}  
+Iteration 62:{space 2}Log likelihood = {res: 3011.1062}  (backed up)
+Iteration 63:{space 2}Log likelihood = {res: 3011.1076}  (backed up)
+Iteration 64:{space 2}Log likelihood = {res: 3011.1101}  (backed up)
+Iteration 65:{space 2}Log likelihood = {res: 3011.1117}  (backed up)
+Iteration 66:{space 2}Log likelihood = {res: 3011.1156}  (backed up)
+Iteration 67:{space 2}Log likelihood = {res: 3011.1224}  (backed up)
+Iteration 68:{space 2}Log likelihood = {res: 3011.1263}  (backed up)
+Iteration 69:{space 2}Log likelihood = {res: 3011.1276}  (backed up)
+Iteration 70:{space 2}Log likelihood = {res: 3011.1281}  (backed up)
+Iteration 71:{space 2}Log likelihood = {res: 3011.1289}  (backed up)
+Iteration 72:{space 2}Log likelihood = {res: 3011.1318}  (backed up)
+Iteration 73:{space 2}Log likelihood = {res: 3011.1323}  (backed up)
+Iteration 74:{space 2}Log likelihood = {res: 3011.1733}  (backed up)
+Iteration 75:{space 2}Log likelihood = {res: 3011.1749}  
+Iteration 76:{space 2}Log likelihood = {res: 3011.2036}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 77:{space 2}Log likelihood = {res: 3011.2577}  
+Iteration 78:{space 2}Log likelihood = {res: 3011.2638}  (backed up)
+Iteration 79:{space 2}Log likelihood = {res: 3011.2648}  (backed up)
+Iteration 80:{space 2}Log likelihood = {res: 3011.2656}  (backed up)
+Iteration 81:{space 2}Log likelihood = {res: 3011.2657}  (backed up)
+Iteration 82:{space 2}Log likelihood = {res: 3011.2675}  (backed up)
+Iteration 83:{space 2}Log likelihood = {res:  3011.269}  (backed up)
+Iteration 84:{space 2}Log likelihood = {res: 3011.2704}  (backed up)
+Iteration 85:{space 2}Log likelihood = {res: 3011.2712}  (backed up)
+Iteration 86:{space 2}Log likelihood = {res: 3011.2729}  (backed up)
+Iteration 87:{space 2}Log likelihood = {res: 3011.2737}  (backed up)
+Iteration 88:{space 2}Log likelihood = {res: 3011.2744}  (backed up)
+Iteration 89:{space 2}Log likelihood = {res:  3011.276}  (backed up)
+Iteration 90:{space 2}Log likelihood = {res: 3011.2763}  (backed up)
+Iteration 91:{space 2}Log likelihood = {res: 3011.2941}  
+Iteration 92:{space 2}Log likelihood = {res: 3011.2978}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 93:{space 2}Log likelihood = {res: 3011.3739}  
+Iteration 94:{space 2}Log likelihood = {res: 3011.3767}  (backed up)
+Iteration 95:{space 2}Log likelihood = {res: 3011.3768}  (backed up)
+Iteration 96:{space 2}Log likelihood = {res: 3011.3771}  (backed up)
+Iteration 97:{space 2}Log likelihood = {res: 3011.3775}  (backed up)
+Iteration 98:{space 2}Log likelihood = {res: 3011.3783}  (backed up)
+Iteration 99:{space 2}Log likelihood = {res:   3011.38}  (backed up)
+Iteration 100:{space 1}Log likelihood = {res: 3011.3805}  (backed up)
+
+Inefficiency effects model (truncated-normal){col 54}Number of obs {col 68}={col 70}{res}     8572
+{txt}Group variable: {res}pid{txt}{col 51}Number of groups{col 68}={col 70}{res}     2153
+{txt}Time variable: {res}year{txt}{col 49}Obs per group: min{col 68}={col 70}{res}        1
+{col 64}{txt}avg{col 68}={col 70}{res}      4.0
+{col 64}{txt}max{col 68}={col 70}{res}        9
+
+{txt}{col 54}Prob > chi2   = {res}   0.0000
+{txt}Log likelihood = {res} 3011.3805{txt}{col 54}Wald chi2({res}10{txt})  = {res}134442.15
+
+{txt}{hline 31}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}               lndairyproducts{col 32}{c |}      Coef.{col 44}   Std. Err.{col 56}      z{col 64}   P>|z|{col 72}     [95% Con{col 85}f. Interval]
+{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Frontier                       {txt}{c |}
+{space 20}lnfdferfil {c |}{col 32}{res}{space 2} .0251104{col 44}{space 2}  .002156{col 55}{space 1}   11.65{col 64}{space 3}0.000{col 72}{space 4} .0208847{col 85}{space 3}  .029336
+{txt}lnfeedforgrazinglivestockpurch {c |}{col 32}{res}{space 2} .1119574{col 44}{space 2} .0029008{col 55}{space 1}   38.60{col 64}{space 3}0.000{col 72}{space 4}  .106272{col 85}{space 3} .1176429
+{txt}{space 18}lnforagearea {c |}{col 32}{res}{space 2}-.0052186{col 44}{space 2} .0054691{col 55}{space 1}   -0.95{col 64}{space 3}0.340{col 72}{space 4}-.0159378{col 85}{space 3} .0055006
+{txt}{space 22}lndpnolu {c |}{col 32}{res}{space 2} .8543034{col 44}{space 2}  .007914{col 55}{space 1}  107.95{col 64}{space 3}0.000{col 72}{space 4} .8387922{col 85}{space 3} .8698147
+{txt}{space 12}lnlabourinputhours {c |}{col 32}{res}{space 2} .0488758{col 44}{space 2} .0062235{col 55}{space 1}    7.85{col 64}{space 3}0.000{col 72}{space 4} .0366779{col 85}{space 3} .0610737
+{txt}{space 17}lnmachinery_q {c |}{col 32}{res}{space 2}  .037128{col 44}{space 2} .0025407{col 55}{space 1}   14.61{col 64}{space 3}0.000{col 72}{space 4} .0321483{col 85}{space 3} .0421076
+{txt}{space 17}lnbuildings_q {c |}{col 32}{res}{space 2} .0142191{col 44}{space 2} .0017356{col 55}{space 1}    8.19{col 64}{space 3}0.000{col 72}{space 4} .0108173{col 85}{space 3} .0176208
+{txt}{space 24}azone2 {c |}{col 32}{res}{space 2}-.0858479{col 44}{space 2} .0046479{col 55}{space 1}  -18.47{col 64}{space 3}0.000{col 72}{space 4}-.0949577{col 85}{space 3}-.0767382
+{txt}{space 24}azone3 {c |}{col 32}{res}{space 2}-.0620721{col 44}{space 2} .0068034{col 55}{space 1}   -9.12{col 64}{space 3}0.000{col 72}{space 4}-.0754064{col 85}{space 3}-.0487377
+{txt}{space 25}TREND {c |}{col 32}{res}{space 2} .0105749{col 44}{space 2} .0007116{col 55}{space 1}   14.86{col 64}{space 3}0.000{col 72}{space 4} .0091802{col 85}{space 3} .0119696
+{txt}{space 25}_cons {c |}{col 32}{res}{space 2}  7.45552{col 44}{space 2} .0472005{col 55}{space 1}  157.95{col 64}{space 3}0.000{col 72}{space 4} 7.363009{col 85}{space 3} 7.548031
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Mu                             {txt}{c |}
+{space 21}lnfdratio {c |}{col 32}{res}{space 2} .9328093{col 44}{space 2} .2062296{col 55}{space 1}    4.52{col 64}{space 3}0.000{col 72}{space 4} .5286068{col 85}{space 3} 1.337012
+{txt}{space 25}_cons {c |}{col 32}{res}{space 2}-18.81954{col 44}{space 2}        .{col 55}{space 1}       .{col 64}{space 3}    .{col 72}{space 4}        .{col 85}{space 3}        .
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Usigma                         {txt}{c |}
+{space 25}_cons {c |}{col 32}{res}{space 2} .6822276{col 44}{space 2} .0477962{col 55}{space 1}   14.27{col 64}{space 3}0.000{col 72}{space 4} .5885487{col 85}{space 3} .7759066
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Vsigma                         {txt}{c |}
+{space 25}_cons {c |}{col 32}{res}{space 2}-4.126625{col 44}{space 2} .0325502{col 55}{space 1} -126.78{col 64}{space 3}0.000{col 72}{space 4}-4.190423{col 85}{space 3}-4.062828
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{col 1}{text}     sigma_u{col 14}{c |}{result}{space 2} 1.406513{col 26}{space 2}  .033613{col 37}{space 1}   41.84{col 46}{space 3}0.000{col 55}{space 3} 1.342152{col 67}{space 3} 1.473961
+{col 1}{text}     sigma_v{col 14}{c |}{result}{space 2} .1270325{col 26}{space 2} .0020675{col 37}{space 1}   61.44{col 46}{space 3}0.000{col 55}{space 3} .1230442{col 67}{space 3} .1311499
+{col 1}{text}      lambda{col 14}{c |}{result}{space 2} 11.07208{col 26}{space 2} .0345544{col 37}{space 1}  320.42{col 46}{space 3}0.000{col 55}{space 3} 11.00435{col 67}{space 3}  11.1398
+{txt}{hline 13}{c BT}{hline 64}
+
+{com}. estimates store bc95_DEU
+{txt}
+{com}. 
+. sfpanel `dep_vlist' `indep_vlist' TREND if country=="FRA", model(bc95) d(tnormal) emean(`z_vlist')
+
+{res}
+{txt}initial:{col 16}Log likelihood = {res:-6871.9213}
+Iteration 0:{space 3}Log likelihood = {res:-6871.9213}  
+Iteration 1:{space 3}Log likelihood = {res:-3966.2878}  (backed up)
+Iteration 2:{space 3}Log likelihood = {res:-3723.4567}  (backed up)
+Iteration 3:{space 3}Log likelihood = {res:-3357.7949}  (backed up)
+Iteration 4:{space 3}Log likelihood = {res:-3356.3018}  (backed up)
+Iteration 5:{space 3}Log likelihood = {res:-3350.5858}  (backed up)
+Iteration 6:{space 3}Log likelihood = {res:-3290.4902}  (backed up)
+Iteration 7:{space 3}Log likelihood = {res:-2952.2826}  (backed up)
+Iteration 8:{space 3}Log likelihood = {res:-2941.3268}  (backed up)
+Iteration 9:{space 3}Log likelihood = {res:-2911.1757}  (backed up)
+Iteration 10:{space 2}Log likelihood = {res:-2872.1128}  (backed up)
+Iteration 11:{space 2}Log likelihood = {res:-2861.1818}  
+Iteration 12:{space 2}Log likelihood = {res:-2860.9206}  (backed up)
+Iteration 13:{space 2}Log likelihood = {res:-2826.5221}  (backed up)
+Iteration 14:{space 2}Log likelihood = {res:  -2794.66}  (backed up)
+Iteration 15:{space 2}Log likelihood = {res:-2784.1275}  (backed up)
+Iteration 16:{space 2}Log likelihood = {res: -2075.938}  
+Iteration 17:{space 2}Log likelihood = {res: -1626.041}  
+Iteration 18:{space 2}Log likelihood = {res:-1344.3202}  
+Iteration 19:{space 2}Log likelihood = {res:-1098.5496}  
+Iteration 20:{space 2}Log likelihood = {res:-893.35881}  
+Iteration 21:{space 2}Log likelihood = {res:-496.27204}  
+Iteration 22:{space 2}Log likelihood = {res:-276.85845}  
+Iteration 23:{space 2}Log likelihood = {res: 142.73586}  
+Iteration 24:{space 2}Log likelihood = {res: 356.18567}  
+Iteration 25:{space 2}Log likelihood = {res:  455.6258}  
+Iteration 26:{space 2}Log likelihood = {res: 498.33559}  
+Iteration 27:{space 2}Log likelihood = {res: 523.26784}  
+Iteration 28:{space 2}Log likelihood = {res: 532.39555}  
+Iteration 29:{space 2}Log likelihood = {res: 539.82013}  
+Iteration 30:{space 2}Log likelihood = {res: 547.77021}  
+Iteration 31:{space 2}Log likelihood = {res: 550.00459}  
+Iteration 32:{space 2}Log likelihood = {res: 562.37625}  
+Iteration 33:{space 2}Log likelihood = {res: 565.88406}  
+Iteration 34:{space 2}Log likelihood = {res: 606.41589}  
+Iteration 35:{space 2}Log likelihood = {res: 619.40774}  
+Iteration 36:{space 2}Log likelihood = {res: 625.85184}  
+Iteration 37:{space 2}Log likelihood = {res: 628.67823}  
+Iteration 38:{space 2}Log likelihood = {res: 630.59621}  
+Iteration 39:{space 2}Log likelihood = {res: 630.69788}  
+Iteration 40:{space 2}Log likelihood = {res: 631.31918}  
+Iteration 41:{space 2}Log likelihood = {res: 632.07548}  
+Iteration 42:{space 2}Log likelihood = {res: 632.84174}  
+Iteration 43:{space 2}Log likelihood = {res: 633.05148}  
+Iteration 44:{space 2}Log likelihood = {res: 633.07122}  
+Iteration 45:{space 2}Log likelihood = {res: 633.07181}  
+Iteration 46:{space 2}Log likelihood = {res: 633.07187}  
+
+Inefficiency effects model (truncated-normal){col 54}Number of obs {col 68}={col 70}{res}     2130
+{txt}Group variable: {res}pid{txt}{col 51}Number of groups{col 68}={col 70}{res}      995
+{txt}Time variable: {res}year{txt}{col 49}Obs per group: min{col 68}={col 70}{res}        1
+{col 64}{txt}avg{col 68}={col 70}{res}      2.1
+{col 64}{txt}max{col 68}={col 70}{res}        8
+
+{txt}{col 54}Prob > chi2   = {res}   0.0000
+{txt}Log likelihood = {res}  633.0719{txt}{col 54}Wald chi2({res}10{txt})  = {res} 14451.40
+
+{txt}{hline 31}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}               lndairyproducts{col 32}{c |}      Coef.{col 44}   Std. Err.{col 56}      z{col 64}   P>|z|{col 72}     [95% Con{col 85}f. Interval]
+{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Frontier                       {txt}{c |}
+{space 20}lnfdferfil {c |}{col 32}{res}{space 2} .0445218{col 44}{space 2} .0064526{col 55}{space 1}    6.90{col 64}{space 3}0.000{col 72}{space 4} .0318749{col 85}{space 3} .0571687
+{txt}lnfeedforgrazinglivestockpurch {c |}{col 32}{res}{space 2} .1509137{col 44}{space 2} .0066622{col 55}{space 1}   22.65{col 64}{space 3}0.000{col 72}{space 4}  .137856{col 85}{space 3} .1639714
+{txt}{space 18}lnforagearea {c |}{col 32}{res}{space 2}-.0357844{col 44}{space 2}  .012334{col 55}{space 1}   -2.90{col 64}{space 3}0.004{col 72}{space 4}-.0599587{col 85}{space 3}-.0116101
+{txt}{space 22}lndpnolu {c |}{col 32}{res}{space 2} .6699926{col 44}{space 2} .0191003{col 55}{space 1}   35.08{col 64}{space 3}0.000{col 72}{space 4} .6325567{col 85}{space 3} .7074285
+{txt}{space 12}lnlabourinputhours {c |}{col 32}{res}{space 2}  .126895{col 44}{space 2} .0119599{col 55}{space 1}   10.61{col 64}{space 3}0.000{col 72}{space 4}  .103454{col 85}{space 3}  .150336
+{txt}{space 17}lnmachinery_q {c |}{col 32}{res}{space 2} .0249317{col 44}{space 2} .0048742{col 55}{space 1}    5.12{col 64}{space 3}0.000{col 72}{space 4} .0153785{col 85}{space 3} .0344849
+{txt}{space 17}lnbuildings_q {c |}{col 32}{res}{space 2} .0213561{col 44}{space 2} .0028834{col 55}{space 1}    7.41{col 64}{space 3}0.000{col 72}{space 4} .0157047{col 85}{space 3} .0270074
+{txt}{space 24}azone2 {c |}{col 32}{res}{space 2}-.0746233{col 44}{space 2} .0101599{col 55}{space 1}   -7.34{col 64}{space 3}0.000{col 72}{space 4}-.0945363{col 85}{space 3}-.0547102
+{txt}{space 24}azone3 {c |}{col 32}{res}{space 2}-.1502922{col 44}{space 2} .0108044{col 55}{space 1}  -13.91{col 64}{space 3}0.000{col 72}{space 4}-.1714684{col 85}{space 3} -.129116
+{txt}{space 25}TREND {c |}{col 32}{res}{space 2} .0189491{col 44}{space 2} .0015947{col 55}{space 1}   11.88{col 64}{space 3}0.000{col 72}{space 4} .0158234{col 85}{space 3} .0220747
+{txt}{space 25}_cons {c |}{col 32}{res}{space 2}  7.04771{col 44}{space 2} .0885773{col 55}{space 1}   79.57{col 64}{space 3}0.000{col 72}{space 4} 6.874101{col 85}{space 3} 7.221318
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Mu                             {txt}{c |}
+{space 21}lnfdratio {c |}{col 32}{res}{space 2}-.5742342{col 44}{space 2} .7055153{col 55}{space 1}   -0.81{col 64}{space 3}0.416{col 72}{space 4}-1.957019{col 85}{space 3} .8085504
+{txt}{space 25}_cons {c |}{col 32}{res}{space 2} -4.54591{col 44}{space 2} 6.060956{col 55}{space 1}   -0.75{col 64}{space 3}0.453{col 72}{space 4}-16.42517{col 85}{space 3} 7.333344
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Usigma                         {txt}{c |}
+{space 25}_cons {c |}{col 32}{res}{space 2}-.1479844{col 44}{space 2} 1.206259{col 55}{space 1}   -0.12{col 64}{space 3}0.902{col 72}{space 4}-2.512209{col 85}{space 3}  2.21624
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Vsigma                         {txt}{c |}
+{space 25}_cons {c |}{col 32}{res}{space 2}-4.062222{col 44}{space 2} .0745045{col 55}{space 1}  -54.52{col 64}{space 3}0.000{col 72}{space 4}-4.208248{col 85}{space 3}-3.916195
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{col 1}{text}     sigma_u{col 14}{c |}{result}{space 2} .9286789{col 26}{space 2} .5601137{col 37}{space 1}    1.66{col 46}{space 3}0.097{col 55}{space 3} .2847612{col 67}{space 3} 3.028659
+{col 1}{text}     sigma_v{col 14}{c |}{result}{space 2} .1311897{col 26}{space 2} .0048871{col 37}{space 1}   26.84{col 46}{space 3}0.000{col 55}{space 3} .1219525{col 67}{space 3} .1411266
+{col 1}{text}      lambda{col 14}{c |}{result}{space 2}   7.0789{col 26}{space 2} .5587479{col 37}{space 1}   12.67{col 46}{space 3}0.000{col 55}{space 3} 5.983774{col 67}{space 3} 8.174026
+{txt}{hline 13}{c BT}{hline 64}
+
+{com}. estimates store bc95_FRA
+{txt}
+{com}. sfpanel `dep_vlist' `indep_vlist' TREND if country=="IRE", model(bc95) d(tnormal) emean(`z_vlist')
+
+{txt}note: azone3 omitted because of collinearity
+{res}
+{txt}initial:{col 16}Log likelihood = {res: -8480.875}
+Iteration 0:{space 3}Log likelihood = {res: -8480.875}  
+Iteration 1:{space 3}Log likelihood = {res:-5569.7536}  (backed up)
+Iteration 2:{space 3}Log likelihood = {res:-5549.8824}  (backed up)
+Iteration 3:{space 3}Log likelihood = {res:-5362.8309}  (backed up)
+Iteration 4:{space 3}Log likelihood = {res: -5346.295}  (backed up)
+Iteration 5:{space 3}Log likelihood = {res:-5314.1733}  (backed up)
+Iteration 6:{space 3}Log likelihood = {res:  -5248.31}  (backed up)
+Iteration 7:{space 3}Log likelihood = {res:-5069.9597}  
+Iteration 8:{space 3}Log likelihood = {res:-5032.7743}  (backed up)
+Iteration 9:{space 3}Log likelihood = {res:-5020.0643}  (backed up)
+Iteration 10:{space 2}Log likelihood = {res:-4999.3627}  (backed up)
+Iteration 11:{space 2}Log likelihood = {res: -4920.771}  
+Iteration 12:{space 2}Log likelihood = {res:-3560.7357}  
+Iteration 13:{space 2}Log likelihood = {res:-3480.7603}  
+Iteration 14:{space 2}Log likelihood = {res:-3033.5263}  
+Iteration 15:{space 2}Log likelihood = {res: -2151.349}  
+Iteration 16:{space 2}Log likelihood = {res:-1904.2777}  
+Iteration 17:{space 2}Log likelihood = {res:-1877.0537}  
+Iteration 18:{space 2}Log likelihood = {res:-1348.8409}  
+Iteration 19:{space 2}Log likelihood = {res:-1116.3911}  
+Iteration 20:{space 2}Log likelihood = {res:-814.53082}  
+Iteration 21:{space 2}Log likelihood = {res:-338.09928}  
+Iteration 22:{space 2}Log likelihood = {res:-135.10367}  
+Iteration 23:{space 2}Log likelihood = {res:-69.887892}  
+Iteration 24:{space 2}Log likelihood = {res: 127.38462}  
+Iteration 25:{space 2}Log likelihood = {res: 326.29393}  
+Iteration 26:{space 2}Log likelihood = {res: 561.40726}  
+Iteration 27:{space 2}Log likelihood = {res: 676.72232}  
+Iteration 28:{space 2}Log likelihood = {res: 715.97738}  
+Iteration 29:{space 2}Log likelihood = {res: 797.19241}  
+Iteration 30:{space 2}Log likelihood = {res: 896.37781}  
+Iteration 31:{space 2}Log likelihood = {res: 1110.7236}  
+Iteration 32:{space 2}Log likelihood = {res:  1163.772}  
+Iteration 33:{space 2}Log likelihood = {res: 1166.7706}  
+Iteration 34:{space 2}Log likelihood = {res: 1191.5316}  
+Iteration 35:{space 2}Log likelihood = {res: 1197.3301}  
+Iteration 36:{space 2}Log likelihood = {res: 1219.1568}  
+Iteration 37:{space 2}Log likelihood = {res: 1233.7099}  
+Iteration 38:{space 2}Log likelihood = {res: 1240.1487}  
+Iteration 39:{space 2}Log likelihood = {res: 1240.7454}  
+Iteration 40:{space 2}Log likelihood = {res: 1242.9876}  
+Iteration 41:{space 2}Log likelihood = {res: 1243.1479}  
+Iteration 42:{space 2}Log likelihood = {res: 1243.6713}  
+Iteration 43:{space 2}Log likelihood = {res: 1243.6904}  
+Iteration 44:{space 2}Log likelihood = {res: 1243.6987}  
+Iteration 45:{space 2}Log likelihood = {res: 1243.7069}  
+Iteration 46:{space 2}Log likelihood = {res: 1243.7546}  
+Iteration 47:{space 2}Log likelihood = {res: 1243.8392}  
+Iteration 48:{space 2}Log likelihood = {res: 1244.0844}  
+Iteration 49:{space 2}Log likelihood = {res: 1244.5625}  
+Iteration 50:{space 2}Log likelihood = {res: 1244.7939}  
+Iteration 51:{space 2}Log likelihood = {res: 1245.1579}  
+Iteration 52:{space 2}Log likelihood = {res: 1245.3284}  
+Iteration 53:{space 2}Log likelihood = {res: 1246.0399}  
+Iteration 54:{space 2}Log likelihood = {res: 1246.2204}  
+Iteration 55:{space 2}Log likelihood = {res: 1246.2562}  
+Iteration 56:{space 2}Log likelihood = {res: 1246.4659}  
+Iteration 57:{space 2}Log likelihood = {res: 1246.6202}  
+Iteration 58:{space 2}Log likelihood = {res: 1246.7591}  
+Iteration 59:{space 2}Log likelihood = {res: 1246.9455}  
+Iteration 60:{space 2}Log likelihood = {res: 1247.0608}  
+Iteration 61:{space 2}Log likelihood = {res: 1247.1526}  
+Iteration 62:{space 2}Log likelihood = {res: 1247.2482}  
+Iteration 63:{space 2}Log likelihood = {res: 1247.3052}  
+Iteration 64:{space 2}Log likelihood = {res: 1247.3909}  
+Iteration 65:{space 2}Log likelihood = {res: 1247.4475}  
+Iteration 66:{space 2}Log likelihood = {res: 1247.7651}  
+Iteration 67:{space 2}Log likelihood = {res: 1247.7918}  
+Iteration 68:{space 2}Log likelihood = {res: 1247.8119}  
+Iteration 69:{space 2}Log likelihood = {res: 1247.8621}  
+Iteration 70:{space 2}Log likelihood = {res: 1247.8799}  
+Iteration 71:{space 2}Log likelihood = {res: 1247.9138}  
+Iteration 72:{space 2}Log likelihood = {res: 1247.9442}  
+Iteration 73:{space 2}Log likelihood = {res: 1247.9744}  
+Iteration 74:{space 2}Log likelihood = {res: 1247.9972}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 75:{space 2}Log likelihood = {res: 1248.0413}  
+Iteration 76:{space 2}Log likelihood = {res: 1248.0465}  (backed up)
+Iteration 77:{space 2}Log likelihood = {res:  1248.047}  (backed up)
+Iteration 78:{space 2}Log likelihood = {res: 1248.0472}  (backed up)
+Iteration 79:{space 2}Log likelihood = {res: 1248.0479}  (backed up)
+Iteration 80:{space 2}Log likelihood = {res: 1248.0487}  (backed up)
+Iteration 81:{space 2}Log likelihood = {res: 1248.0498}  (backed up)
+Iteration 82:{space 2}Log likelihood = {res: 1248.0506}  (backed up)
+Iteration 83:{space 2}Log likelihood = {res: 1248.0508}  (backed up)
+Iteration 84:{space 2}Log likelihood = {res: 1248.0514}  (backed up)
+Iteration 85:{space 2}Log likelihood = {res: 1248.0516}  (backed up)
+Iteration 86:{space 2}Log likelihood = {res: 1248.0517}  (backed up)
+Iteration 87:{space 2}Log likelihood = {res: 1248.0766}  
+Iteration 88:{space 2}Log likelihood = {res:  1248.077}  (backed up)
+Iteration 89:{space 2}Log likelihood = {res:  1248.085}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 90:{space 2}Log likelihood = {res: 1248.1434}  
+Iteration 91:{space 2}Log likelihood = {res: 1248.1448}  (backed up)
+Iteration 92:{space 2}Log likelihood = {res: 1248.1448}  (backed up)
+Iteration 93:{space 2}Log likelihood = {res:  1248.145}  (backed up)
+Iteration 94:{space 2}Log likelihood = {res: 1248.1451}  (backed up)
+Iteration 95:{space 2}Log likelihood = {res: 1248.1459}  (backed up)
+Iteration 96:{space 2}Log likelihood = {res:  1248.146}  (backed up)
+Iteration 97:{space 2}Log likelihood = {res: 1248.1461}  (backed up)
+Iteration 98:{space 2}Log likelihood = {res: 1248.1461}  (backed up)
+Iteration 99:{space 2}Log likelihood = {res: 1248.1464}  (backed up)
+Iteration 100:{space 1}Log likelihood = {res: 1248.1468}  (backed up)
+
+Inefficiency effects model (truncated-normal){col 54}Number of obs {col 68}={col 70}{res}     2702
+{txt}Group variable: {res}pid{txt}{col 51}Number of groups{col 68}={col 70}{res}      581
+{txt}Time variable: {res}year{txt}{col 49}Obs per group: min{col 68}={col 70}{res}        1
+{col 64}{txt}avg{col 68}={col 70}{res}      4.7
+{col 64}{txt}max{col 68}={col 70}{res}        9
+
+{txt}{col 54}Prob > chi2   = {res}   0.0000
+{txt}Log likelihood = {res} 1248.1468{txt}{col 54}Wald chi2({res}9{txt})  = {res} 42216.56
+
+{txt}{hline 31}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}               lndairyproducts{col 32}{c |}      Coef.{col 44}   Std. Err.{col 56}      z{col 64}   P>|z|{col 72}     [95% Con{col 85}f. Interval]
+{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Frontier                       {txt}{c |}
+{space 20}lnfdferfil {c |}{col 32}{res}{space 2}  .088687{col 44}{space 2} .0080876{col 55}{space 1}   10.97{col 64}{space 3}0.000{col 72}{space 4} .0728357{col 85}{space 3} .1045384
+{txt}lnfeedforgrazinglivestockpurch {c |}{col 32}{res}{space 2} .1411571{col 44}{space 2} .0064145{col 55}{space 1}   22.01{col 64}{space 3}0.000{col 72}{space 4} .1285849{col 85}{space 3} .1537292
+{txt}{space 18}lnforagearea {c |}{col 32}{res}{space 2}-.0993707{col 44}{space 2} .0100722{col 55}{space 1}   -9.87{col 64}{space 3}0.000{col 72}{space 4}-.1191119{col 85}{space 3}-.0796296
+{txt}{space 22}lndpnolu {c |}{col 32}{res}{space 2} .8353314{col 44}{space 2} .0135014{col 55}{space 1}   61.87{col 64}{space 3}0.000{col 72}{space 4} .8088691{col 85}{space 3} .8617937
+{txt}{space 12}lnlabourinputhours {c |}{col 32}{res}{space 2} .0372276{col 44}{space 2} .0097137{col 55}{space 1}    3.83{col 64}{space 3}0.000{col 72}{space 4}  .018189{col 85}{space 3} .0562661
+{txt}{space 17}lnmachinery_q {c |}{col 32}{res}{space 2} .0305765{col 44}{space 2}  .004296{col 55}{space 1}    7.12{col 64}{space 3}0.000{col 72}{space 4} .0221565{col 85}{space 3} .0389966
+{txt}{space 17}lnbuildings_q {c |}{col 32}{res}{space 2} .0354006{col 44}{space 2} .0040066{col 55}{space 1}    8.84{col 64}{space 3}0.000{col 72}{space 4} .0275478{col 85}{space 3} .0432535
+{txt}{space 24}azone2 {c |}{col 32}{res}{space 2}-.1418874{col 44}{space 2} .0374773{col 55}{space 1}   -3.79{col 64}{space 3}0.000{col 72}{space 4}-.2153415{col 85}{space 3}-.0684333
+{txt}{space 24}azone3 {c |}{col 32}{res}{space 2}-8.03e-14{col 44}{txt}  (omitted)
+{space 25}TREND {c |}{col 32}{res}{space 2} .0041731{col 44}{space 2} .0011912{col 55}{space 1}    3.50{col 64}{space 3}0.000{col 72}{space 4} .0018384{col 85}{space 3} .0065078
+{txt}{space 25}_cons {c |}{col 32}{res}{space 2} 6.833647{col 44}{space 2} .0790826{col 55}{space 1}   86.41{col 64}{space 3}0.000{col 72}{space 4} 6.678648{col 85}{space 3} 6.988646
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Mu                             {txt}{c |}
+{space 21}lnfdratio {c |}{col 32}{res}{space 2}-1.848183{col 44}{space 2} 4.742043{col 55}{space 1}   -0.39{col 64}{space 3}0.697{col 72}{space 4}-11.14242{col 85}{space 3} 7.446049
+{txt}{space 25}_cons {c |}{col 32}{res}{space 2}-14.61146{col 44}{space 2} 37.91399{col 55}{space 1}   -0.39{col 64}{space 3}0.700{col 72}{space 4}-88.92152{col 85}{space 3} 59.69861
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Usigma                         {txt}{c |}
+{space 25}_cons {c |}{col 32}{res}{space 2} .7104852{col 44}{space 2} 2.526643{col 55}{space 1}    0.28{col 64}{space 3}0.779{col 72}{space 4}-4.241645{col 85}{space 3} 5.662615
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Vsigma                         {txt}{c |}
+{space 25}_cons {c |}{col 32}{res}{space 2}-4.253956{col 44}{space 2} .0557552{col 55}{space 1}  -76.30{col 64}{space 3}0.000{col 72}{space 4}-4.363234{col 85}{space 3}-4.144678
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{col 1}{text}     sigma_u{col 14}{c |}{result}{space 2} 1.426527{col 26}{space 2} 1.802162{col 37}{space 1}    0.79{col 46}{space 3}0.429{col 55}{space 3}  .119933{col 67}{space 3} 16.96763
+{col 1}{text}     sigma_v{col 14}{c |}{result}{space 2}  .119197{col 26}{space 2} .0033229{col 37}{space 1}   35.87{col 46}{space 3}0.000{col 55}{space 3} .1128589{col 67}{space 3}  .125891
+{col 1}{text}      lambda{col 14}{c |}{result}{space 2} 11.96781{col 26}{space 2}  1.80154{col 37}{space 1}    6.64{col 46}{space 3}0.000{col 55}{space 3} 8.436857{col 67}{space 3} 15.49876
+{txt}{hline 13}{c BT}{hline 64}
+
+{com}. estimates store bc95_IRE
+{txt}
+{com}. sfpanel `dep_vlist' `indep_vlist' TREND if country=="UKI", model(bc95) d(tnormal) emean(`z_vlist') 
+
+{res}
+{txt}initial:{col 16}Log likelihood = {res:-10207.308}
+Iteration 0:{space 3}Log likelihood = {res:-10207.308}  
+Iteration 1:{space 3}Log likelihood = {res:-6657.3379}  (backed up)
+Iteration 2:{space 3}Log likelihood = {res:-6499.7547}  (backed up)
+Iteration 3:{space 3}Log likelihood = {res:-4036.3105}  (backed up)
+Iteration 4:{space 3}Log likelihood = {res: -4003.287}  (backed up)
+Iteration 5:{space 3}Log likelihood = {res:-3972.5276}  (backed up)
+Iteration 6:{space 3}Log likelihood = {res:-3928.4313}  (backed up)
+Iteration 7:{space 3}Log likelihood = {res:-3898.1395}  (backed up)
+Iteration 8:{space 3}Log likelihood = {res:-3896.6008}  (backed up)
+Iteration 9:{space 3}Log likelihood = {res:-3855.8404}  (backed up)
+Iteration 10:{space 2}Log likelihood = {res: -3836.996}  (backed up)
+Iteration 11:{space 2}Log likelihood = {res:-3497.7989}  (backed up)
+Iteration 12:{space 2}Log likelihood = {res:-3339.5672}  (backed up)
+Iteration 13:{space 2}Log likelihood = {res:-3155.9832}  (backed up)
+Iteration 14:{space 2}Log likelihood = {res:-3019.5434}  (backed up)
+Iteration 15:{space 2}Log likelihood = {res:-2857.3558}  
+Iteration 16:{space 2}Log likelihood = {res:-621.57617}  
+Iteration 17:{space 2}Log likelihood = {res:-368.19632}  
+Iteration 18:{space 2}Log likelihood = {res: -262.4477}  
+Iteration 19:{space 2}Log likelihood = {res: 131.53781}  
+Iteration 20:{space 2}Log likelihood = {res:  401.4021}  
+Iteration 21:{space 2}Log likelihood = {res: 635.00008}  
+Iteration 22:{space 2}Log likelihood = {res: 941.72129}  
+Iteration 23:{space 2}Log likelihood = {res: 1109.6106}  
+Iteration 24:{space 2}Log likelihood = {res: 1306.7387}  
+Iteration 25:{space 2}Log likelihood = {res: 1416.1583}  
+Iteration 26:{space 2}Log likelihood = {res: 1429.5011}  
+Iteration 27:{space 2}Log likelihood = {res: 1459.8683}  
+Iteration 28:{space 2}Log likelihood = {res: 1499.4487}  
+Iteration 29:{space 2}Log likelihood = {res: 1527.6036}  
+Iteration 30:{space 2}Log likelihood = {res: 1541.0323}  
+Iteration 31:{space 2}Log likelihood = {res: 1552.2806}  
+Iteration 32:{space 2}Log likelihood = {res: 1555.6173}  
+Iteration 33:{space 2}Log likelihood = {res: 1558.7747}  
+Iteration 34:{space 2}Log likelihood = {res: 1561.1646}  
+Iteration 35:{space 2}Log likelihood = {res: 1562.6872}  
+Iteration 36:{space 2}Log likelihood = {res: 1562.7595}  
+Iteration 37:{space 2}Log likelihood = {res: 1562.8893}  
+Iteration 38:{space 2}Log likelihood = {res: 1562.9059}  
+Iteration 39:{space 2}Log likelihood = {res: 1562.9271}  
+Iteration 40:{space 2}Log likelihood = {res: 1562.9463}  
+Iteration 41:{space 2}Log likelihood = {res: 1562.9479}  
+Iteration 42:{space 2}Log likelihood = {res:  1562.948}  
+Iteration 43:{space 2}Log likelihood = {res:  1562.948}  
+Iteration 44:{space 2}Log likelihood = {res: 1562.9484}  
+Iteration 45:{space 2}Log likelihood = {res: 1562.9565}  
+Iteration 46:{space 2}Log likelihood = {res: 1562.9746}  
+Iteration 47:{space 2}Log likelihood = {res: 1562.9855}  
+Iteration 48:{space 2}Log likelihood = {res: 1563.0075}  
+Iteration 49:{space 2}Log likelihood = {res: 1563.0223}  
+Iteration 50:{space 2}Log likelihood = {res:  1563.033}  
+Iteration 51:{space 2}Log likelihood = {res: 1563.0564}  
+Iteration 52:{space 2}Log likelihood = {res: 1563.0598}  
+Iteration 53:{space 2}Log likelihood = {res: 1563.0811}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 54:{space 2}Log likelihood = {res: 1563.0903}  
+Iteration 55:{space 2}Log likelihood = {res: 1563.0905}  (backed up)
+Iteration 56:{space 2}Log likelihood = {res: 1563.0905}  (backed up)
+Iteration 57:{space 2}Log likelihood = {res: 1563.0905}  (backed up)
+Iteration 58:{space 2}Log likelihood = {res: 1563.0908}  (backed up)
+Iteration 59:{space 2}Log likelihood = {res: 1563.0914}  (backed up)
+Iteration 60:{space 2}Log likelihood = {res: 1563.0916}  (backed up)
+Iteration 61:{space 2}Log likelihood = {res: 1563.0916}  (backed up)
+Iteration 62:{space 2}Log likelihood = {res: 1563.0916}  (backed up)
+Iteration 63:{space 2}Log likelihood = {res: 1563.0917}  (backed up)
+Iteration 64:{space 2}Log likelihood = {res: 1563.0918}  (backed up)
+Iteration 65:{space 2}Log likelihood = {res: 1563.0918}  (backed up)
+Iteration 66:{space 2}Log likelihood = {res:  1563.092}  (backed up)
+Iteration 67:{space 2}Log likelihood = {res:  1563.092}  (backed up)
+Iteration 68:{space 2}Log likelihood = {res: 1563.0921}  (backed up)
+Iteration 69:{space 2}Log likelihood = {res: 1563.0941}  
+Iteration 70:{space 2}Log likelihood = {res: 1563.1005}  
+Iteration 71:{space 2}Log likelihood = {res: 1563.1115}  
+Iteration 72:{space 2}Log likelihood = {res: 1563.1182}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 73:{space 2}Log likelihood = {res: 1563.1299}  
+Iteration 74:{space 2}Log likelihood = {res: 1563.1301}  (backed up)
+Iteration 75:{space 2}Log likelihood = {res: 1563.1301}  (backed up)
+Iteration 76:{space 2}Log likelihood = {res: 1563.1301}  (backed up)
+Iteration 77:{space 2}Log likelihood = {res: 1563.1302}  (backed up)
+Iteration 78:{space 2}Log likelihood = {res:  1563.131}  (backed up)
+Iteration 79:{space 2}Log likelihood = {res: 1563.1311}  (backed up)
+Iteration 80:{space 2}Log likelihood = {res: 1563.1311}  (backed up)
+Iteration 81:{space 2}Log likelihood = {res: 1563.1311}  (backed up)
+Iteration 82:{space 2}Log likelihood = {res: 1563.1312}  (backed up)
+Iteration 83:{space 2}Log likelihood = {res: 1563.1312}  (backed up)
+Iteration 84:{space 2}Log likelihood = {res: 1563.1312}  (backed up)
+Iteration 85:{space 2}Log likelihood = {res: 1563.1314}  (backed up)
+Iteration 86:{space 2}Log likelihood = {res: 1563.1315}  (backed up)
+Iteration 87:{space 2}Log likelihood = {res: 1563.1315}  (backed up)
+Iteration 88:{space 2}Log likelihood = {res: 1563.1343}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 89:{space 2}Log likelihood = {res: 1563.1398}  
+Iteration 90:{space 2}Log likelihood = {res: 1563.1403}  (backed up)
+Iteration 91:{space 2}Log likelihood = {res: 1563.1403}  (backed up)
+Iteration 92:{space 2}Log likelihood = {res: 1563.1404}  (backed up)
+Iteration 93:{space 2}Log likelihood = {res: 1563.1404}  (backed up)
+Iteration 94:{space 2}Log likelihood = {res: 1563.1404}  (backed up)
+Iteration 95:{space 2}Log likelihood = {res: 1563.1404}  (backed up)
+Iteration 96:{space 2}Log likelihood = {res: 1563.1404}  (backed up)
+Iteration 97:{space 2}Log likelihood = {res: 1563.1404}  (backed up)
+Iteration 98:{space 2}Log likelihood = {res: 1563.1404}  (backed up)
+Iteration 99:{space 2}Log likelihood = {res: 1563.1405}  (backed up)
+Iteration 100:{space 1}Log likelihood = {res: 1563.1405}  (backed up)
+
+Inefficiency effects model (truncated-normal){col 54}Number of obs {col 68}={col 70}{res}     3611
+{txt}Group variable: {res}pid{txt}{col 51}Number of groups{col 68}={col 70}{res}     1317
+{txt}Time variable: {res}year{txt}{col 49}Obs per group: min{col 68}={col 70}{res}        1
+{col 64}{txt}avg{col 68}={col 70}{res}      2.7
+{col 64}{txt}max{col 68}={col 70}{res}        9
+
+{txt}{col 54}Prob > chi2   = {res}   0.0000
+{txt}Log likelihood = {res} 1563.1405{txt}{col 54}Wald chi2({res}10{txt})  = {res} 74452.73
+
+{txt}{hline 31}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}               lndairyproducts{col 32}{c |}      Coef.{col 44}   Std. Err.{col 56}      z{col 64}   P>|z|{col 72}     [95% Con{col 85}f. Interval]
+{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Frontier                       {txt}{c |}
+{space 20}lnfdferfil {c |}{col 32}{res}{space 2} .0190576{col 44}{space 2} .0051337{col 55}{space 1}    3.71{col 64}{space 3}0.000{col 72}{space 4} .0089957{col 85}{space 3} .0291195
+{txt}lnfeedforgrazinglivestockpurch {c |}{col 32}{res}{space 2} .2271549{col 44}{space 2} .0056977{col 55}{space 1}   39.87{col 64}{space 3}0.000{col 72}{space 4} .2159876{col 85}{space 3} .2383223
+{txt}{space 18}lnforagearea {c |}{col 32}{res}{space 2}-.0645212{col 44}{space 2} .0074729{col 55}{space 1}   -8.63{col 64}{space 3}0.000{col 72}{space 4}-.0791677{col 85}{space 3}-.0498746
+{txt}{space 22}lndpnolu {c |}{col 32}{res}{space 2} .8116366{col 44}{space 2} .0102664{col 55}{space 1}   79.06{col 64}{space 3}0.000{col 72}{space 4} .7915148{col 85}{space 3} .8317583
+{txt}{space 12}lnlabourinputhours {c |}{col 32}{res}{space 2} .0115395{col 44}{space 2} .0088454{col 55}{space 1}    1.30{col 64}{space 3}0.192{col 72}{space 4} -.005797{col 85}{space 3} .0288761
+{txt}{space 17}lnmachinery_q {c |}{col 32}{res}{space 2} .0632047{col 44}{space 2} .0047053{col 55}{space 1}   13.43{col 64}{space 3}0.000{col 72}{space 4} .0539826{col 85}{space 3} .0724269
+{txt}{space 17}lnbuildings_q {c |}{col 32}{res}{space 2} .0038938{col 44}{space 2} .0008718{col 55}{space 1}    4.47{col 64}{space 3}0.000{col 72}{space 4} .0021851{col 85}{space 3} .0056025
+{txt}{space 24}azone2 {c |}{col 32}{res}{space 2}-.0435586{col 44}{space 2} .0132187{col 55}{space 1}   -3.30{col 64}{space 3}0.001{col 72}{space 4}-.0694668{col 85}{space 3}-.0176504
+{txt}{space 24}azone3 {c |}{col 32}{res}{space 2} .0808616{col 44}{space 2}  .027688{col 55}{space 1}    2.92{col 64}{space 3}0.003{col 72}{space 4} .0265941{col 85}{space 3}  .135129
+{txt}{space 25}TREND {c |}{col 32}{res}{space 2} .0042664{col 44}{space 2} .0010937{col 55}{space 1}    3.90{col 64}{space 3}0.000{col 72}{space 4} .0021228{col 85}{space 3}   .00641
+{txt}{space 25}_cons {c |}{col 32}{res}{space 2} 6.886168{col 44}{space 2} .0666399{col 55}{space 1}  103.33{col 64}{space 3}0.000{col 72}{space 4} 6.755556{col 85}{space 3}  7.01678
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Mu                             {txt}{c |}
+{space 21}lnfdratio {c |}{col 32}{res}{space 2} -.631413{col 44}{space 2} .3646837{col 55}{space 1}   -1.73{col 64}{space 3}0.083{col 72}{space 4} -1.34618{col 85}{space 3} .0833539
+{txt}{space 25}_cons {c |}{col 32}{res}{space 2}-6.921385{col 44}{space 2} 3.899339{col 55}{space 1}   -1.78{col 64}{space 3}0.076{col 72}{space 4}-14.56395{col 85}{space 3} .7211789
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Usigma                         {txt}{c |}
+{space 25}_cons {c |}{col 32}{res}{space 2} .0263274{col 44}{space 2} .5317708{col 55}{space 1}    0.05{col 64}{space 3}0.961{col 72}{space 4}-1.015924{col 85}{space 3} 1.068579
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Vsigma                         {txt}{c |}
+{space 25}_cons {c |}{col 32}{res}{space 2}-4.386118{col 44}{space 2} .0526899{col 55}{space 1}  -83.24{col 64}{space 3}0.000{col 72}{space 4}-4.489388{col 85}{space 3}-4.282848
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{col 1}{text}     sigma_u{col 14}{c |}{result}{space 2} 1.013251{col 26}{space 2} .2694085{col 37}{space 1}    3.76{col 46}{space 3}0.000{col 55}{space 3} .6017206{col 67}{space 3} 1.706235
+{col 1}{text}     sigma_v{col 14}{c |}{result}{space 2} .1115749{col 26}{space 2} .0029394{col 37}{space 1}   37.96{col 46}{space 3}0.000{col 55}{space 3}   .10596{col 67}{space 3} .1174874
+{col 1}{text}      lambda{col 14}{c |}{result}{space 2} 9.081348{col 26}{space 2} .2691934{col 37}{space 1}   33.74{col 46}{space 3}0.000{col 55}{space 3} 8.553739{col 67}{space 3} 9.608957
+{txt}{hline 13}{c BT}{hline 64}
+
+{com}. estimates store bc95_UKI
+{txt}
+{com}. 
+. *bysort country: xtreg `dep_vlist' `indep_vlist' , constraints(1)
+. 
+. *`model1command'
+. 
+. *sfpanel `dep_vlist' `indep_vlist' year if country=="IRE",  model(tfe) cost d(exponential) usigma(`z_vlist') vsigma(`z_vlist') // emean(`z_vlist')  
+. *estimates store tfe
+. 
+. *sfpanel `dep_vlist' `indep_vlist' year if country=="IRE",  model(tre) cost d(exponential) usigma(`z_vlist') vsigma(`z_vlist') // emean(`z_vlist')  
+. *estimates store tre
+. 
+. *sfpanel `dep_vlist' `indep_vlist' year,  model(bc95) cost d(tnormal) emean(`z_vlist') // usigma(`z_vlist')  vsigma(`z_vlist') marginal(`z_vlist')  constraint(1)
+. * ===================
+. 
+. * store estimates 
+. qui estimates store `model1name'
+{txt}
+{com}. 
+. 
+. * create list of price parameters to sum for homogeneity test
+. local est_vlist: colnames e(b)
+{txt}
+{com}. local lnhomog_w: list lnhomog_w & est_vlist
+{txt}
+{com}. foreach lnw_var of local lnhomog_w {c -(}
+{txt}  2{com}.         local homog_w_test "`homog_w_test' _b[`lnw_var'] +"
+{txt}  3{com}. {c )-}
+{txt}
+{com}. * remove trailing "+" from homog_w_test
+. local homog_w_test: di substr("`homog_w_test'", 1, length("`homog_w_test'")-1)
+{res}{txt}
+{com}. 
+. 
+. predict xb, xb
+{txt}(2775 missing values generated)
+
+{com}. predict u, u
+{txt}(2775 missing values generated)
+(2775 missing values generated)
+(4945 missing values generated)
+
+{com}. qui reg `dep_vlist' xb u
+{txt}
+{com}. di "R-squared for reg of predictions + u on `dep_vlist' is `e(r2)'. "
+{res}R-squared for reg of predictions + u on lndairyproducts is .9833496232902638. 
+{txt}
+{com}. qui xtreg `dep_vlist' `indep_vlist', fe
+{txt}
+{com}. di "R-squared for xtreg of equivalent spec is `e(r2)'"
+{res}R-squared for xtreg of equivalent spec is .5753927745043383
+{txt}
+{com}. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. * Get the AIC and BIC estimates for the fitted model
+. estimates stats
+
+{txt}{hline 13}{c TT}{hline 63}
+       Model {c |}    Obs    ll(null)   ll(model)     df          AIC         BIC
+{hline 13}{c +}{hline 63}
+{ralign 12:.}{col 14}{c |}{res}{col 17}19185{col 25}  14789.8{col 37} 23006.65{col 48}   10{col 57} -45993.3{col 69}-45914.68
+{txt}{hline 13}{c BT}{hline 63}
+{p 15 22 2}
+Note:  N=Obs used in calculating BIC; see {helpb bic_note:[R] BIC note}
+{p_end}
+
+{com}. 
+. 
+. 
+. 
+. qui estimates save  `fadnoutdatadir'/`model1name'$datestamp$timestamp.ster, replace
+{txt}
+{com}. qui capture drop te_`model1name'
+{txt}
+{com}. 
+. 
+. 
+. 
+. 
+. * constructs ind. level CI's for TE scores
+. *qui frontier_teci te_`model1name'_ci 
+. 
+. /*
+> * store estimates and predict ind. TE scores
+> qui estimates store `model2name'
+> qui estimates save  `model2name'$datestamp.ster, replace
+> qui capture drop te_`model2name'
+> qui predict te_`model2name', `predict_opts'
+> */
+. 
+. save `fadnoutdatadir'/$datanameSFApost, replace
+{txt}file G:\\Data/data_FADNPanelAnalysis/OutData/multisward/.dta saved
+
+{com}. 
+. STOP!!
+{err}unrecognized command:  STOP
+{txt}{search r(199):r(199);}
+
+end of do-file
+
+{search r(199):r(199);}
+
+{com}. tabstat dairyproducts totalspecificcosts dpnolu fsizuaa daforare labourinputhours fdferfil fdratio buildings machinery if year==2007
+
+{txt}   stats {...}
+{c |}{...}
+  dairyp~s  tota~sts    dpnolu   fsizuaa  daforare  labour~s  fdferfil   fdratio
+{hline 9}{c +}{hline 80}
+{ralign 8:mean} {...}
+{c |}{...}
+ {res} 506339.2   81642.1  73.92638  76.91434  40.81014  4497.348   8356.57  22.20582
+{txt}{hline 9}{c BT}{hline 80}
+
+   stats {...}
+{c |}{...}
+  buildi~s  machin~y
+{hline 9}{c +}{hline 20}
+{ralign 8:mean} {...}
+{c |}{...}
+ {res} 101683.3  86677.75
+{txt}{hline 9}{c BT}{hline 20}
+
+{com}. tabstat dairyproducts totalspecificcosts dpnolu fsizuaa daforare labourinputhours fdferfil fdratio buildings machinery if year==2007, over(country)
+{err}option over() not allowed
+{txt}{search r(198):r(198);}
+
+{com}. tabstat dairyproducts totalspecificcosts dpnolu fsizuaa daforare labourinputhours fdferfil fdratio buildings machinery if year==2007, by(country)
+
+{txt}Summary statistics: mean
+  by categories of: country (a24)
+
+{ralign 7:country} {...}
+{c |}{...}
+  dairyp~s  tota~sts    dpnolu   fsizuaa  daforare  labour~s  fdferfil   fdratio
+{hline 8}{c +}{hline 80}
+{ralign 7:DEU} {...}
+{c |}{...}
+ {res} 460647.3  74908.97  63.43969  72.87404  35.37688  4407.967  7467.694  27.17249
+{txt}{ralign 7:FRA} {...}
+{c |}{...}
+ {res} 289134.9  37773.05   48.5381  70.12569  37.58724  2791.058  5335.455  17.46464
+{txt}{ralign 7:IRE} {...}
+{c |}{...}
+ {res} 334422.8   47920.8  60.97993  56.14034  31.75213  3865.286  8388.946  22.74024
+{txt}{ralign 7:UKI} {...}
+{c |}{...}
+ {res} 886885.8  152443.4  125.1623  104.0904  60.86675  6452.193   12691.8  14.85264
+{txt}{hline 8}{c +}{hline 80}
+{ralign 7:Total} {...}
+{c |}{...}
+ {res} 506339.2   81642.1  73.92638  76.91434  40.81014  4497.348   8356.57  22.20582
+{txt}{hline 8}{c BT}{hline 80}
+
+{ralign 7:country} {...}
+{c |}{...}
+  buildi~s  machin~y
+{hline 8}{c +}{hline 20}
+{ralign 7:DEU} {...}
+{c |}{...}
+ {res} 106664.8  97469.65
+{txt}{ralign 7:FRA} {...}
+{c |}{...}
+ {res}  92838.1  63062.71
+{txt}{ralign 7:IRE} {...}
+{c |}{...}
+ {res} 107267.4  52650.79
+{txt}{ralign 7:UKI} {...}
+{c |}{...}
+ {res} 94439.51  103280.2
+{txt}{hline 8}{c +}{hline 20}
+{ralign 7:Total} {...}
+{c |}{...}
+ {res} 101683.3  86677.75
+{txt}{hline 8}{c BT}{hline 20}
+
+{com}. tabstat dairyproducts totalspecificcosts dpnolu fsizuaa daforare labourinputhours fdferfil fdratio buildings machinery if year==2007, by(country) col(stats)
+
+{txt}Summary for variables: dairyproducts totalspecificcosts dpnolu fsizuaa daforare labourinputhours fdferfil fdratio buildings machinery
+{col 6}by categories of: country (a24)
+
+{ralign 7:country} {...}
+{c |}      mean
+{hline 8}{c +}{hline 10}
+{ralign 7:DEU} {...}
+{c |}{...}
+ {res} 460647.3
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 74908.97
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 63.43969
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 72.87404
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 35.37688
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 4407.967
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 7467.694
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 27.17249
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 106664.8
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 97469.65
+{txt}{hline 8}{c +}{hline 10}
+{ralign 7:FRA} {...}
+{c |}{...}
+ {res} 289134.9
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 37773.05
+{space 7} {...}
+{txt}{c |}{...}
+ {res}  48.5381
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 70.12569
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 37.58724
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 2791.058
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 5335.455
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 17.46464
+{space 7} {...}
+{txt}{c |}{...}
+ {res}  92838.1
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 63062.71
+{txt}{hline 8}{c +}{hline 10}
+{ralign 7:IRE} {...}
+{c |}{...}
+ {res} 334422.8
+{space 7} {...}
+{txt}{c |}{...}
+ {res}  47920.8
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 60.97993
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 56.14034
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 31.75213
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 3865.286
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 8388.946
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 22.74024
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 107267.4
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 52650.79
+{txt}{hline 8}{c +}{hline 10}
+{ralign 7:UKI} {...}
+{c |}{...}
+ {res} 886885.8
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 152443.4
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 125.1623
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 104.0904
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 60.86675
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 6452.193
+{space 7} {...}
+{txt}{c |}{...}
+ {res}  12691.8
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 14.85264
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 94439.51
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 103280.2
+{txt}{hline 8}{c +}{hline 10}
+{ralign 7:Total} {...}
+{c |}{...}
+ {res} 506339.2
+{space 7} {...}
+{txt}{c |}{...}
+ {res}  81642.1
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 73.92638
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 76.91434
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 40.81014
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 4497.348
+{space 7} {...}
+{txt}{c |}{...}
+ {res}  8356.57
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 22.20582
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 101683.3
+{space 7} {...}
+{txt}{c |}{...}
+ {res} 86677.75
+{txt}{hline 8}{c BT}{hline 10}
+
+{com}. tabstat feedforgrazinglivestockpurch if year==2007, by(country)
+
+{txt}Summary for variables: feedforgrazinglivestockpurch
+{col 6}by categories of: country (a24)
+
+{ralign 7:country} {...}
+{c |}      mean
+{hline 8}{c +}{hline 10}
+{ralign 7:DEU} {...}
+{c |}{...}
+ {res} 34527.82
+{txt}{ralign 7:FRA} {...}
+{c |}{...}
+ {res} 19524.22
+{txt}{ralign 7:IRE} {...}
+{c |}{...}
+ {res} 21552.81
+{txt}{ralign 7:UKI} {...}
+{c |}{...}
+ {res} 82413.05
+{txt}{hline 8}{c +}{hline 10}
+{ralign 7:Total} {...}
+{c |}{...}
+ {res} 40566.41
+{txt}{hline 8}{c BT}{hline 10}
+
+{com}. exit, clear

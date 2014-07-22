@@ -1,0 +1,17 @@
+matrix list e(b)
+matrix list e(b)[Usigma]
+matrix list b_[Usigma]
+matrix list e(b)["Usigma"]
+matrix list b_["Usigma"]
+matrix list e(b)_["Usigma"]
+matrix list e(b)[1]
+matrix list e(b)[1,1]
+matrix list e(b)[1,2]
+di e(b)["Usigma"]
+di e(b)[14]
+di "e(b)[14]"
+di scalar(e(b)[14])
+di e(b)[14]
+di exp(-6.1841749)
+clear
+exit

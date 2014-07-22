@@ -1,0 +1,571 @@
+RESET$ 
+
+READ;FILE="D:\R E S E A R C H\DATA\Data\THESIS\CTL REAR\CTL REAR DATA XLS.xls"$
+DELETE		;CD$
+
+DSTAT		;RHS=Y,H,L,A,C,D$
+
+REJECT		;T<1$
+REJECT		;Y<1$
+
+
+? CREATE PANEL INDICATOR 
+
+SORT		;LHS=FC;RHS=*$
+CREATE	 	;IND=NDX(FC,0)$
+REGRESS	;LHS=ONE;RHS=ONE;STR=fc;PANEL$
+CREATE		;GRPSIZE=_GROUPTI$
+CALC		;LIST;G=MAX(GRPSIZE)$
+
+CALC		;MEANY=XBR(Y)$
+CALC		;MEANH=XBR(H)$
+CALC		;MEANL=XBR(L)$
+CALC		;MEANA=XBR(A2)$
+CALC		;MEANC=XBR(C)$
+CALC		;MEAND=XBR(D)$	
+
+CREATE		;LNY=LOG(Y/MEANY)$
+CREATE		;LNH=LOG(H/MEANH)$
+CREATE		;LNL=LOG(L/MEANL)$
+CREATE		;LNA=LOG(A2/MEANA)$
+CREATE		;LNC=LOG(C/MEANC)$
+CREATE		;LND=LOG(D/MEAND)$
+
+CREATE		;LNHH = LNH*LNH	
+		;LNHL = LNH*LNL
+		;LNHC = LNH*LNC
+		;LNHA = LNH*LNA
+		;LNHD = LNH*LND
+		;LNLL = LNL*LNL
+		;LNLC = LNL*LNC
+		;LNLA = LNL*LNA
+		;LNLD = LNL*LND
+		;LNCC = LNC*LNC
+		;LNCA = LNC*LNA
+		;LNCD = LNC*LND
+		;LNAA = LNA*LNA
+		;LNAD = LNA*LND
+		;LNDD = LND*LND
+		;TT=T*T$
+
+NAMELIST	;TDV=T2,T3,T4,T5,T6,T7,T8,T9,T10,T11$
+NAMELIST 	;CD=ONE,LNL,LNC,LNA,LND$
+NAMELIST	;TL=LNLL,LNLC,LNLA,LNLD,LNCC,LNCA,LNCD,LNAA,LNAD,LNDD$
+
+????????????????????????????????????????????? GETTING RID OF WIERD FARMS BEFORE ACTUAL ANALYSIS ?????????????????????????????????????????????????
+
+FRONTIER	;LHS=LNY;RHS=CD,TL,TDV$
+FRONTIER	;LHS=LNY;RHS=CD,TL,TDV;PDS=GRPSIZE;HALTON;PTS=50;RPM;FCN=ONE(n);EFF=UTRE$
+FRONTIER	;LHS=LNY;RHS=CD,TL,TDV$
+FRONTIER	;LHS=LNY;RHS=CD,TL,TDV;PDS=GRPSIZE;FEM;EFF=UTFE$
+reject		;utre>1$
+reject		;utfe>1$
+
+??????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
+
+? pit and lee (1981)
+SAMPLE		;ALL$
+reject		;utre>1$
+reject		;utfe>1$
+
+FRONTIER	;LHS=LNY;RHS=CD,TL,TDV;PDS=GRPSIZE;EFF=UPL$
+CREATE		;EPL=EXP(-UPL)$
+DSTAT		;RHS=UPL;WTS=W$
+
+CREATE		;B1 =  B(2)
+		;B2 =  B(3)
+		;B3 =  B(4)
+		;B4 =  B(5)
+		;B11 = B(6)
+		;B12 = B(7)
+		;B13 = B(8)
+		;B14 = B(9)
+		;B22 = B(10)
+		;B23 = B(11)
+		;B24 = B(12)
+		;B33 = B(13)
+		;B34 = B(14)	
+		;B44 = B(15)$
+
+CREATE;	ELP=B1+(2*LNL*B11)+(LNC*B12)+(LNA*B13)+(LND*B14)$
+CREATE;	ECP=B2+(LNL*B12)+(2*LNC*B22)+(LNA*B23)+(LND*B24)$
+CREATE;	EAP=B3+(LNL*B13)+(LNC*B23)+(2*LNA*B33)+(LND*B34)$
+CREATE;	EDP=B4+(LNL*B14)+(LNC*B24)+(LNA*B34)+(2*LND*B44)$
+
+create		;EL2P=(2*B11)+((ELP-1)*(ELP))$
+create		;EC2P=(2*B22)+((ECP-1)*(ECP))$
+create		;EA2P=(2*B33)+((EAP-1)*(EAP))$
+create		;ED2P=(2*B44)+((EDP-1)*(EDP))$
+
+CREATE;	RTSP=EDP+ECP+ELP+EAP$
+
+DSTAT		;RHS=EAP,EDP,ECP,ELP,EA2P,ED2P,EC2P,EL2P,RTSP$
+
+INCLUDE	;New;t=1$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EPL,ELP,ECP,EAP,EDP,LNL,LNC,LNA,LND;WTS=W$
+
+INCLUDE	;New;t=2$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EPL,ELP,ECP,EAP,EDP,LNL,LNC,LNA,LND;WTS=W$
+
+INCLUDE	;New;t=3$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EPL,ELP,ECP,EAP,EDP,LNL,LNC,LNA,LND;WTS=W$
+
+INCLUDE	;New;t=4$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EPL,ELP,ECP,EAP,EDP,LNL,LNC,LNA,LND;WTS=W$
+
+INCLUDE	;New;t=5$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EPL,ELP,ECP,EAP,EDP,LNL,LNC,LNA,LND;WTS=W$
+
+INCLUDE	;New;t=6$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EPL,ELP,ECP,EAP,EDP,LNL,LNC,LNA,LND;WTS=W$
+
+INCLUDE	;New;t=7$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EPL,ELP,ECP,EAP,EDP,LNL,LNC,LNA,LND;WTS=W$
+
+INCLUDE	;New;t=8$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EPL,ELP,ECP,EAP,EDP,LNL,LNC,LNA,LND;WTS=W$
+
+INCLUDE	;New;t=9$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EPL,ELP,ECP,EAP,EDP,LNL,LNC,LNA,LND;WTS=W$
+
+INCLUDE	;New;t=10$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EPL,ELP,ECP,EAP,EDP,LNL,LNC,LNA,LND;WTS=W$
+
+INCLUDE	;New;t=11$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EPL,ELP,ECP,EAP,EDP,LNL,LNC,LNA,LND;WTS=W$
+
+
+???????????????????? B AND C ????????????????????????????????
+
+SAMPLE		;ALL$
+reject		;utre>1$
+reject		;utfe>1$
+FRONTIER	;LHS=LNY;RHS=CD,TL,TDV;PDS=GRPSIZE;MODEL=BC;EFF=UBC$
+CREATE		;EBC=EXP(-UBC)$
+
+SAMPLE		;ALL$
+reject		;utre>1$
+reject		;utfe>1$
+CREATE		;B1 =  B(2)
+		;B2 =  B(3)
+		;B3 =  B(4)
+		;B4 =  B(5)
+		;B11 = B(6)
+		;B12 = B(7)
+		;B13 = B(8)
+		;B14 = B(9)
+		;B22 = B(10)
+		;B23 = B(11)
+		;B24 = B(12)
+		;B33 = B(13)
+		;B34 = B(14)	
+		;B44 = B(15)$
+
+CREATE;	ELB=B1+(2*LNL*B11)+(LNC*B12)+(LNA*B13)+(LND*B14)$
+CREATE;	ECB=B2+(LNL*B12)+(2*LNC*B22)+(LNA*B23)+(LND*B24)$
+CREATE;	EAB=B3+(LNL*B13)+(LNC*B23)+(2*LNA*B33)+(LND*B34)$
+CREATE;	EDB=B4+(LNL*B14)+(LNC*B24)+(LNA*B34)+(2*LND*B44)$
+
+create		;EL2B=(2*B11)+((ELB-1)*(ELB))$
+create		;EC2B=(2*B22)+((ECB-1)*(ECB))$
+create		;EA2B=(2*B33)+((EAB-1)*(EAB))$
+create		;ED2B=(2*B44)+((EDB-1)*(EDB))$
+
+CREATE;	RTSB=EDB+ECB+ELB+EAB$
+
+DSTAT		;RHS=EAB,EDB,ECB,ELB,EA2B,ED2B,EC2B,EL2B,RTSB$
+
+INCLUDE	;New;t=1$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EBC,ELB,ECB,EAB,EDB;WTS=W$
+
+INCLUDE	;New;t=2$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EBC,ELB,ECB,EAB,EDB;WTS=W$
+
+INCLUDE	;New;t=3$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EBC,ELB,ECB,EAB,EDB;WTS=W$
+
+INCLUDE	;New;t=4$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EBC,ELB,ECB,EAB,EDB;WTS=W$
+
+INCLUDE	;New;t=5$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EBC,ELB,ECB,EAB,EDB;WTS=W$
+
+INCLUDE	;New;t=6$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EBC,ELB,ECB,EAB,EDB;WTS=W$
+
+INCLUDE	;New;t=7$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EBC,ELB,ECB,EAB,EDB;WTS=W$
+
+INCLUDE	;New;t=8$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EBC,ELB,ECB,EAB,EDB;WTS=W$
+
+INCLUDE	;New;t=9$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EBC,ELB,ECB,EAB,EDB;WTS=W$
+
+INCLUDE	;New;t=10$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EBC,ELB,ECB,EAB,EDB;WTS=W$
+
+INCLUDE	;New;t=11$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=EBC,ELB,ECB,EAB,EDB;WTS=W$
+
+SAMPLE		;ALL$
+reject		;utre>1$
+reject		;utfe>1$
+
+
+???????????????????????????????????????? TRE ???????????????????????????????????
+SAMPLE		;ALL$
+reject		;utre>1$
+reject		;utfe>1$
+FRONTIER	;LHS=LNY;RHS=CD,TL,TDV$
+FRONTIER	;LHS=LNY;RHS=CD,TL,TDV;PDS=GRPSIZE;HALTON;PTS=50;RPM;FCN=ONE(n);EFF=UTRE$
+CREATE		;ETRE=EXP(-UTRE)$
+
+SAMPLE		;ALL$
+reject		;utre>1$
+reject		;utfe>1$
+CREATE		;B1 =  B(1)
+		;B2 =  B(2)
+		;B3 =  B(3)
+		;B4 =  B(4)
+		;B11 = B(5)
+		;B12 = B(6)
+		;B13 = B(7)
+		;B14 = B(8)
+		;B22 = B(9)
+		;B23 = B(10)
+		;B24 = B(11)
+		;B33 = B(12)
+		;B34 = B(13)	
+		;B44 = B(14)$
+
+CREATE;	ELR=B1+(2*LNL*B11)+(LNC*B12)+(LNA*B13)+(LND*B14)$
+CREATE;	ECR=B2+(LNL*B12)+(2*LNC*B22)+(LNA*B23)+(LND*B24)$
+CREATE;	EAR=B3+(LNL*B13)+(LNC*B23)+(2*LNA*B33)+(LND*B34)$
+CREATE;	EDR=B4+(LNL*B14)+(LNC*B24)+(LNA*B34)+(2*LND*B44)$
+
+create		;EL2R=(2*B11)+((ELR-1)*(ELR))$
+create		;EC2R=(2*B22)+((ECR-1)*(ECR))$
+create		;EA2R=(2*B33)+((EAR-1)*(EAR))$
+create		;ED2R=(2*B44)+((EDR-1)*(EDR))$
+
+CREATE;	RTSR=EDR+ECR+ELR+EAR$
+
+DSTAT		;RHS=EAR,EDR,ECR,ELR,EA2R,ED2R,EC2R,EL2R,RTSR$
+
+INCLUDE	;New;t=1$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETRE,ELR,ECR,EAR,EDR;WTS=W$
+
+INCLUDE	;New;t=2$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETRE,ELR,ECR,EAR,EDR;WTS=W$
+
+INCLUDE	;New;t=3$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETRE,ELR,ECR,EAR,EDR;WTS=W$
+
+INCLUDE	;New;t=4$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETRE,ELR,ECR,EAR,EDR;WTS=W$
+
+INCLUDE	;New;t=5$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETRE,ELR,ECR,EAR,EDR;WTS=W$
+
+INCLUDE	;New;t=6$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETRE,ELR,ECR,EAR,EDR;WTS=W$
+
+INCLUDE	;New;t=7$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETRE,ELR,ECR,EAR,EDR;WTS=W$
+
+INCLUDE	;New;t=8$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETRE,ELR,ECR,EAR,EDR;WTS=W$
+
+INCLUDE	;New;t=9$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETRE,ELR,ECR,EAR,EDR;WTS=W$
+
+INCLUDE	;New;t=10$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETRE,ELR,ECR,EAR,EDR;WTS=W$
+
+INCLUDE	;New;t=11$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETRE,ELR,ECR,EAR,EDR;WTS=W$
+
+SAMPLE		;ALL$
+reject		;utre>1$
+reject		;utfe>1$
+
+
+???????????????????????????????????????? TFE ???????????????????????????????????
+
+SAMPLE		;ALL$
+reject		;utre>1$
+reject		;utfe>1$
+FRONTIER	;LHS=LNY;RHS=CD,TL,TDV$
+FRONTIER	;LHS=LNY;RHS=CD,TL,TDV;PDS=GRPSIZE;FEM;EFF=UTFE$
+CREATE		;ETFE=EXP(-UTFE)$
+
+SAMPLE		;ALL$
+reject		;utre>1$
+reject		;utfe>1$
+CREATE		;B1 =  B(1)
+		;B2 =  B(2)
+		;B3 =  B(3)
+		;B4 =  B(4)
+		;B11 = B(5)
+		;B12 = B(6)
+		;B13 = B(7)
+		;B14 = B(8)
+		;B22 = B(9)
+		;B23 = B(10)
+		;B24 = B(11)
+		;B33 = B(12)
+		;B34 = B(13)	
+		;B44 = B(14)$
+
+CREATE;	ELF=B1+(2*LNL*B11)+(LNC*B12)+(LNA*B13)+(LND*B14)$
+CREATE;	ECF=B2+(LNL*B12)+(2*LNC*B22)+(LNA*B23)+(LND*B24)$
+CREATE;	EAF=B3+(LNL*B13)+(LNC*B23)+(2*LNA*B33)+(LND*B34)$
+CREATE;	EDF=B4+(LNL*B14)+(LNC*B24)+(LNA*B34)+(2*LND*B44)$
+
+create		;EL2F=(2*B11)+((ELF-1)*(ELF))$
+create		;EC2F=(2*B22)+((ECF-1)*(ECF))$
+create		;EA2F=(2*B33)+((EAF-1)*(EAF))$
+create		;ED2F=(2*B44)+((EDF-1)*(EDF))$
+
+CREATE;	RTSF=EDF+ECF+ELF+EAF$
+
+DSTAT		;RHS=EAF,EDF,ECF,ELF,EA2F,ED2F,EC2F,EL2F,RTSF$
+
+INCLUDE	;New;t=1$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETFE,ELF,ECF,EAF,EDF;WTS=W$
+
+INCLUDE	;New;t=2$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETFE,ELF,ECF,EAF,EDF;WTS=W$
+
+INCLUDE	;New;t=3$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETFE,ELF,ECF,EAF,EDF;WTS=W$
+
+INCLUDE	;New;t=4$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETFE,ELF,ECF,EAF,EDF;WTS=W$
+
+INCLUDE	;New;t=5$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETFE,ELF,ECF,EAF,EDF;WTS=W$
+
+INCLUDE	;New;t=6$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETFE,ELF,ECF,EAF,EDF;WTS=W$
+
+INCLUDE	;New;t=7$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETFE,ELF,ECF,EAF,EDF;WTS=W$
+
+INCLUDE	;New;t=8$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETFE,ELF,ECF,EAF,EDF;WTS=W$
+
+INCLUDE	;New;t=9$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETFE,ELF,ECF,EAF,EDF;WTS=W$
+
+INCLUDE	;New;t=10$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETFE,ELF,ECF,EAF,EDF;WTS=W$
+
+INCLUDE	;New;t=11$
+reject		;utre>1$
+reject		;utfe>1$
+DSTAT		;RHS=ETFE,ELF,ECF,EAF,EDF;WTS=W$
+
+SAMPLE		;ALL$
+reject		;utre>1$
+reject		;utfe>1$
+
+WRITE;w,t,fc,upl,ubc,utre,utfe;File="D:\R E S E A R C H\DATA\Data\THESIS\CTL REAR\UITS CTLR";Format=XLS$
+
+
+?kernal	;rhs=upl$
+?kernal	;rhs=ubc$
+?kernal	;rhs=utre$
+?KERNAL	;RHS=UTFE$
+
+SAMPLE		;ALL$
+INCLUDE	;New;t=1$
+reject		;utre>1$
+reject		;utfe>1$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=2$
+reject		;utre>1$
+reject		;utfe>1$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=3$
+reject		;utre>1$
+reject		;utfe>1$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=4$
+reject		;utre>1$
+reject		;utfe>1$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=5$
+reject		;utre>1$
+reject		;utfe>1$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=6$
+reject		;utre>1$
+reject		;utfe>1$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=7$
+reject		;utre>1$
+reject		;utfe>1$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=8$
+reject		;utre>1$
+reject		;utfe>1$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=9$
+reject		;utre>1$
+reject		;utfe>1$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=10$
+reject		;utre>1$
+reject		;utfe>1$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=11$
+reject		;utre>1$
+reject		;utfe>1$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+SAMPLE		;ALL$
+reject		;utre>1$
+reject		;utfe>1$
+
+dstat		;rhs=rkpl2,rkbc2,rktre2,rktfe2;output=2$
+
+?WRITE		;t,fc,upl,ubc,utre,utfe,rkpl2,rkbc2,rktre2,rktfe2
+?			;File="D:\R E S E A R C H\DATA\Data\THESIS\CTL REAR\UITS CTLR"
+?			;Format=XLS$
+
+
+?WRITE;W,FC,T,EAF,EDF,ECF,ELF,EA2F,ED2F,EC2F,EL2F,RTSF,EAR,EDR,ECR,ELR,EA2R,
+?	ED2R,EC2R,EL2R,RTSR,EAB,EDB,ECB,ELB,EA2B,ED2B,EC2B,EL2B,RTSB,EAP,EDP,ECP,
+?	ELP,EA2P,ED2P,EC2P,EL2P,RTSP
+?	;File="D:\DATA\Data\THESIS\CTL REAR\THEORY DATA.wks";Format=WKS$

@@ -1,0 +1,9 @@
+{
+    "path" : "/media/MyPassport/Data",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}

@@ -1,0 +1,269 @@
+% Header
+\documentclass{article}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{datetime}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\hrule
+\begin{quote}
+  \begin{flushleft}
+    Patrick R. Gillespie\\
+    Walsh Fellow\\
+    Teagasc, REDP\\
+    Athenry, Co Galway, Ireland\\
+    patrick.gillespie@teagasc.ie\\
+  \end{flushleft}
+\end{quote}
+\hrule
+\begin{flushleft}
+  \textbf{\jobname.Rnw}\\
+  \today at \currenttime
+\end{flushleft}
+\hrule
+\vspace{1cm}
+
+
+\begin{flushleft}
+\subsection*{Clearing and loading}
+<<echo=T, results='markup'>>=
+rm(list=ls()) 
+paneldir <- "/media/MyPassport/Data/data_NFSPanelAnalysis/"
+#paneldir <- "G:\\Data/data_NFSPanelAnalysi/"
+source(paste(paneldir, "code_R/dirstruct.R", sep='')) 
+setwd(Rdir)
+library(foreign) #...for the ability to read .dta files
+library(data.table) #... useful for big datasets (makes manipulation faster & easier)
+library(xtable) #... to get nice looking tables.
+library(rstudio) #... functions for the RStudio GUI (mostly just viewData() as an alternative to View())
+@
+ 
+\subsection*{Data import and set up}
+
+Next code chunk does the following:
+\begin{itemize}
+  \item {Read the NFS dataset into a data.table (type of data.frame - useful for large datasets) and ID the key
+        variables (like subscripts for the data). Sorts by those too.}
+  \item {Select only Specialist Dairying}
+  \item {Tabulate farm numbers by year}
+\end{itemize}
+<<echo=TRUE, results='markup'>>=
+nfs <- data.table(read.dta(paste(nfsdatadir, "nfs_data.dta", sep='')), key="fffadnsy")
+nfs <- nfs[fffadnsy==411]
+setkey(nfs, farmcode, year) # reset key
+nfs.farms <- nfs[year>1998 & year<2008, length(farmcode), by=year] 
+@
+
+
+<<echo=TRUE, results='markup'>>=
+fadn <- data.table(read.csv(paste(fadndir9907, "Ireland.csv", sep='')), key="A30")
+fadn <- fadn[A30==4110]
+setkey(fadn, Farm.Code, YEAR) # reset key
+
+# create new data table for just the 2005 year
+nfs05 <- nfs[year==2005]  
+fadn05 <-fadn[YEAR==2005]
+
+# set the key for each to the farm size variables in each dataset (which I think match up)
+setkey(nfs05, fsizuaa)
+setkey(fadn05, Total.UAA)
+
+# # now read in the key (saved the Enterprise sheet from the full spreadsheet as a csv in NFSPanelAnalysis for reading in) ...
+# nfskey <- data.table(read.csv("nfskey.csv")) # includes rows and columns I don't need
+# 
+# # ... and clean it up a bit.
+# sr <- grep("Farm code", nfskey$ENTREPRISE.LAYOUT, ignore.case=T) # starting row
+# er <- length(nfskey$ENTREPRISE.LAYOUT) # ending row
+# # select starting to ending row, cols 1 to 2 (note that the typo in "ENTREPRISE.LAYOUT" is in the csv, hence it is "correct" here)
+# nfskey <- nfskey[sr:er, list(ENTREPRISE.LAYOUT, X)]
+# setnames(nfskey, c("ENTREPRISE.LAYOUT", "X"),c("labels", "varnames"))  # rename columns
+# nfskey <- nfskey[varnames!=""]
+# nfskey <- nfskey[varnames=="YEAR", FADN:=YEAR]
+
+# create a column of fadn names 
+fadn.names <- data.table(vars = names(fadn05)) 
+
+f05.sum <- summary(fadn05)
+@
+
+Having printed off tables of the the varnames in the FADN (all of them), and the NFS (about 724 of them available from Brian's file), starting looking for likely candidates and compare summary stats to confirm matches. Then put the FADN name in a new column with the corresponding row in nfskey.
+
+<<echo=TRUE, results='markup'>>=
+# # economic size doesn't look like a match
+# summary(fadn05[,Economic.Size])
+# summary(nfs05[,fsizesu])
+# 
+# # Total.UAA looks like a match with fsizuaa (as expected). Checking with adj and unad to be thorough.
+# summary(fadn05[,Total.UAA])
+# summary(nfs05[,fsizuaa])
+# summary(nfs05[,fsizunad])
+# summary(nfs05[,fsizeadj])
+# nfskey <- nfskey[varnames=="FSIZUAA", FADN:="Total.UAA"] #entry in the FADN column
+
+## separate data by class
+# create a data table with w/ varname and class (length will be transpose width of original data table)
+f.classes <- fadn05[,list(varname=names(.SD), class=sapply(.SD, class))]
+n.classes <- nfs05[,list(varname=names(.SD), class=sapply(.SD, class))]
+
+# select class and create a vector of associated var names
+f.num <- f.classes[class=="numeric", varname]
+n.num <- n.classes[class=="numeric", varname]
+
+# can now peel off the variable using the var names stored in the vectors
+f05.num <- fadn05[,f.num, with=F] 
+n05.num <- nfs05[,n.num, with=F] 
+  # NOTE: you need <<with = F>> to allow the table to interpret the vector as column names
+
+
+# creates a data table of the Rsquared from regressions of each FADN variable on a single NFS variable and the name of the FADN variable used as the dependent, then returns the name of the FADN variable wih the highest R squared along with the name of the single NFS variable (because an entire column with that name was created)... only approach that's given the correct variable match for UAA so far.
+data.table(f05.num[,list(nfs = names(n05.num[,list(fsizuaa)]),match = names(.SD), R.squared = sapply(.SD, function(x) summary(lm(x ~ n05.num[,fsizuaa]))$r.squared)),] ,key="R.squared")[R.squared==max(test[,R.squared], na.rm=T), list(nfs,match)]
+
+# creates a single character string to use in a formula for the lm command (already got around this using the fact that lm will accept an entire data.frame (or data.table) and simply make the first column the dependent). This code is not necessary.
+RHS <- paste0(paste("n05.num$",names(n05.num), sep=""), collapse=" + ")
+
+
+# using the fact that lm accepts matrices, data.tables, etc. to do the regression
+test2 <- f05.num[,list(var = names(f05.num[,list(Total.UAA)]), R.squared = sapply(f05.num[,list(Total.UAA)], function(x) summary(lm(cbind(x,nfs05))$r.squared))]
+# can also do a substitution based on results, although the following just copies the FADN column name over (where what I really want is the NFS column name)
+test2 <- test2[,match:= ifelse(R.squared==max(R.squared), var, "NA")]
+
+# creates a vector of NFS column names for the regression below highest number of columns that will run is currently 270
+cols <- names(n05.num)[1:270]
+# can check to see that they are what we expect
+f05.num[,list(Total.UAA)]
+n05.num[,cols, with=F]
+test3 <- 
+
+# the following runs a regression of a single variable from the FADN on a selection of variables from NFS, finds the NFS variable with the maximium p-value and returns its name. Getting the single value returned means that it can be the entry of the match column for each individual FADN variable.
+data.table(summary(lm(data.table(f05.num[,list(Total.UAA)], n05.num[,cols, with=F])))$coefficients, keep.rownames=T)[`Pr(>|t|)`== max(`Pr(>|t|)`), rn]
+# Todo - get the the above to run for a larger number of the NFS variables (numeric ones with no NA's )
+# Todo - get this to run for every (numeric) FADN variable
+test4 <- f05.num[,match = sapply(.SD, function(x) data.table(summary(lm(data.table(x, n05.num[,cols, with=F])))$coefficients, keep.rownames=T)[`Pr(>|t|)`== max(`Pr(>|t|)`), rn])]
+# Repeat for other classes of variables.
+
+# will give you a column vector of NA's the length of the number of variable for which its mean is NA (so it's an entire colunn of NA and should thus be excluded). However, there's no  labels or vector posisitons to use from this output (which I'd need to use to exclude those variables)
+viewData(colMeans(n05.num)[colMeans(n05.num)=="NA"])
+
+# ahh... here's how to get those lists of non-NA variables that I need
+n05.num.nona <- na.omit(data.table(varname = names(n05.num), mean = colMeans(n05.num), key="mean"))[,varname]
+f05.num.nona <- na.omit(data.table(varname = names(f05.num), mean = colMeans(f05.num), key="mean"))[,varname]
+
+# then subset the appropriate data tables
+n05.num <- n05.num[,n05.num.nona,with=F]
+f05.num <- f05.num[,f05.num.nona,with=F]
+
+# Tried means, then betas and pvalues from multivariate regressions,then R-squared from univariate regressions. All I really need is basic correlation here, as I'm not trying to do inferential stats (just use descriptive stat to aid in matching). 
+
+# entirety of both 05.num datasets... no problem... and really quick too.
+nfcor <- data.table(cor(n05.num, f05.num), keep.rownames=T)
+
+match <- data.table(nfs=nfcor[,rn], fadn="", rho="", key="nfs")
+
+# think I've got it now!
+# gives a vector of row positions for matches to each column
+
+
+match <- data.table(t(nfcor[,sapply(.SD, function(x) nfcor[.I[which.max(x)], rn])]), rho = nfcor[,sapply(.SD, function(x) max(x, na.rm=T))], keep.rownames=T)
+setnames(match,c("rn","V1"), c("fadn","nfs"))
+setkey(match, nfs)
+match <- match[fadn!="rn"]
+matchv <- match[, .I[which.max(rho)], by=nfs]
+match2 <- match[matchv]
+setkey(match2, rho)
+match3 <- match2[rho>.9]
+viewData(match3)
+  #NOTE: .I is a reserved name in data.table, much like .SD. It's a vector of row positions, which I'm then passing to the subsetting command, returning the row name that maximises each column. end up with a row vector, which I then transpose for convenient reading.
+
+# hmm... still getting a lot of matches. lets subset match to see
+match["fsizuaa"]
+
+
+# well if I pull in the rho values along with the nfs names, then maximise the rho values using the nfs name as a grouping variable, I should be left with best match... let's try it again.
+
+# scrap
+nfcor[,sapply(.SD function(x) match[,fadn:=data.table(rho = nfcor[x==max(x, na.rm=T), x], fadn = names(nfcor[,list(x)]))))]
+
+@
+
+% % Printing NFS names (that I have so far), 50 rows at a time
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(nfskey[1:50])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(nfskey[51:100])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(nfskey[101:150])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(nfskey[151:200])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(nfskey[201:250])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(nfskey[251:300])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(nfskey[301:350])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(nfskey[351:400])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(nfskey[401:450])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(nfskey[451:500])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(nfskey[501:550])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(nfskey[551:600])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(nfskey[601:650])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(nfskey[651:700])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(nfskey[701:length(nfskey[,varnames])])
+% @
+% 
+% % Printing FADN names, 50 rows at a time
+% \clearpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(fadn.names[1:50])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(fadn.names[51:100])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(fadn.names[101:150])
+% @
+% \newpage
+% <<echo=FALSE, results='asis'>>=
+% xtable(fadn.names[151:length(fadn.names[,vars])])
+% @
+
+\end{flushleft}
+\end{document}

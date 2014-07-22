@@ -1,0 +1,638 @@
+?*******************************************************
+?*******************************************************
+?       Cathal O'Donoghue, REDP Teagasc
+?       &
+?       Patrick R. Gillespie                            
+?       Walsh Fellow                    
+?       Teagasc, REDP                           
+?       patrick.gillespie@teagasc.ie            
+?*******************************************************
+? Farm Level Microsimulation Model
+?       Cross country SFA analysis
+?       Using FADN Panel Data                         
+?       
+?       Code for PhD Thesis chapter
+?       Contribution to Multisward 
+?       Framework Project
+?                                                    
+?       Thesis Supervisors:
+?       Cathal O'Donoghue
+?       Stephen Hynes
+?       Thia Hennessey
+?       Fiona Thorne
+?
+?*******************************************************
+? READ THE README.txt FILE BEFORE CHANGING ANYTHING!!!
+?*******************************************************
+
+
+? Variables I don't have
+? D = DC = Direct Costs <-- THIS ONE IS GONNA TAKE SOME WORK
+
+
+
+RESET$ 
+
+
+READ	;FILE="G:\Data\data_FADNPanelAnalysis\OutData\DataCreatorFADN\test_constructed_data_FADN.csv"$
+?READ	;FILE="\productivity\inputdata\xls\9609v2d.xls"$
+?READ	;FILE="\productivity\Limdep Data (xls)\DAIRY XLS.xls"$
+?READ	;FILE="\productivity\Limdep Data (xls)\DY9609v2d.xls"$
+
+
+?RENAME	;DC=D$
+
+
+
+?1********************
+? CREATE LAND
+?*********************
+CREATE		;A=LANDFAGE$
+
+?DSTAT		;RHS=Y2,H,C,D,L3,A$
+DSTAT		;RHS=Y2,H,C,L3,A$
+
+REJECT	;Y2<=0$
+REJECT	;H<=0$
+?REJECT	;D<=0$ ? <-- commented out as D is missing
+REJECT	;C<=0$
+REJECT	;L3<=0$
+REJECT	;A<=0$
+?DSTAT		;RHS=Y2,H,C,D,L3,A$
+DSTAT		;RHS=Y2,H,C,L3,A$ ? <-- D taken out as it is missing
+
+
+
+?2********************
+? CREATE PANEL INDICATOR 
+?*********************
+SORT		;LHS=FC;RHS=*$
+CREATE	;IND=NDX(FC,0)$
+REGRESS	;LHS=ONE;RHS=ONE;STR=fc;PANEL$
+CREATE	;GRPSIZE=_GROUPTI$
+CALC		;LIST;G=MAX(GRPSIZE)$
+
+
+
+?3********************
+? CALCULATE MEANS		
+?*********************
+CALC		;MEANY1=XBR(Y1)$
+CALC		;MEANY2=XBR(Y2)$
+CALC		;MEANH=XBR(H)$
+CALC		;MEANC=XBR(C)$
+?CALC		;MEAND=XBR(D)$ <-- commented out as D is missing
+CALC		;MEANL=XBR(L3)$
+CALC		;MEANA=XBR(A)$
+
+
+
+?4********************
+? MEAN ADJUST
+?*********************
+CREATE		;MY1=Y1/MEANY1 ;MY2=Y2/MEANY2 ;MH=H/MEANH ;MC=C/MEANC ; ML=L3/MEANL ;MA=A/MEANA$  ? <-- "MD=D/MEAND  ;" removed as D is missing
+
+
+
+?5********************
+? CONvERT TO LOGS
+?*********************
+CREATE		;LNY1=LOG(MY1);LNY2=LOG(MY2);LNH=LOG(MH);LNC=LOG(MC);LNL=LOG(ML) ;LNA=LOG(MA)$ ? <-- "LND=LOG(MD);" removed... D missing
+
+
+
+?6********************
+? CREATE INTERACTION VARIABLES FOR TRANSLOG
+?*********************
+CREATE	;TT=T*T ;LNHH=LNH*LNH ;LNHC=LNH*LNC ;LNHL=LNH*LNL
+		;LNCC=LNC*LNC ;LNCL=LNC*LNL ;LNLL=LNL*LNL
+		;LNHA=LNH*LNA ;LNCA=LNC*LNA ;LNLA=LNL*LNA ;LNAA=LNA*LNA
+		;LNHT=LNH*T ;LNCT=LNC*T ;LNLT=LNL*T ;TTT=TT*T$ 
+
+? Removed all the D interactions from above (see below)... D is missing
+?"LNDA=LND*LNA ;LNDC=LND*LNC; LNDD=LND*LND LNHD=LNH*LND; LNDL=LND*LNL; LNDT=LND*T;"
+
+
+ 
+?7********************
+? CREATE NAMELISTS
+?*********************
+NAMELIST	;CD=ONE,LNH,LNC,LNL,LNA$ ? <-- "LND," removed... D missing
+NAMELIST	;TL=LNHH,LNHC,LNHL,LNHA,LNCC,LNCL,LNCA,LNLL,LNLA,LNAA$ ? <--"LNHD,LNDD,LNDC,LNDL,LNDA," removed... D missing
+NAMELIST	;TCD=T,TT$
+NAMELIST	;TTL=T,TT,LNHT,LNCT,LNLT$ ? <-- "LNDT," removed... D missing
+NAMELIST	;TDV=T2,T3,T4,T5,T6,T7,T8,T9$ <-- ",T10,T11" removed ... only 9 years
+?REJECT	;T>11$
+
+
+
+?8**********************************************************************************
+? PIT AND LEE 
+?***********************************************************************************
+
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV;PDS=GRPSIZE;EFF=UPL$
+CREATE		;EPL=EXP(-UPL)$
+
+SAMPLE		;ALL$
+CREATE		;B1 = 0.607276
+		;B2 = 0.266128
+		;B3 = 0.0836909
+		;B4 = 0.107536
+		;B5 = 0.0135853
+		;B11 = 0.0480964
+		;B12 = -0.0326877
+		;B13 = -0.0614504
+		;B14 = -0.12991
+		;B15 = 0.0264809
+		;B22 = 0.0100688
+		;B23 = 0.0120947
+		;B24 = 0.0696196
+		;B25 = -0.00326439
+		;B33 = 0.00999511
+		;B34 = 0.0377526
+		;B35 = -0.0130894
+		;B44 = -0.10981
+		;B45 = 0.101696
+		;B55 = -0.0260937$
+
+
+
+
+?
+? NO ERRORS THUS FAR
+?
+
+
+
+
+CREATE;	EH=B1+(2*LNH*B11)++(LNC*B13)+(LNL*B14)+(LNA*B15)$ ? <-- "(LND*B12)" removed... D missing
+CREATE;	ED=B2+(LNH*B12)+(LNC*B23)+(LNL*B24)+(LNA*B25)$ ?<-- "(2*LND*B22)+" removed... D missing
+CREATE;	EC=B3+(LNH*B13)+(2*LNC*B33)+(LNL*B34)+(LNA*B35)$ ?<-- "(LND*B23)+" removed... D missing
+CREATE;	EL=B4+(LNH*B14)+(LNC*B34)+(2*LNL*B44)+(LNA*B45)$ ?<-- "(LND*B24)+" removed... D missing
+CREATE;	EA=B5+(LNH*B15)+(LNC*B35)+(LNL*B45)+(2*LNA*B55)$ ?<-- "(LND*B25)+" removed... D missing
+
+CREATE;	RTS=EH+ED+EC+EL+EA$ ?<-- "" removed... D missing
+
+DSTAT		;RHS=EH,EC,EL,EA,RTS;WTS=W$ ?<-- "ED," removed... D missing
+
+INCLUDE	;New;t=1$
+DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+
+INCLUDE	;New;t=2$
+DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+
+INCLUDE	;New;t=3$
+DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+
+INCLUDE	;New;t=4$
+DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+
+INCLUDE	;New;t=5$
+DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+
+INCLUDE	;New;t=6$
+DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+
+INCLUDE	;New;t=7$
+DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+
+INCLUDE	;New;t=8$
+DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+
+INCLUDE	;New;t=9$
+DSTAT		;RHS=EPL,EH,EC,EL,EA,LNH,LNC,LNL,LNA;WTS=W$ ?<-- "ED,LND," removed... D missing
+
+SAMPLE		;ALL$
+
+
+
+?9**********************************************************************************
+? B AND C 1992 
+?***********************************************************************************
+
+SAMPLE		;ALL$
+
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV;PDS=GRPSIZE;MODEL=BC;EFF=UBC$
+CREATE		;EBC=EXP(-UBC)$
+
+SAMPLE		;ALL$
+CREATE		;B1 = 0.607519
+		;B2 = 0.266137
+		;B3 = 0.0837152
+		;B4 = 0.107218
+		;B5 = 0.0134999
+		;B11 = 0.051415
+		;B12 = -0.0336521
+		;B13 = -0.0630815
+		;B14 = -0.131231
+		;B15 = 0.0237146
+		;B22 = 0.0104537
+		;B23 = 0.0119907
+		;B24 = 0.0701465
+		;B25 = -0.00296092
+		;B33 = 0.0101397
+		;B34 = 0.0384787
+		;B35 = -0.0120346
+		;B44 = -0.110346
+		;B45 = 0.101634
+		;B55 = -0.0253562$
+
+		
+CREATE;	EH=B1+(2*LNH*B11)+(LND*B12)+(LNC*B13)+(LNL*B14)+(LNA*B15)$ ?<-- "" removed... D missing
+CREATE;	ED=B2+(LNH*B12)+(2*LND*B22)+(LNC*B23)+(LNL*B24)+(LNA*B25)$ ?<-- "" removed... D missing
+CREATE;	EC=B3+(LNH*B13)+(LND*B23)+(2*LNC*B33)+(LNL*B34)+(LNA*B35)$ ?<-- "" removed... D missing
+CREATE;	EL=B4+(LNH*B14)+(LND*B24)+(LNC*B34)+(2*LNL*B44)+(LNA*B45)$ ?<-- "" removed... D missing
+CREATE;	EA=B5+(LNH*B15)+(LND*B25)+(LNC*B35)+(LNL*B45)+(2*LNA*B55)$ ?<-- "" removed... D missing
+
+CREATE;	RTS=EH+ED+EC+EL+EA$ ?<-- "" removed... D missing
+
+DSTAT		;RHS=EH,ED,EC,EL,EA,RTS;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=1$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=2$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=3$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=4$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=5$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=6$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=7$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=8$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=9$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=10$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=11$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+
+
+?10*********************************************************************************
+? 'True' Random Effects Model WITH TIME DUMMIES 
+?***********************************************************************************
+
+?ONLY RESULTS IN LIMDEP 9 - Coefficients are BELOW. UITS are in excel and stata file ??
+SAMPLE	;ALL$
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV$
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV;PDS=GRPSIZE;HALTON;PTS=10;RPM;FCN=ONE(n);EFF=UTRE$
+CREATE		;ETRE=EXP(-UTRE)$
+
+
+SAMPLE		;ALL$
+CREATE		;B1 = 0.560133
+		;B2 = 0.235499
+		;B3 = 0.073961
+		;B4 = 0.121385
+		;B5 = 0.0472807
+		;B11 = -0.0327971
+		;B12 = -0.0203755
+		;B13 = -0.0589744
+		;B14 = 0.00461434
+		;B15 = 0.0744758
+		;B22 = 0.0159658
+		;B23 = -0.00735575
+		;B24 = 0.0264018
+		;B25 = -0.0109839
+		;B33 = 0.0101046
+		;B34 = 0.023573
+		;B35 = -0.00377276
+		;B44 = -0.119301
+		;B45 = 0.0650428
+		;B55 = -0.0319019$
+		
+CREATE;	EH=B1+(2*LNH*B11)+(LND*B12)+(LNC*B13)+(LNL*B14)+(LNA*B15)$ ?<-- "" removed... D missing
+CREATE;	ED=B2+(LNH*B12)+(2*LND*B22)+(LNC*B23)+(LNL*B24)+(LNA*B25)$ ?<-- "" removed... D missing
+CREATE;	EC=B3+(LNH*B13)+(LND*B23)+(2*LNC*B33)+(LNL*B34)+(LNA*B35)$ ?<-- "" removed... D missing
+CREATE;	EL=B4+(LNH*B14)+(LND*B24)+(LNC*B34)+(2*LNL*B44)+(LNA*B45)$ ?<-- "" removed... D missing
+CREATE;	EA=B5+(LNH*B15)+(LND*B25)+(LNC*B35)+(LNL*B45)+(2*LNA*B55)$ ?<-- "" removed... D missing
+
+CREATE;	RTS=EH+ED+EC+EL+EA$ ?<-- "" removed... D missing
+
+DSTAT		;RHS=EH,ED,EC,EL,EA,RTS;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=1$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=2$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=3$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=4$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=5$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=6$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=7$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=8$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=9$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=10$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=11$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+
+
+?11*********************************************************************************
+? 'True' Fixed Effects Model TIME DUMMIES
+?***********************************************************************************
+
+SAMPLE		;ALL$
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV$
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV;PDS=GRPSIZE;FEM;EFF=UTFE$
+CREATE		;ETFE=EXP(-UTFE)$
+
+SAMPLE		;ALL$
+CREATE		;B1 = 0.667347
+ 		;B2 = 0.338626
+ 		;B3 = 0.0747814
+ 		;B4 = 0.0678878
+ 		;B5 = -0.0440256
+ 		;B11 = 0.21639
+ 		;B12 = -0.112157
+ 		;B13 = -0.0838574
+ 		;B14 = -0.252307
+ 		;B15 = -0.142161
+ 		;B22 = 0.0455195
+ 		;B23 = 0.00445489
+ 		;B24 = 0.0466085
+ 		;B25 = 0.0367418
+ 		;B33 = 0.0123742
+ 		;B34 = 0.0697879
+ 		;B35 = 0.0074238
+ 		;B44= -0.02776
+ 		;B45 = 0.148912
+ 		;B55 = -0.0141675$
+
+CREATE;	EH=B1+(2*LNH*B11)+(LND*B12)+(LNC*B13)+(LNL*B14)+(LNA*B15)$ ?<-- "" removed... D missing
+CREATE;	ED=B2+(LNH*B12)+(2*LND*B22)+(LNC*B23)+(LNL*B24)+(LNA*B25)$ ?<-- "" removed... D missing
+CREATE;	EC=B3+(LNH*B13)+(LND*B23)+(2*LNC*B33)+(LNL*B34)+(LNA*B35)$ ?<-- "" removed... D missing
+CREATE;	EL=B4+(LNH*B14)+(LND*B24)+(LNC*B34)+(2*LNL*B44)+(LNA*B45)$ ?<-- "" removed... D missing
+CREATE;	EA=B5+(LNH*B15)+(LND*B25)+(LNC*B35)+(LNL*B45)+(2*LNA*B55)$ ?<-- "" removed... D missing
+
+CREATE;	RTS=EH+ED+EC+EL+EA$
+
+DSTAT		;RHS=EH,ED,EC,EL,EA,RTS;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=1$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=2$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=3$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=4$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=5$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=6$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=7$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=8$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=9$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=10$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+INCLUDE	;New;t=11$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W$ ?<-- "" removed... D missing
+
+
+
+?12*********************************************************************************
+? Compare ranking of farms by various measures of efficiency for each year
+?***********************************************************************************
+
+SAMPLE		;ALL$
+INCLUDE	;New;t=1$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=2$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=3$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=4$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=5$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=6$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=7$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=8$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=9$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=10$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=11$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+SAMPLE		;ALL$
+
+
+
+PLOT	;rhs=rktre2;lhs=rktfe2$
+?WRITE;T,W,upl,ubc,utre,utfe,RKPL,RKPL2,RKBC,RKBC2,RKTRE,RKTRE2,RKTFE,RKTFE2;File="G:\Data\data_FADNPanelAnalysis\OutData\multisward\uits_dairy_multisward.xls";Format=XLS$
+
+
+
+?13*********************************************************************************
+?Latent Class Model
+?***********************************************************************************
+
+SAMPLE		;ALL$
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV$
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV;PDS=GRPSIZE;LCM;PTS=2;EFF=ULCM$
+CREATE		;ELCM=EXP(-ULCM)$
+DSTAT		;RHS=ELCM;WTS=W$
+
+? CORRELATION MATRIX
+
+DSTAT;Rhs=UPL,UCS,UBC,UKO,UTRE,UTFE;Wts=W;Output=2$
+
+? CREATE RANKS AND COMPARE CORRELATIONS
+
+CREATE		;RKPL=RNK(UPL)$
+CREATE		;RKCS=RNK(UCS)$
+CREATE		;RKBC=RNK(UBC)$
+CREATE		;RKKO=RNK(UKO)$
+CREATE		;RKTRE=RNK(UTRE)$
+CREATE		;RKTFE=RNK(UTFE)$
+
+DSTAT;Rhs=RKPL,RKCS,RKBC,RKKO,RKTRE,RKTFE;Wts=W;Output=2$
+
+? RANK BY YEAR 
+
+INCLUDE	;New;t=1$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=2$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=3$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=4$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=5$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=6$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=7$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=8$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=9$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=10$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+INCLUDE	;New;t=11$
+CREATE		;RKPL2=RNK(UPL)$
+CREATE		;RKBC2=RNK(UBC)$
+CREATE		;RKTRE2=RNK(UTRE)$
+CREATE		;RKTFE2=RNK(UTFE)$
+
+
+
+
+REJECT		;NEW;T<5$
+DSTAT;Rhs=RKPL2,RKCS2,RKBC2,RKKO2,RKTRE2,RKTFE2;Wts=W;Output=2$
+
+? PLOT INEFFICIENCES
+
+PLOT;Lhs=RKPL2;Rhs=RKCS2$
+PLOT;Lhs=RKTFE2;Rhs=RKTRE2$
+PLOT;Lhs=RKTRE2;Rhs=RKPL2$
+
+WRITE		;t,fc,upl,ubc,utre,utfe,rkpl2,rkbc2,rktre2,rktfe2
+		;File="G:\Data\data_FADNPanelAnalysis\OutData\multisward\latent_uits_dairy_multisward.xls"
+		;Format=XLS$
+
+
+?14*********************************************************************************
+??????????? Orea and Kumbhakar - variables effects variance of Ui ????????
+?***********************************************************************************
+
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV
+		;PDS=GRPSIZE
+		;MODEL=BC; EFF=UKO
+		;HFU=SOIL2,SOIL3,EXTEND,OFFFARM,AID,FSIZE,AGE,ALLOC,INTENSE,DECOUP$
+

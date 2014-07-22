@@ -1,0 +1,46 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_09_11.txt
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}11 Sep 2013, 06:03:52
+{txt}
+{com}. di  "Job  Started  at  $S_TIME  on $S_DATE"
+{res}Job  Started  at  06:03:52  on 11 Sep 2013
+{txt}
+{com}. cmdlog using logs/$project$datestamp.cmd.txt, replace
+{txt}(cmdlog G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_09_11.cmd.txt opened)
+
+{com}. 
+. preserve
+{txt}
+{com}. drop country
+{txt}
+{com}. gen int country = countrycode2
+{txt}
+{com}. keep pid year country `dep_vlist' `indep_vlist' `z_vlist' 
+{txt}
+{com}. 
+. outsheet _all using `fadnoutdatadir'/exported_data.csv, comma replace nolabel
+{txt}
+{com}. save `fadnoutdatadir'/exported_data.dta, replace nolabel
+{txt}file G:\\Data/data_FADNPanelAnalysis/OutData/multisward/exported_data.dta saved
+
+{com}. gen TREND =year-1998
+{txt}
+{com}. *bysort country: sfpanel `dep_vlist' `indep_vlist' TREND, model(bc95) cost d(tnormal) emean(`z_vlist')
+. bysort country: sfpanel `dep_vlist' `indep_vlist' TREND, model(bc95) d(tnormal) emean(`z_vlist')
+
+{txt}{hline}
+-> country = 1
+
+no observations
+{res}
+{err}too many initial values for equation 2
+{txt}{search r(3498):r(3498);}
+
+end of do-file
+
+{search r(3498):r(3498);}
+
+{com}. exit, clear

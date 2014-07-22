@@ -1,0 +1,8 @@
+cd ../../
+cd OutData/IGM/
+view FADNModel_Chow.smcl
+estimates use chow_dotomkgl
+xtfrontier
+do FADNModel_2013_11_01
+cd G:\Data\data_FADNPanelAnalysis\Do_Files\IGM\
+do FADNModel_2013_11_01

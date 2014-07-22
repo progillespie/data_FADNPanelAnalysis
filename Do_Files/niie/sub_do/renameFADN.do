@@ -1,0 +1,1345 @@
+********************************************************
+********************************************************
+*    Cathal O'Donoghue, REDP Teagasc
+*       &
+*       Patrick R. Gillespie                            
+*       Walsh Fellow                    
+*       Teagasc, REDP                           
+*       patrick.gillespie@teagasc.ie            
+********************************************************
+* Farm Level Microsimulation Model
+*       Cross country SFA analysis
+*       Using FADN Panel Data                                                   
+*       
+*       Code for PhD Thesis chapter
+*       Contribution to Multisward 
+*       Framework Project
+*                                                                       
+*       Thesis Supervisors:
+*       Cathal O'Donoghue
+*       Stephen Hynes
+*       Thia Hennessey
+*       Fiona Thorne
+*
+********************************************************
+* sub_do file for FADN_IGM
+*
+* ... renames and generates variables from FADN data
+* (variables from Standard Results, see RICC 882) +
+* Manager/Holder age variable from second FADN request. 
+* Vars are given closest NFS varname for usage in IGM
+* model (see Cathal O'Donoghue). 
+*
+* Currently pertains to Dairy only (i.e. mostly vars
+* pertaining to Dairy are manipulated).
+********************************************************
+
+
+/*
+--------------------------------------------------------
+ NOTES
+--------------------------------------------------------
+- search doFarmDerivedFADN.do for "*!"
+
+- most regressions turned off
+
+- several tabstats turned off 
+
+- I don't believe we will have off farm employment or number of children. section turned off starting from gen isofffarmy 
+
+- I had to shut off Dairy Platform section and Exists in 2008 altogether (data only goes to 2007 currently, 
+  and I don't think platform dat is transmissable to FADN)
+
+- I had to create random assignment of soil variable to allow "tab soil, gen" to work (needs 8 values to gen 8 soil dummies)
+
+- lt_conc was replaced with 1 if missing (which it always was due to setting of some of the divisors to 0)
+
+- Ensure all loops that go through years have the correct start and stop years for the panel (i.e. FADN I had went from 1999 - 2007). First line in 
+  which this was a problem was around 1353 (while loop under "Enterprise specific Quintile of GM")
+
+- Also, under Enterprise Specific quintiles I had to take fcrops out of ent_vlist (no observations)
+
+- I also had to comment the following (around line 1184 in doFarmDerivedVars.do) ...
+	*drop if tfarmffi2 == .
+  ... until this variable is successfully generated with non-missing values (all obs are dropped otherwise)
+--------------------------------------------------------
+*/
+
+
+********************************************************
+* Farm descriptors
+********************************************************
+gen wt 		= farmsrepresented
+gen ftotallu 	= totallivestockunits
+gen total_labour_hrs = labourinputhours
+gen fsubchen 	= lessfavouredarea
+*gen fsubesag 	= 
+* fsubreps is generated in the code below 
+gen sfp		=  singlefarmpayment 
+gen lfa		= lfasubsidies
+
+
+
+
+***********************************************
+* CREATE PRICE INDEXES 
+***********************************************
+
+capture drop	PTotalCattle					
+gen	PTotalCattle	=	0			
+replace	PTotalCattle	=	77.929	if	year ==	1980
+replace	PTotalCattle	=	95.563	if	year ==	1981
+replace	PTotalCattle	=	104.778	if	year ==	1982
+replace	PTotalCattle	=	110.353	if	year ==	1983
+replace	PTotalCattle	=	114.334	if	year ==	1984
+replace	PTotalCattle	=	111.490	if	year ==	1985
+replace	PTotalCattle	=	107.281	if	year ==	1986
+replace	PTotalCattle	=	115.131	if	year ==	1987
+replace	PTotalCattle	=	132.537	if	year ==	1988
+replace	PTotalCattle	=	127.986	if	year ==	1989
+replace	PTotalCattle	=	113.766	if	year ==	1990
+replace	PTotalCattle	=	107.736	if	year ==	1991
+replace	PTotalCattle	=	108.419	if	year ==	1992
+replace	PTotalCattle	=	118.316	if	year ==	1993
+replace	PTotalCattle	=	122.071	if	year ==	1994
+replace	PTotalCattle	=	120.700	if	year ==	1995
+replace	PTotalCattle	=	101.700	if	year ==	1996
+replace	PTotalCattle	=	96.300	if	year ==	1997
+replace	PTotalCattle	=	93.400	if	year ==	1998
+replace	PTotalCattle	=	89.100	if	year ==	1999
+replace	PTotalCattle	=	100.000	if	year ==	2000
+replace	PTotalCattle	=	92.260	if	year ==	2001
+replace	PTotalCattle	=	94.410	if	year ==	2002
+replace	PTotalCattle	=	93.640	if	year ==	2003
+replace	PTotalCattle	=	103.250	if	year ==	2004
+replace	PTotalCattle	=	105.580	if	year ==	2005
+replace	PTotalCattle	=	113.220	if	year ==	2006
+replace	PTotalCattle	=	111.000	if	year ==	2007
+replace	PTotalCattle	=	127.800	if	year ==	2008
+replace	PTotalCattle	=	114.400	if	year ==	2009
+replace	PTotalCattle	=	115.900	if	year ==	2010
+
+
+
+capture drop	PSheep					
+gen	PSheep	=	0			
+replace	PSheep	=	113.088	if	year ==	1980
+replace	PSheep	=	136.395	if	year ==	1981
+replace	PSheep	=	139.036	if	year ==	1982
+replace	PSheep	=	146.039	if	year ==	1983
+replace	PSheep	=	143.972	if	year ==	1984
+replace	PSheep	=	140.069	if	year ==	1985
+replace	PSheep	=	140.528	if	year ==	1986
+replace	PSheep	=	147.187	if	year ==	1987
+replace	PSheep	=	150.976	if	year ==	1988
+replace	PSheep	=	145.350	if	year ==	1989
+replace	PSheep	=	114.811	if	year ==	1990
+replace	PSheep	=	109.070	if	year ==	1991
+replace	PSheep	=	80.941	if	year ==	1992
+replace	PSheep	=	94.374	if	year ==	1993
+replace	PSheep	=	101.952	if	year ==	1994
+replace	PSheep	=	89.800	if	year ==	1995
+replace	PSheep	=	109.600	if	year ==	1996
+replace	PSheep	=	112.400	if	year ==	1997
+replace	PSheep	=	96.500	if	year ==	1998
+replace	PSheep	=	88.700	if	year ==	1999
+replace	PSheep	=	100.000	if	year ==	2000
+replace	PSheep	=	142.850	if	year ==	2001
+replace	PSheep	=	121.290	if	year ==	2002
+replace	PSheep	=	119.500	if	year ==	2003
+replace	PSheep	=	117.650	if	year ==	2004
+replace	PSheep	=	109.560	if	year ==	2005
+replace	PSheep	=	112.210	if	year ==	2006
+replace	PSheep	=	114.900	if	year ==	2007
+replace	PSheep	=	120.200	if	year ==	2008
+replace	PSheep	=	122.100	if	year ==	2009
+replace	PSheep	=	142.800	if	year ==	2010
+
+
+
+capture drop	PMilk					
+gen	PMilk	=	0			
+replace	PMilk	=	53.369	if	year ==	1980
+replace	PMilk	=	60.638	if	year ==	1981
+replace	PMilk	=	66.312	if	year ==	1982
+replace	PMilk	=	71.809	if	year ==	1983
+replace	PMilk	=	72.695	if	year ==	1984
+replace	PMilk	=	75.089	if	year ==	1985
+replace	PMilk	=	77.305	if	year ==	1986
+replace	PMilk	=	80.585	if	year ==	1987
+replace	PMilk	=	89.894	if	year ==	1988
+replace	PMilk	=	101.950	if	year ==	1989
+replace	PMilk	=	88.652	if	year ==	1990
+replace	PMilk	=	84.663	if	year ==	1991
+replace	PMilk	=	91.046	if	year ==	1992
+replace	PMilk	=	98.848	if	year ==	1993
+replace	PMilk	=	98.493	if	year ==	1994
+replace	PMilk	=	105.200	if	year ==	1995
+replace	PMilk	=	105.400	if	year ==	1996
+replace	PMilk	=	97.800	if	year ==	1997
+replace	PMilk	=	101.100	if	year ==	1998
+replace	PMilk	=	98.400	if	year ==	1999
+replace	PMilk	=	100.000	if	year ==	2000
+replace	PMilk	=	104.310	if	year ==	2001
+replace	PMilk	=	97.090	if	year ==	2002
+replace	PMilk	=	95.560	if	year ==	2003
+replace	PMilk	=	95.320	if	year ==	2004
+replace	PMilk	=	93.510	if	year ==	2005
+replace	PMilk	=	90.160	if	year ==	2006
+replace	PMilk	=	111.000	if	year ==	2007
+replace	PMilk	=	112.700	if	year ==	2008
+replace	PMilk	=	78.100	if	year ==	2009
+replace	PMilk	=	100.200	if	year ==	2010
+
+
+
+capture drop	PTotalCrop					
+gen	PTotalCrop	=	0			
+replace	PTotalCrop	=	84.794	if	year ==	1980
+replace	PTotalCrop	=	96.475	if	year ==	1981
+replace	PTotalCrop	=	102.920	if	year ==	1982
+replace	PTotalCrop	=	112.991	if	year ==	1983
+replace	PTotalCrop	=	117.221	if	year ==	1984
+replace	PTotalCrop	=	98.691	if	year ==	1985
+replace	PTotalCrop	=	106.647	if	year ==	1986
+replace	PTotalCrop	=	102.417	if	year ==	1987
+replace	PTotalCrop	=	101.913	if	year ==	1988
+replace	PTotalCrop	=	108.560	if	year ==	1989
+replace	PTotalCrop	=	100.705	if	year ==	1990
+replace	PTotalCrop	=	104.532	if	year ==	1991
+replace	PTotalCrop	=	101.712	if	year ==	1992
+replace	PTotalCrop	=	106.042	if	year ==	1993
+replace	PTotalCrop	=	106.143	if	year ==	1994
+replace	PTotalCrop	=	110.600	if	year ==	1995
+replace	PTotalCrop	=	100.700	if	year ==	1996
+replace	PTotalCrop	=	91.200	if	year ==	1997
+replace	PTotalCrop	=	104.700	if	year ==	1998
+replace	PTotalCrop	=	103.300	if	year ==	1999
+replace	PTotalCrop	=	100.000	if	year ==	2000
+replace	PTotalCrop	=	112.170	if	year ==	2001
+replace	PTotalCrop	=	110.410	if	year ==	2002
+replace	PTotalCrop	=	116.030	if	year ==	2003
+replace	PTotalCrop	=	104.360	if	year ==	2004
+replace	PTotalCrop	=	111.990	if	year ==	2005
+replace	PTotalCrop	=	133.860	if	year ==	2006
+replace	PTotalCrop	=	162.200	if	year ==	2007
+replace	PTotalCrop	=	137.900	if	year ==	2008
+replace	PTotalCrop	=	124.300	if	year ==	2009
+replace	PTotalCrop	=	144.000	if	year ==	2010
+
+
+
+capture drop	PTotalInputs					
+gen	PTotalInputs	=	0			
+replace	PTotalInputs	=	62.192	if	year ==	1980
+replace	PTotalInputs	=	71.050	if	year ==	1981
+replace	PTotalInputs	=	77.808	if	year ==	1982
+replace	PTotalInputs	=	84.018	if	year ==	1983
+replace	PTotalInputs	=	90.502	if	year ==	1984
+replace	PTotalInputs	=	91.781	if	year ==	1985
+replace	PTotalInputs	=	88.311	if	year ==	1986
+replace	PTotalInputs	=	84.201	if	year ==	1987
+replace	PTotalInputs	=	86.484	if	year ==	1988
+replace	PTotalInputs	=	91.142	if	year ==	1989
+replace	PTotalInputs	=	91.324	if	year ==	1990
+replace	PTotalInputs	=	91.689	if	year ==	1991
+replace	PTotalInputs	=	91.598	if	year ==	1992
+replace	PTotalInputs	=	91.598	if	year ==	1993
+replace	PTotalInputs	=	92.420	if	year ==	1994
+replace	PTotalInputs	=	93.400	if	year ==	1995
+replace	PTotalInputs	=	97.300	if	year ==	1996
+replace	PTotalInputs	=	95.300	if	year ==	1997
+replace	PTotalInputs	=	93.000	if	year ==	1998
+replace	PTotalInputs	=	94.100	if	year ==	1999
+replace	PTotalInputs	=	100.000	if	year ==	2000
+replace	PTotalInputs	=	104.790	if	year ==	2001
+replace	PTotalInputs	=	106.150	if	year ==	2002
+replace	PTotalInputs	=	108.800	if	year ==	2003
+replace	PTotalInputs	=	113.070	if	year ==	2004
+replace	PTotalInputs	=	117.990	if	year ==	2005
+replace	PTotalInputs	=	123.070	if	year ==	2006
+replace	PTotalInputs	=	131.300	if	year ==	2007
+replace	PTotalInputs	=	155.900	if	year ==	2008
+replace	PTotalInputs	=	142.200	if	year ==	2009
+replace	PTotalInputs	=	139.900	if	year ==	2010
+
+
+
+capture drop	PStraightFeed					
+gen	PStraightFeed	=	0			
+replace	PStraightFeed	=	66.908	if	year ==	1980
+replace	PStraightFeed	=	73.009	if	year ==	1981
+replace	PStraightFeed	=	78.387	if	year ==	1982
+replace	PStraightFeed	=	87.073	if	year ==	1983
+replace	PStraightFeed	=	89.245	if	year ==	1984
+replace	PStraightFeed	=	88.004	if	year ==	1985
+replace	PStraightFeed	=	88.418	if	year ==	1986
+replace	PStraightFeed	=	88.211	if	year ==	1987
+replace	PStraightFeed	=	91.830	if	year ==	1988
+replace	PStraightFeed	=	103.309	if	year ==	1989
+replace	PStraightFeed	=	103.413	if	year ==	1990
+replace	PStraightFeed	=	101.965	if	year ==	1991
+replace	PStraightFeed	=	100.931	if	year ==	1992
+replace	PStraightFeed	=	101.965	if	year ==	1993
+replace	PStraightFeed	=	102.689	if	year ==	1994
+replace	PStraightFeed	=	106.000	if	year ==	1995
+replace	PStraightFeed	=	109.300	if	year ==	1996
+replace	PStraightFeed	=	104.900	if	year ==	1997
+replace	PStraightFeed	=	98.800	if	year ==	1998
+replace	PStraightFeed	=	97.100	if	year ==	1999
+replace	PStraightFeed	=	100.000	if	year ==	2000
+replace	PStraightFeed	=	102.080	if	year ==	2001
+replace	PStraightFeed	=	102.920	if	year ==	2002
+replace	PStraightFeed	=	102.980	if	year ==	2003
+replace	PStraightFeed	=	110.450	if	year ==	2004
+replace	PStraightFeed	=	110.280	if	year ==	2005
+replace	PStraightFeed	=	116.180	if	year ==	2006
+replace	PStraightFeed	=	134.300	if	year ==	2007
+replace	PStraightFeed	=	152.000	if	year ==	2008
+replace	PStraightFeed	=	133.800	if	year ==	2009
+replace	PStraightFeed	=	131.300	if	year ==	2010
+
+
+
+capture drop	PCattleFeed					
+gen	PCattleFeed	=	0			
+replace	PCattleFeed	=	86.272	if	year ==	1980
+replace	PCattleFeed	=	91.975	if	year ==	1981
+replace	PCattleFeed	=	99.155	if	year ==	1982
+replace	PCattleFeed	=	108.448	if	year ==	1983
+replace	PCattleFeed	=	117.529	if	year ==	1984
+replace	PCattleFeed	=	107.392	if	year ==	1985
+replace	PCattleFeed	=	104.329	if	year ==	1986
+replace	PCattleFeed	=	100.845	if	year ==	1987
+replace	PCattleFeed	=	102.112	if	year ==	1988
+replace	PCattleFeed	=	108.237	if	year ==	1989
+replace	PCattleFeed	=	105.597	if	year ==	1990
+replace	PCattleFeed	=	101.478	if	year ==	1991
+replace	PCattleFeed	=	102.006	if	year ==	1992
+replace	PCattleFeed	=	102.851	if	year ==	1993
+replace	PCattleFeed	=	104.541	if	year ==	1994
+replace	PCattleFeed	=	106.000	if	year ==	1995
+replace	PCattleFeed	=	110.700	if	year ==	1996
+replace	PCattleFeed	=	104.400	if	year ==	1997
+replace	PCattleFeed	=	98.300	if	year ==	1998
+replace	PCattleFeed	=	96.500	if	year ==	1999
+replace	PCattleFeed	=	100.000	if	year ==	2000
+replace	PCattleFeed	=	106.410	if	year ==	2001
+replace	PCattleFeed	=	107.840	if	year ==	2002
+replace	PCattleFeed	=	107.740	if	year ==	2003
+replace	PCattleFeed	=	111.710	if	year ==	2004
+replace	PCattleFeed	=	108.850	if	year ==	2005
+replace	PCattleFeed	=	111.230	if	year ==	2006
+replace	PCattleFeed	=	126.700	if	year ==	2007
+replace	PCattleFeed	=	147.400	if	year ==	2008
+replace	PCattleFeed	=	132.000	if	year ==	2009
+replace	PCattleFeed	=	122.900	if	year ==	2010
+
+
+
+capture drop	PTotalFert					
+gen	PTotalFert	=	0			
+replace	PTotalFert	=	81.250	if	year ==	1980
+replace	PTotalFert	=	92.641	if	year ==	1981
+replace	PTotalFert	=	98.488	if	year ==	1982
+replace	PTotalFert	=	99.698	if	year ==	1983
+replace	PTotalFert	=	109.476	if	year ==	1984
+replace	PTotalFert	=	119.859	if	year ==	1985
+replace	PTotalFert	=	109.677	if	year ==	1986
+replace	PTotalFert	=	88.206	if	year ==	1987
+replace	PTotalFert	=	94.556	if	year ==	1988
+replace	PTotalFert	=	101.008	if	year ==	1989
+replace	PTotalFert	=	100.806	if	year ==	1990
+replace	PTotalFert	=	103.024	if	year ==	1991
+replace	PTotalFert	=	101.411	if	year ==	1992
+replace	PTotalFert	=	95.766	if	year ==	1993
+replace	PTotalFert	=	96.270	if	year ==	1994
+replace	PTotalFert	=	96.400	if	year ==	1995
+replace	PTotalFert	=	101.000	if	year ==	1996
+replace	PTotalFert	=	94.800	if	year ==	1997
+replace	PTotalFert	=	91.300	if	year ==	1998
+replace	PTotalFert	=	93.300	if	year ==	1999
+replace	PTotalFert	=	100.000	if	year ==	2000
+replace	PTotalFert	=	113.430	if	year ==	2001
+replace	PTotalFert	=	110.510	if	year ==	2002
+replace	PTotalFert	=	113.020	if	year ==	2003
+replace	PTotalFert	=	115.140	if	year ==	2004
+replace	PTotalFert	=	124.460	if	year ==	2005
+replace	PTotalFert	=	133.100	if	year ==	2006
+replace	PTotalFert	=	136.400	if	year ==	2007
+replace	PTotalFert	=	220.600	if	year ==	2008
+replace	PTotalFert	=	185.000	if	year ==	2009
+replace	PTotalFert	=	162.200	if	year ==	2010
+
+
+
+capture drop	PMotorFuels					
+gen	PMotorFuels	=	0			
+replace	PMotorFuels	=	40.710	if	year ==	1980
+replace	PMotorFuels	=	55.741	if	year ==	1981
+replace	PMotorFuels	=	64.092	if	year ==	1982
+replace	PMotorFuels	=	72.164	if	year ==	1983
+replace	PMotorFuels	=	75.713	if	year ==	1984
+replace	PMotorFuels	=	78.706	if	year ==	1985
+replace	PMotorFuels	=	61.656	if	year ==	1986
+replace	PMotorFuels	=	62.143	if	year ==	1987
+replace	PMotorFuels	=	60.612	if	year ==	1988
+replace	PMotorFuels	=	66.040	if	year ==	1989
+replace	PMotorFuels	=	69.589	if	year ==	1990
+replace	PMotorFuels	=	71.260	if	year ==	1991
+replace	PMotorFuels	=	65.623	if	year ==	1992
+replace	PMotorFuels	=	67.711	if	year ==	1993
+replace	PMotorFuels	=	65.553	if	year ==	1994
+replace	PMotorFuels	=	66.000	if	year ==	1995
+replace	PMotorFuels	=	71.800	if	year ==	1996
+replace	PMotorFuels	=	73.500	if	year ==	1997
+replace	PMotorFuels	=	70.500	if	year ==	1998
+replace	PMotorFuels	=	75.600	if	year ==	1999
+replace	PMotorFuels	=	100.000	if	year ==	2000
+replace	PMotorFuels	=	95.780	if	year ==	2001
+replace	PMotorFuels	=	94.730	if	year ==	2002
+replace	PMotorFuels	=	99.060	if	year ==	2003
+replace	PMotorFuels	=	110.170	if	year ==	2004
+replace	PMotorFuels	=	131.720	if	year ==	2005
+replace	PMotorFuels	=	144.080	if	year ==	2006
+replace	PMotorFuels	=	147.300	if	year ==	2007
+replace	PMotorFuels	=	173.600	if	year ==	2008
+replace	PMotorFuels	=	143.500	if	year ==	2009
+replace	PMotorFuels	=	168.600	if	year ==	2010
+
+
+
+capture drop	PElectricity					
+gen	PElectricity	=	0			
+replace	PElectricity	=	61.979	if	year ==	1980
+replace	PElectricity	=	77.886	if	year ==	1981
+replace	PElectricity	=	92.532	if	year ==	1982
+replace	PElectricity	=	98.739	if	year ==	1983
+replace	PElectricity	=	104.656	if	year ==	1984
+replace	PElectricity	=	110.863	if	year ==	1985
+replace	PElectricity	=	113.773	if	year ==	1986
+replace	PElectricity	=	106.014	if	year ==	1987
+replace	PElectricity	=	101.843	if	year ==	1988
+replace	PElectricity	=	100.873	if	year ==	1989
+replace	PElectricity	=	96.993	if	year ==	1990
+replace	PElectricity	=	96.023	if	year ==	1991
+replace	PElectricity	=	96.023	if	year ==	1992
+replace	PElectricity	=	96.023	if	year ==	1993
+replace	PElectricity	=	96.023	if	year ==	1994
+replace	PElectricity	=	96.000	if	year ==	1995
+replace	PElectricity	=	97.500	if	year ==	1996
+replace	PElectricity	=	99.400	if	year ==	1997
+replace	PElectricity	=	100.000	if	year ==	1998
+replace	PElectricity	=	100.000	if	year ==	1999
+replace	PElectricity	=	100.000	if	year ==	2000
+replace	PElectricity	=	101.480	if	year ==	2001
+replace	PElectricity	=	105.930	if	year ==	2002
+replace	PElectricity	=	119.570	if	year ==	2003
+replace	PElectricity	=	125.690	if	year ==	2004
+replace	PElectricity	=	135.710	if	year ==	2005
+replace	PElectricity	=	141.610	if	year ==	2006
+replace	PElectricity	=	157.600	if	year ==	2007
+replace	PElectricity	=	159.900	if	year ==	2008
+replace	PElectricity	=	167.400	if	year ==	2009
+replace	PElectricity	=	156.900	if	year ==	2010
+
+
+
+capture drop	POtherInputs					
+gen	POtherInputs	=	0			
+replace	POtherInputs	=	42.155	if	year ==	1980
+replace	POtherInputs	=	50.079	if	year ==	1981
+replace	POtherInputs	=	56.894	if	year ==	1982
+replace	POtherInputs	=	61.648	if	year ==	1983
+replace	POtherInputs	=	66.403	if	year ==	1984
+replace	POtherInputs	=	69.968	if	year ==	1985
+replace	POtherInputs	=	71.712	if	year ==	1986
+replace	POtherInputs	=	73.613	if	year ==	1987
+replace	POtherInputs	=	76.070	if	year ==	1988
+replace	POtherInputs	=	77.655	if	year ==	1989
+replace	POtherInputs	=	79.239	if	year ==	1990
+replace	POtherInputs	=	81.933	if	year ==	1991
+replace	POtherInputs	=	84.152	if	year ==	1992
+replace	POtherInputs	=	85.658	if	year ==	1993
+replace	POtherInputs	=	87.480	if	year ==	1994
+replace	POtherInputs	=	90.300	if	year ==	1995
+replace	POtherInputs	=	91.200	if	year ==	1996
+replace	POtherInputs	=	92.700	if	year ==	1997
+replace	POtherInputs	=	93.600	if	year ==	1998
+replace	POtherInputs	=	95.900	if	year ==	1999
+replace	POtherInputs	=	100.000	if	year ==	2000
+replace	POtherInputs	=	105.920	if	year ==	2001
+replace	POtherInputs	=	110.350	if	year ==	2002
+replace	POtherInputs	=	114.090	if	year ==	2003
+replace	POtherInputs	=	116.910	if	year ==	2004
+replace	POtherInputs	=	121.000	if	year ==	2005
+replace	POtherInputs	=	124.040	if	year ==	2006
+replace	POtherInputs	=	128.900	if	year ==	2007
+replace	POtherInputs	=	136.800	if	year ==	2008
+replace	POtherInputs	=	139.200	if	year ==	2009
+replace	POtherInputs	=	137.300	if	year ==	2010
+
+
+
+capture drop	PSeeds					
+gen	PSeeds	=	0			
+replace	PSeeds	=	53.292	if	year ==	1980
+replace	PSeeds	=	55.926	if	year ==	1981
+replace	PSeeds	=	61.658	if	year ==	1982
+replace	PSeeds	=	65.763	if	year ==	1983
+replace	PSeeds	=	74.206	if	year ==	1984
+replace	PSeeds	=	72.424	if	year ==	1985
+replace	PSeeds	=	77.459	if	year ==	1986
+replace	PSeeds	=	78.311	if	year ==	1987
+replace	PSeeds	=	75.600	if	year ==	1988
+replace	PSeeds	=	75.600	if	year ==	1989
+replace	PSeeds	=	77.459	if	year ==	1990
+replace	PSeeds	=	78.466	if	year ==	1991
+replace	PSeeds	=	83.579	if	year ==	1992
+replace	PSeeds	=	84.198	if	year ==	1993
+replace	PSeeds	=	89.620	if	year ==	1994
+replace	PSeeds	=	98.000	if	year ==	1995
+replace	PSeeds	=	103.400	if	year ==	1996
+replace	PSeeds	=	100.500	if	year ==	1997
+replace	PSeeds	=	102.000	if	year ==	1998
+replace	PSeeds	=	102.100	if	year ==	1999
+replace	PSeeds	=	100.000	if	year ==	2000
+replace	PSeeds	=	103.680	if	year ==	2001
+replace	PSeeds	=	107.350	if	year ==	2002
+replace	PSeeds	=	115.150	if	year ==	2003
+replace	PSeeds	=	116.140	if	year ==	2004
+replace	PSeeds	=	115.660	if	year ==	2005
+replace	PSeeds	=	120.110	if	year ==	2006
+replace	PSeeds	=	130.800	if	year ==	2007
+replace	PSeeds	=	141.900	if	year ==	2008
+replace	PSeeds	=	131.600	if	year ==	2009
+replace	PSeeds	=	122.100	if	year ==	2010
+
+
+
+capture drop	PPlantProtection
+gen	PPlantProtection =	0			
+replace	PPlantProtection =	57.192	if	year ==	1980
+replace	PPlantProtection =	65.547	if	year ==	1981
+replace	PPlantProtection =	71.404	if	year ==	1982
+replace	PPlantProtection =	73.299	if	year ==	1983
+replace	PPlantProtection =	77.950	if	year ==	1984
+replace	PPlantProtection =	80.017	if	year ==	1985
+replace	PPlantProtection =	80.362	if	year ==	1986
+replace	PPlantProtection =	80.276	if	year ==	1987
+replace	PPlantProtection =	82.257	if	year ==	1988
+replace	PPlantProtection =	83.376	if	year ==	1989
+replace	PPlantProtection =	86.133	if	year ==	1990
+replace	PPlantProtection =	88.803	if	year ==	1991
+replace	PPlantProtection =	89.664	if	year ==	1992
+replace	PPlantProtection =	91.731	if	year ==	1993
+replace	PPlantProtection =	95.004	if	year ==	1994
+replace	PPlantProtection =	97.500	if	year ==	1995
+replace	PPlantProtection =	100.800	if	year ==	1996
+replace	PPlantProtection =	100.400	if	year ==	1997
+replace	PPlantProtection =	100.800	if	year ==	1998
+replace	PPlantProtection =	100.600	if	year ==	1999
+replace	PPlantProtection =	100.000	if	year ==	2000
+replace	PPlantProtection =	100.830	if	year ==	2001
+replace	PPlantProtection =	101.640	if	year ==	2002
+replace	PPlantProtection =	101.610	if	year ==	2003
+replace	PPlantProtection =	103.220	if	year ==	2004
+replace	PPlantProtection =	102.690	if	year ==	2005
+replace	PPlantProtection =	101.720	if	year ==	2006
+replace	PPlantProtection =	101.700	if	year ==	2007
+replace	PPlantProtection =	103.200	if	year ==	2008
+replace	PPlantProtection =	105.100	if	year ==	2009
+replace	PPlantProtection =	105.200	if	year ==	2010
+
+capture drop	PVetExp					
+gen	PVetExp	=	0			
+replace	PVetExp	=	35.751	if	year ==	1980
+replace	PVetExp	=	40.044	if	year ==	1981
+replace	PVetExp	=	46.336	if	year ==	1982
+replace	PVetExp	=	50.629	if	year ==	1983
+replace	PVetExp	=	57.513	if	year ==	1984
+replace	PVetExp	=	64.545	if	year ==	1985
+replace	PVetExp	=	66.765	if	year ==	1986
+replace	PVetExp	=	66.395	if	year ==	1987
+replace	PVetExp	=	68.616	if	year ==	1988
+replace	PVetExp	=	71.355	if	year ==	1989
+replace	PVetExp	=	74.019	if	year ==	1990
+replace	PVetExp	=	77.054	if	year ==	1991
+replace	PVetExp	=	79.571	if	year ==	1992
+replace	PVetExp	=	81.569	if	year ==	1993
+replace	PVetExp	=	83.050	if	year ==	1994
+replace	PVetExp	=	85.800	if	year ==	1995
+replace	PVetExp	=	89.300	if	year ==	1996
+replace	PVetExp	=	92.300	if	year ==	1997
+replace	PVetExp	=	94.700	if	year ==	1998
+replace	PVetExp	=	95.900	if	year ==	1999
+replace	PVetExp	=	100.000	if	year ==	2000
+replace	PVetExp	=	104.660	if	year ==	2001
+replace	PVetExp	=	109.360	if	year ==	2002
+replace	PVetExp	=	114.670	if	year ==	2003
+replace	PVetExp	=	115.780	if	year ==	2004
+replace	PVetExp	=	117.620	if	year ==	2005
+replace	PVetExp	=	122.430	if	year ==	2006
+replace	PVetExp	=	126.200	if	year ==	2007
+replace	PVetExp	=	128.900	if	year ==	2008
+replace	PVetExp	=	130.900	if	year ==	2009
+replace	PVetExp	=	131.100	if	year ==	2010
+
+
+capture drop farmgo
+capture drop farmdc
+capture drop farmgm
+capture drop farmohct
+capture drop farmdirpayts
+capture drop farmffi
+
+********************************************************
+* Farm Level vars
+********************************************************
+
+* The following definitions maintain FFI = GO - DC - OH + DP
+*  where DP are direct payments
+gen farmgo	= totaloutput
+gen farmdc	= totalspecificcosts
+
+gen farmohct 	= 			   ///
+	wagespaid                        + /// 
+	interestpaid                     + /// 
+	rentpaid                         + /// 
+	depreciation                     + /// 
+	energy                           + /// 
+	machininerybuildingcurrentcosts  + /// 
+	contractwork                     + /// 
+	otherdirectinputs
+
+gen farmgm = farmgo - farmdc
+
+* DP
+gen farmdirpayts =                             ///
+	subsidiesoninvest                    + ///
+	totalsubsidiesexcludingoninvestm     + ///
+	paymentstodairyoutgoers         
+
+/* The following is an alternative and equivalent
+ formulation of farmohct */
+/*
+gen farmohct =                             ///
+totalfarmingoverheads                    + /// 
+totalexternalfactors                     + /// 
+depreciation 
+*/
+
+gen farmffi =              	        	///
+	totaloutput                     -	///
+	feedforgrazinglivestock         - 	///
+	feedforpigspoultry	        - 	///
+	otherlivestockspecificcosts     - 	///
+	seedsandplants 	                - 	///
+	fertilisers                     - 	///
+	cropprotection	                - 	///
+	othercropspecific               - 	///
+	forestryspecificcosts           - 	///
+	contractwork                    - 	///
+	machininerybuildingcurrentcosts - 	///
+	energy                          - 	///
+	otherdirectinputs               -	///
+	depreciation                    - 	///
+	wagespaid                       - 	///
+	rentpaid                        -	///
+	interestpaid                    +	///
+	subsidiesoninvest               +	///
+	totalsubsidiesexcludingoninvestm +	///
+	paymentstodairyoutgoers         
+
+/* FFI differs from FADN def: SE415 - SE365 + SE405
+   (see RICC 882). Specifically vatoninvest term 
+   removed (i.e. those taxes left in, and 
+   totalsubsidiesexcludingoninvestm added. 
+*/
+
+* Check that FFI identity holds
+gen testffi = farmgo - farmdc - farmohct + farmdirpayts
+gen df_testffi = farmffi - testffi
+count if df_testffi > 0.05 & df_testffi < .
+drop testffi df_testffi
+
+
+** Direct costs decomposition
+
+* both vetmed and fdaifees are lumped in here
+gen farmvetmed = otherlivestockspecificcosts/2 
+gen farmaifees = otherlivestockspecificcosts/2
+gen aidairy = farmaifees
+* fdpurblk and fdpurcon not separable   
+gen farmpurblk	= feedforgrazinglivestock/2 
+gen farmpurcon	= feedforgrazinglivestock/2 
+gen farmcrppro	= cropprotection 
+gen farmferfil	=  fertilisers 
+gen farmpursed	=  seedsandplants
+
+* original farmdc def., but closest thing we have to that in 
+* standard FADN is totalspecific costs
+*gen farmdc =  fdvetmed + fdaifees + fdpurblk + fdpurcon + fdcrppro + fdferfil + fdpursed + contractwork - foragecropsvalue
+
+gen fainvfrm = totalfixedassets
+gen fainvmch = machinery
+gen fainvbld = buildings
+gen fofuellu = energy
+
+
+
+** Fixed (overhead) costs decomposition
+
+*gen labunits = totallabourinputawu
+gen flabtotl = labourinputhours
+gen flabpaid =  paidlabourinputhours
+gen flabunpd = unpaidlabourinputhours
+gen fsubreps = environmentalsubsidies
+*! could use carexpenses + electricity, but don't have these variables, so set to 0, but IGM needs this, so set to = energy. 
+gen focarelp =  energy 
+
+
+
+
+
+********************************************************
+* Allocation variables (these differ slightly from Fiona's 
+* as I don't have some vars)
+********************************************************
+
+gen dpalloclu = dairycowslus/(dairycowslus+othercattlelus+sheepandgoatslus)
+gen cpalloclu = othercattlelus/(dairycowslus+othercattlelus+sheepandgoatslus)
+gen spalloclu = sheepandgoatslus/(dairycowslus+othercattlelus+sheepandgoatslus)
+gen dpallocgo = cowsmilkandmilkproducts/(cowsmilkandmilkproducts+beefandveal+sheepandgoats)
+gen cpallocgo = beefandveal/(cowsmilkandmilkproducts+beefandveal+sheepandgoats)
+gen spallocgo = sheepandgoats/(cowsmilkandmilkproducts+beefandveal+sheepandgoats)
+gen alloc = cowsmilkandmilkproducts/(totaloutputcrops+totaloutputlivestock)
+
+replace dpallocgo = cowsmilkandmilkproducts/(cowsmilkandmilkproducts+beefandveal+sheepandgoats)
+
+
+
+********************************************************
+* Enterprise Level (via allocation vars calculated above)
+********************************************************
+
+
+** Forage areas
+gen daforare = foragearea * dpalloclu
+gen cpforacs = foragearea * cpalloclu
+gen spforacs = foragearea * spalloclu
+
+
+gen fdairygo = cowsmilkandmilkproducts // <- euro value
+gen dogrosso = cowsmilkandmilkproducts // corr fdairygo dogrosso = 1 in nfs_data.dta 
+gen dotomkgl = dairyproducts/1.03  // convert from kg to litres
+/* This var is the numerator for milk yield, see milk yield definition in RICC 882 (NOTE: I think the 1000 term is a typo, because there's 1.03 kg per litre, sot they're quite close as figures. Since a quintal is 100 kg, it should also be close to 100 l in volume, not 1000 as implied by RICC 882. */
+
+gen 	fdairydc   = farmdc	* dpalloclu
+gen 	fdairyoh   = farmohct 	* dpalloclu
+gen 	fdairytct  = fdairydc 	+ fdairyoh
+
+gen 	fdairygm  = fdairygo - fdairydc
+
+
+gen fcatlego = beefandveal // <- euro value
+gen cogrosso = fcatlego // corr fcatlego  cogrosso = 1 in nfs_data.dta 
+
+gen fsheepgo = sheepandgoats // <- euro value
+* corr fsheepgo sogrosso is not perfect in nfs_data.dta!
+
+* corr fpigsgo hogrosso is not perfect in nfs_data.dta!
+
+
+** Direct Costs
+* both vetmed and fdaifees are lumped in here
+gen fdvetmed = (otherlivestockspecificcosts/2)
+gen fdaifees = (otherlivestockspecificcosts/2)
+
+
+* fdpurblk and fdpurcon not separable   
+gen fdpurblk = (feedforgrazinglivestock/2)
+gen fdpurcon = (feedforgrazinglivestock/2)
+gen fdcrppro = cropprotection 
+gen fdferfil = fertilisers 
+gen fdpursed = seedsandplants 
+
+
+
+
+*******************************************************
+* Other vars (level of measurement varies)
+*******************************************************
+
+** Farm/holder descriptors
+
+gen ogagehld 	= year - yrborn
+gen age		=  ogagehld 
+gen fsizuaa 	= totaluaa   
+
+
+
+** Stocking variables
+gen dpnolu 	=  dairycowslus   
+gen cpnolu 	=  othercattlelus   
+gen spnolu 	=  sheepandgoatslus   
+
+
+
+* other necessary vars (usually defined in doFarmDerivedVars.do).
+gen hasreps =  fsubreps > 0 & fsubreps != .
+*gen hasforestry =  forestryspecificcosts > 0 & forestryspecificcosts != .
+gen hasforestry =  forestryaa > 0 & forestryaa != .
+*! these may or may not be appropriate
+gen landval =  landpermananentcropsquotas
+
+
+gen loan =  longmediumtermloans + shorttermloans
+local unitvars fdairygo dotomkgl landval fdferfil dpnolu fdvetmed fdaifees fdpurblk fdpurcon fdcrppro fdpursed
+
+
+
+
+
+*******************************************************
+* Generate the minimum agricultural wage
+*  This is used to give a value to family labour
+*******************************************************
+
+capture drop PMinAgWage
+gen PMinAgWage = 0
+replace PMinAgWage = 9705 if year == 1996
+replace PMinAgWage = 10047 if year == 1997
+replace PMinAgWage = 10278 if year == 1998
+replace PMinAgWage = 10642 if year == 1999
+replace PMinAgWage = 11437 if year == 2000
+replace PMinAgWage = 12481 if year == 2001
+replace PMinAgWage = 13208 if year == 2002
+replace PMinAgWage = 13802 if year == 2003
+replace PMinAgWage = 14196 if year == 2004
+replace PMinAgWage = 15513 if year == 2005
+replace PMinAgWage = 16062 if year == 2006
+replace PMinAgWage = 17339 if year == 2007
+replace PMinAgWage = 17988.36 if year == 2008
+replace PMinAgWage = 18921.24 if year == 2009
+replace PMinAgWage = 18907.2 if year == 2010
+replace PMinAgWage = 19167.2 if year == 2011
+replace PMinAgWage = 19406.4 if year == 2012
+replace PMinAgWage = 19406.4 if year == 2013
+
+
+
+*******************************************************
+*******************************************************
+* long list of variables
+*******************************************************
+*******************************************************
+
+* !!Notes at bottom of the file!!
+
+gen flabsmds = labourinputhours/8
+gen spavnoew = 0
+gen spavno12 = 0
+gen spavno2p = 0
+gen spavnorm = 0
+gen spavnlbw = 0
+gen spavnool = 0
+gen spavnots = 0
+gen oanolt5y = 0
+gen oano515y = 0
+gen oano1619 = 0
+gen oano2024 = 0
+gen oano2544 = 0
+gen oano4564 = 0
+gen oanoge65 = 0
+gen ffszsyst = system
+gen fgrntsub = 0
+gen fsubesag = 0
+gen cssuckcw = 0
+gen cs10mtbf = 0
+gen cs22mtbf = 0
+gen csslaugh = 0 
+gen csextens = 0 
+gen csheadag = 0 
+gen csmctopu = 0
+gen sosubsid = 0
+gen posubsid = 0
+gen dogpcomp = 0
+gen fsubastp = 0
+gen fsubcatp = 0
+gen fsubrptp = 0
+gen fsubpbtp = 0
+gen fsublitp = 0
+gen fsubmztp = 0
+gen fsubvstp = 0
+gen dqcomlrd = 0
+gen dosubsvl = 0
+gen fsizldow = 0
+gen fsizldrt = 0
+gen fsizldlt = 0
+gen wwhcuarq = 0
+gen swhcuarq = 0
+gen wbycuarq = 0
+gen sbycuarq = 0
+gen mbycuarq = 0
+gen wotcuarq = 0
+gen sotcuarq = 0
+gen osrcuarq = 0
+gen pbscuarq = 0
+gen lsdcuarq = 0
+gen potcuarq = 0
+gen sbecuarq = 0
+gen faprldvl = 0
+gen faprldac = 0
+gen faslldvl = 0
+gen faslldac = 0
+gen favlfrey = 0
+gen favlfrby = 0
+gen forntcon = 0
+gen soil     = int(runiform()*8) + 1
+gen soil2    = 0
+gen soil3    = 0
+gen hpforacs = 0
+gen fsizfrac = 0
+gen fsizfort = 0
+gen fsizeadj = fsizuaa
+gen fcropsgm = 0
+gen flivstgm = 0
+gen doslcmvl = 0
+gen dosllmvl = 0
+gen domlkbon = 0
+gen domlkpen = 0
+gen domkfdvl = 0
+gen domkalvl = 0
+gen doslmkvl = 0
+gen doslcmgl = 0
+gen dosllmgl = 0
+gen doslmkgl = dotomkgl // can't distinguish from dotomkgl
+gen domkfdgl = 0
+gen dotomkvl = fdairygo //need this for NLOGIT. Best match is the same var as we have for fdairygo above
+gen doschbvl = 0
+gen doschbno = 0
+gen dosldhrd = 0
+gen docfslvl = 0
+gen docfslno = 0
+gen dotochbv = 0
+gen dotochbn = 0
+gen dopchbvl = 0
+gen dopchbno = 0
+gen dotichbv = 0
+gen dotichbn = 0
+gen doprdhrd = 0
+gen dovlcnod = 0
+gen doreplct = 0
+gen docftfvl = 0
+gen docftfno = 0
+gen dovalclf = 0
+gen ddmiscdc = 0
+gen ivmalldy = 0
+gen iaisfdy  = 0
+gen itedairy = 0
+gen imiscdry = 0
+gen flabccdy = 0
+gen ddconval = 0
+gen ddpastur = 0
+gen ddwinfor = 0
+gen PLabour  =  wagespaid/paidlabourinputhours
+gen cpavnocw = 0
+gen cpavno06 = 0
+gen dpavnohd = dairycows //using dairycows here instead of dairycowslus (should be same). Will end up as H in NLOGIT.
+gen cpavnohc = 0
+gen cpavno61 = 0
+gen cpavno12 = 0
+gen cpavno2p = 0
+gen cpavnobl = 0
+gen cpavn12m = 0
+gen cpavn12f = 0
+gen cpavn2pm = 0
+gen cpavn2pf = 0
+gen cosalesv = 0
+gen copurval = 0
+gen covalcno = 0
+gen cosubsid = 0
+gen cotffdvl = 0
+gen cotftdvl = 0
+gen coslcfvl = 0
+gen coslwnvl = 0
+gen coslstvl = 0
+gen coslfcvl = 0
+gen coslbhvl = 0
+gen coslocvl = 0
+gen coprcfvl = 0
+gen coprwnvl = 0
+gen coprstvl = 0
+gen coprbhvl = 0
+gen coprocvl = 0
+gen coslmfno = 0
+gen coslcfno = 0
+gen coslwnno = 0
+gen coslstno = 0
+gen coslfcno = 0
+gen coslbhno = 0
+gen coslocno = 0
+gen coprcfno = 0
+gen coprwnno = 0
+gen coprstno = 0
+gen coprfcno = 0
+gen coprbhno = 0
+gen coprocno = 0
+gen cotftdno = 0
+gen cotffdno = 0
+gen coslmsvl = 0
+gen coslmsno = 0
+gen coslfsvl = 0
+gen coslfsno = 0
+gen coprmsvl = 0
+gen coprmsno = 0
+gen coprfsvl = 0
+gen coprfsno = 0
+gen coslfmvl = 0
+gen coslffvl = 0
+gen coslffno = 0
+gen cdmiscdc = 0
+gen ivmallc  = 0
+gen iaisfcat = 0
+gen itecattl = 0
+gen imiscctl = 0
+gen flabccct = 0
+gen cdconcen = 0
+gen cdpastur = 0
+gen cdwinfor = 0
+gen cdmilsub = 0
+gen PCalfFeed = 0
+gen sosalean = 0
+gen soslhgvl = 0
+gen soslflvl = 0
+gen soslflno = 0
+gen soslslvl = 0
+gen soslslno = 0
+gen soslhgno = 0
+gen soslbhvl = 0
+gen soslbhno = 0
+gen soslervl = 0
+gen soslerno = 0
+gen soslbevl = 0
+gen soslbeno = 0
+gen soconhvl = 0
+gen soconhno = 0
+gen soprslvl = 0
+gen soprslno = 0
+gen soprbdvl = 0
+gen soprbdno = 0
+gen sdother  = 0
+gen ivmallsp = 0
+gen iaisfshp = 0
+gen itesheep = 0
+gen imiscshp = 0
+gen flabccsh = 0
+gen sdconval = 0
+gen sdwinfor = 0
+gen sdroots  = 0
+gen sdpastur = 0
+gen fcropsgo = 0
+gen wwhcuylq = 0
+gen wwhcusdq = 0
+gen wwhcuslq = 0
+gen wwhcufdq = 0
+gen wwhcuclq = 0
+gen wwhcufnq = 0
+gen wwhcufpq = 0
+gen wwhcufkq = 0
+gen wwhcucpv = 0
+gen wwhcumhv = 0
+gen wwhcucwv = 0
+gen wwhcumcv = 0
+gen wwhcusev = 0
+gen wwhcufrv = 0
+gen wwhcutcv = 0
+gen wwhcutsv = 0
+gen wwhcuwtq = 0 
+gen wwhcualq = 0
+gen wwhopopv = 0
+gen wwhopopq = 0
+gen wwhopslv = 0
+gen wwhopslq = 0
+gen wwhopfdv = 0
+gen wwhopfdq = 0
+gen wwhopsdv = 0
+gen wwhopsdq = 0
+gen wwhopclv = 0
+gen wwhopclq = 0
+gen wwhcugov = 0
+gen wwhopgov = 0
+gen wwhcuslv = 0
+gen wwhcufdv = 0
+gen wwhcusdv = 0
+gen wwhcuclv = 0
+gen swhcuylq = 0
+gen swhcusdq = 0
+gen swhcuslq = 0
+gen swhcufdq = 0
+gen swhcuclq = 0
+gen swhcufnq = 0
+gen swhcufpq = 0
+gen swhcufkq = 0
+gen swhcucpv = 0
+gen swhcumhv = 0
+gen swhcucwv = 0
+gen swhcumcv = 0
+gen swhcufrv = 0
+gen swhcusev = 0
+gen swhcutcv = 0
+gen swhcutsv = 0
+gen swhcuwtq = 0 
+gen swhcualq = 0
+gen swhopopv = 0
+gen swhopopq = 0
+gen swhopslv = 0
+gen swhopslq = 0
+gen swhopfdv = 0
+gen swhopfdq = 0
+gen swhopsdv = 0
+gen swhopsdq = 0
+gen swhopclv = 0
+gen swhopclq = 0
+gen swhcugov = 0
+gen swhopgov = 0
+gen swhcuslv = 0
+gen swhcufdv = 0
+gen swhcusdv = 0
+gen swhcuclv = 0
+gen wbycuylq = 0
+gen wbycusdq = 0
+gen wbycuslq = 0
+gen wbycufdq = 0
+gen wbycuclq = 0
+gen wbycufnq = 0
+gen wbycufpq = 0
+gen wbycufkq = 0
+gen wbycucpv = 0
+gen wbycumhv = 0
+gen wbycucwv = 0
+gen wbycumcv = 0
+gen wbycufrv = 0
+gen wbycusev = 0
+gen wbycutcv = 0
+gen wbycutsv = 0
+gen wbycuwtq = 0 
+gen wbycualq = 0
+gen wbyopopv = 0
+gen wbyopopq = 0
+gen wbyopslv = 0
+gen wbyopslq = 0
+gen wbyopfdv = 0
+gen wbyopfdq = 0
+gen wbyopsdv = 0
+gen wbyopsdq = 0
+gen wbyopclv = 0
+gen wbyopclq = 0
+gen wbycugov = 0
+gen wbyopgov = 0
+gen wbycuslv = 0
+gen wbycufdv = 0
+gen wbycusdv = 0
+gen wbycuclv = 0
+gen sbycuylq = 0
+gen sbycusdq = 0
+gen sbycuslq = 0
+gen sbycufdq = 0
+gen sbycuclq = 0
+gen sbycufnq = 0
+gen sbycufpq = 0
+gen sbycufkq = 0
+gen sbycucpv = 0
+gen sbycumhv = 0
+gen sbycucwv = 0
+gen sbycumcv = 0
+gen sbycusev = 0
+gen sbycufrv = 0
+gen sbycutcv = 0
+gen sbycutsv = 0
+gen sbycuwtq = 0 
+gen sbycualq = 0
+gen sbyopopv = 0
+gen sbyopopq = 0
+gen sbyopslv = 0
+gen sbyopslq = 0
+gen sbyopfdv = 0
+gen sbyopfdq = 0
+gen sbyopsdv = 0
+gen sbyopsdq = 0
+gen sbyopclv = 0
+gen sbyopclq = 0
+gen sbycugov = 0
+gen sbyopgov = 0
+gen sbycuslv = 0
+gen sbycufdv = 0
+gen sbycusdv = 0
+gen sbycuclv = 0
+gen mbycuylq = 0
+gen mbycusdq = 0
+gen mbycuslq = 0
+gen mbycufdq = 0
+gen mbycuclq = 0
+gen mbycufnq = 0
+gen mbycufpq = 0
+gen mbycufkq = 0
+gen mbycucpv = 0
+gen mbycumhv = 0
+gen mbycucwv = 0
+gen mbycumcv = 0
+gen mbycusev = 0
+gen mbycufrv = 0
+gen mbycutcv = 0
+gen mbycutsv = 0
+gen mbycuwtq = 0 
+gen mbycualq = 0
+gen mbyopopv = 0
+gen mbyopopq = 0
+gen mbyopslv = 0
+gen mbyopslq = 0
+gen mbyopfdv = 0
+gen mbyopfdq = 0
+gen mbyopsdv = 0
+gen mbyopsdq = 0
+gen mbyopclv = 0
+gen mbyopclq = 0
+gen mbycugov = 0
+gen mbyopgov = 0
+gen mbycuslv = 0
+gen mbycufdv = 0
+gen mbycusdv = 0
+gen mbycuclv = 0
+gen potcuylq = 0
+gen potcusdq = 0
+gen potcuslq = 0
+gen potcufdq = 0
+gen potcuclq = 0
+gen potcufnq = 0
+gen potcufpq = 0
+gen potcufkq = 0
+gen potcucpv = 0
+gen potcumhv = 0
+gen potcucwv = 0
+gen potcumcv = 0
+gen potcusev = 0
+gen potcufrv = 0
+gen potcutcv = 0
+gen potcutsv = 0
+gen potcuwtq = 0 
+gen potcualq = 0
+gen potopopv = 0
+gen potopopq = 0
+gen potopslv = 0
+gen potopslq = 0
+gen potopfdv = 0
+gen potopfdq = 0
+gen potopsdv = 0
+gen potopsdq = 0
+gen potopclv = 0
+gen potopclq = 0
+gen potcugov = 0
+gen potopgov = 0
+gen potcuslv = 0
+gen potcufdv = 0
+gen potcusdv = 0
+gen potcuclv = 0
+gen sbecuylq = 0
+gen sbecusdq = 0
+gen sbecuslq = 0
+gen sbecufdq = 0
+gen sbecuclq = 0
+gen sbecufnq = 0
+gen sbecufpq = 0
+gen sbecufkq = 0
+gen sbecucpv = 0
+gen sbecumhv = 0
+gen sbecucwv = 0
+gen sbecumcv = 0
+gen sbecusev = 0
+gen sbecufrv = 0
+gen sbecutcv = 0
+gen sbecutsv = 0
+gen sbecuwtq = 0 
+gen sbecualq = 0
+gen sbeopopv = 0
+gen sbeopopq = 0
+gen sbeopslv = 0
+gen sbeopslq = 0
+gen sbeopfdv = 0
+gen sbeopfdq = 0
+gen sbeopsdv = 0
+gen sbeopsdq = 0
+gen sbeopclv = 0
+gen sbeopclq = 0
+gen sbecugov = 0
+gen sbeopgov = 0
+gen sbecuslv = 0
+gen sbecufdv = 0
+gen sbecusdv = 0
+gen sbecuclv = 0
+gen PfertiliserNPK = 0
+gen fpigsgo  = 0
+gen fpoultgo = 0
+gen fhorsego = 0
+gen fothergo = 0
+gen frhiremh = 0
+gen frevoth  = 0
+gen finttran = 0
+gen suckler_welfare = 0
+gen fsubhors = 0
+gen fsubforh = 0 
+gen fsubtbco = 0
+gen fsubyfig = 0
+gen Ppig     = 0
+gen Ppoultry = 0
+gen fdmachir = 0
+gen fdtrans  = 0
+gen fdlivmnt = 0
+gen fdcaslab = contractwork 
+gen fvalflab = unpaidlabourinputhours * PMinAgWage
+gen fdmiscel = 0
+gen fdfodadj = 0
+gen fohirlab = wagespaid
+gen fointpay = 0
+gen fomacdpr = 0
+gen fomacopt = machininerybuildingcurrentcosts
+gen foblddpr = 0
+gen fobldmnt = 0
+gen fodprlim = 0
+gen foupkpld = 0
+gen foannuit = 0
+gen fomiscel = 0
+gen forates  = 0
+gen fortfmer = 0
+gen pdmiscdc = 0
+gen imiscpig = 0
+gen flabccpg = 0
+gen edtotldc = 0
+gen icallpyv = 0
+gen ivmallpy = 0
+gen itepolty = 0
+gen imiscpty = 0
+gen flabccpy = 0
+gen icallhvl = 0
+gen ivmallh  = 0
+gen iaisfhrs = 0
+gen itehorse = 0
+gen imischrs = 0
+gen iballhrs = 0
+gen ibhayhvl = 0
+gen ibstrhvl = 0
+gen ibsilhvl = 0
+gen fcatlegm = 0
+gen fsheepgm = 0
+gen DAIRY_PLATFORM = 0
+gen dafedare = 0
+gen dpcfbtot = 0
+gen fototal  = 0
+gen fcplivgo = totaloutputcrops + totaloutputlivestock // common sense translation here. have to double check definitions though
+* making fcplivgo and fdairygo are critical, as they are needed to gen alloc in the Variable Construction, which is a bottle-neck. 
+gen teagasc  = 0
+
+
+
+

@@ -1,0 +1,1016 @@
+% Header
+\documentclass{article}\usepackage{graphicx, color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\definecolor{fgcolor}{rgb}{0.2, 0.2, 0.2}
+\newcommand{\hlnumber}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlfunctioncall}[1]{\textcolor[rgb]{0.501960784313725,0,0.329411764705882}{\textbf{#1}}}%
+\newcommand{\hlstring}[1]{\textcolor[rgb]{0.6,0.6,1}{#1}}%
+\newcommand{\hlkeyword}[1]{\textcolor[rgb]{0,0,0}{\textbf{#1}}}%
+\newcommand{\hlargument}[1]{\textcolor[rgb]{0.690196078431373,0.250980392156863,0.0196078431372549}{#1}}%
+\newcommand{\hlcomment}[1]{\textcolor[rgb]{0.180392156862745,0.6,0.341176470588235}{#1}}%
+\newcommand{\hlroxygencomment}[1]{\textcolor[rgb]{0.43921568627451,0.47843137254902,0.701960784313725}{#1}}%
+\newcommand{\hlformalargs}[1]{\textcolor[rgb]{0.690196078431373,0.250980392156863,0.0196078431372549}{#1}}%
+\newcommand{\hleqformalargs}[1]{\textcolor[rgb]{0.690196078431373,0.250980392156863,0.0196078431372549}{#1}}%
+\newcommand{\hlassignement}[1]{\textcolor[rgb]{0,0,0}{\textbf{#1}}}%
+\newcommand{\hlpackage}[1]{\textcolor[rgb]{0.588235294117647,0.709803921568627,0.145098039215686}{#1}}%
+\newcommand{\hlslot}[1]{\textit{#1}}%
+\newcommand{\hlsymbol}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlprompt}[1]{\textcolor[rgb]{0.2,0.2,0.2}{#1}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{datetime}
+
+\begin{document}
+
+\hrule
+\begin{quote}
+  \begin{flushleft}
+    Patrick R. Gillespie\\
+    Walsh Fellow\\
+    Teagasc, REDP\\
+    Athenry, Co Galway, Ireland\\
+    patrick.gillespie@teagasc.ie\\
+  \end{flushleft}
+\end{quote}
+\hrule
+\begin{flushleft}
+  \textbf{\jobname.Rnw}\\
+  \today at \currenttime
+\end{flushleft}
+\hrule
+\vspace{1cm}
+
+\begin{flushleft}
+\subsection*{Clearing and loading}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlfunctioncall{rm}(list = \hlfunctioncall{ls}())
+paneldir <- \hlstring{"/media/MyPassport/Data/data_NFSPanelAnalysis/"}
+\hlcomment{# paneldir <- 'G:\textbackslash{}\textbackslash{}Data/data_NFSPanelAnalysi/'}
+\hlfunctioncall{source}(\hlfunctioncall{paste}(paneldir, \hlstring{"code_R/dirstruct.R"}, sep = \hlstring{""}))
+\hlfunctioncall{setwd}(Rdir)
+\hlfunctioncall{library}(foreign)  \hlcomment{#...for the ability to read .dta files}
+\hlfunctioncall{library}(data.table)  \hlcomment{#... useful for big \hlfunctioncall{datasets} (makes manipulation faster & easier)}
+\hlfunctioncall{library}(xtable)  \hlcomment{#... to get nice looking tables.}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+ 
+\subsection*{Data import and set up}
+
+Next code chunk does the following:
+\begin{itemize}
+  \item {Read the NFS dataset into a data.table (type of data.frame - useful for large datasets) and ID the key
+        variables (like subscripts for the data). Sorts by those too.}
+  \item {Select only Specialist Dairying}
+  \item {Tabulate farm numbers by year}
+\end{itemize}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+nfs <- \hlfunctioncall{data.table}(\hlfunctioncall{read.dta}(\hlfunctioncall{paste}(nfsdatadir, \hlstring{"nfs_data.dta"}, sep = \hlstring{""})), key = \hlstring{"fffadnsy"})
+nfs <- nfs[fffadnsy == 411]
+\hlfunctioncall{setkey}(nfs, farmcode, year)  \hlcomment{# reset key}
+nfs.farms <- nfs[year > 1998 & year < 2008, \hlfunctioncall{length}(farmcode), by = year]
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+Then do the following for the FADN data to get a comparable dataset: 
+\begin{itemize}
+  \item{Load the Irish FADN dataset}
+  \item{Select Specialist Dairying (A30==4110)}
+  \item{Tabulate farm numbers by year}
+\end{itemize}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+fadn <- \hlfunctioncall{data.table}(\hlfunctioncall{read.csv}(\hlfunctioncall{paste}(fadndir9907, \hlstring{"Ireland.csv"}, sep = \hlstring{""})), key = \hlstring{"A30"})
+fadn <- fadn[A30 == 4110]
+\hlfunctioncall{setkey}(fadn, Farm.Code, YEAR)  \hlcomment{# reset key}
+fadn.farms <- fadn[, \hlfunctioncall{length}(Farm.Code), by = YEAR]
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\subsection*{Comparison of datasets}
+\subsubsection*{Farm numbers by year}
+Compare farm numbers to choose an easier year for individual variable comparison... 
+
+% latex table generated in R 2.15.1 by xtable 1.7-0 package
+% Mon Dec 31 15:39:47 2012
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{rrr}
+  \hline
+ & NFS & FADN \\ 
+  \hline
+1999 & 287 & 280 \\ 
+  2000 & 331 & 316 \\ 
+  2001 & 379 & 369 \\ 
+  2002 & 331 & 348 \\ 
+  2003 & 353 & 364 \\ 
+  2004 & 335 & 335 \\ 
+  2005 & 324 & 324 \\ 
+  2006 & 313 & 304 \\ 
+  2007 & 299 & 306 \\ 
+   \hline
+\end{tabular}
+\caption{Sampled Specialist Dairy farms by year}
+\end{center}
+\end{table}
+
+
+
+... which shows that the years 2004 and 2005 were exactly the same size as unweighted samples. Gives some confidence that there's no difference in the system code (and there shouldn't be any difference). 
+
+FADN weights differ from NFS weights, so I can't compare weighted samples. 
+
+I'll select one year to compare, say 2005,  as I'd guess the two should be most similar in the most recent year that matches up the sampled farms. 
+
+\textbf{nidy_means.Rnw} calculated means for all variables in each dataset, stored them two vectors, and compared them.
+
+\textbf{nidy_1farm} did the comparison on an element by element basis \emph{i.e.} the individual values of each variable, for a single farm.
+
+This time I'll read in the key Brian Moran gave me (NFS variables names only) and try to match the 163 variables in the FADN as best I can by reading the descriptions. Afterwards, I'll run some descriptive statistics to see if they match up well. 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcomment{# create two new data tables for just the 2005 year}
+nfs05 <- nfs[year == 2005]
+fadn05 <- fadn[YEAR == 2005]
+
+\hlcomment{# set the key for each to the farm size variables in each dataset (which I}
+\hlcomment{# think match up)}
+\hlfunctioncall{setkey}(nfs05, fsizuaa)
+\hlfunctioncall{setkey}(fadn05, Total.UAA)
+
+\hlcomment{# now read in the key (saved the Enterprise sheet from the full}
+\hlcomment{# spreadsheet as a csv in NFSPanelAnalysis for reading in.)}
+nfskey <- \hlfunctioncall{data.table}(\hlfunctioncall{read.csv}(\hlstring{"nfskey.csv"}))  # includes rows and columns I don't need
+sr <- \hlfunctioncall{grep}(\hlstring{"Farm code"}, nfskey$ENTREPRISE.LAYOUT, ignore.case = T)  # starting row
+er <- \hlfunctioncall{length}(nfskey$ENTREPRISE.LAYOUT)  \hlcomment{# ending row}
+nfskey <- nfskey[sr:er, \hlfunctioncall{list}(ENTREPRISE.LAYOUT, X)]
+\hlfunctioncall{setnames}(nfskey, \hlfunctioncall{c}(\hlstring{"ENTREPRISE.LAYOUT"}, \hlstring{"X"}), \hlfunctioncall{c}(\hlstring{"labels"}, \hlstring{"varnames"}))  # rename columns
+nfskey <- nfskey[varnames != \hlstring{""}]
+fadn.names <- \hlfunctioncall{names}(fadn05)
+\hlfunctioncall{viewData}(nfskey)
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\textcolor{errorcolor}{\#\# Error: could not find function "viewData"}}\end{kframe}
+\end{knitrout}
+
+
+
+% latex table generated in R 2.15.1 by xtable 1.7-0 package
+% Mon Dec 31 15:39:47 2012
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{rll}
+  \hline
+ & labels & varnames \\ 
+  \hline
+1 & Farm code & FFARMCOD \\ 
+  2 & Soil code     (1-6) & FFSOLCOD \\ 
+  3 & Size/System & FFSZSYST \\ 
+  4 & Fadn system eg 411 -Three digit Subrout & FFFADNSY \\ 
+  5 & Book Number & FFBOOKNO \\ 
+  6 & Farm registered for vat & FFREGVAT \\ 
+  7 & Size of farm (U.A.A.)    (ha.) & FSIZUAA \\ 
+  8 & Size of farm (ESU) & FSIZESU \\ 
+  9 & Size of farm unadjusted  (ha.) & FSIZUNAD \\ 
+  10 & Size of farm adjusted    (ha.) & FSIZEADJ \\ 
+  11 & Land Owned               (ha.) & FSIZLDOW \\ 
+  12 & Land  Rented             (ha.) & FSIZLDRT \\ 
+  13 & Land  Let                (ha.) & FSIZLDLT \\ 
+  14 & Total Forage Area        (ha.) & FSIZFRAC \\ 
+  15 & Feed acres & FSIZFDAC \\ 
+  16 & Total crops and pasture  (ha.) & FSIZCRPS \\ 
+  17 & Hay acreage (1st cut)    (ha.) & FSIZ1HAY \\ 
+  18 & Hay acreage (2nd cut)    (ha.) & FSIZ2HAY \\ 
+  19 & Hay acreage (3rd cut)    (ha.) & FSIZ3HAY \\ 
+  20 & Silage acreage (1st cut) (ha.) & FSIZSLG1 \\ 
+  21 & Silage acreage (2nd cut) (ha.) & FSIZSLG2 \\ 
+  22 & Silage acreage (3rd cut) (ha.) & FSIZSLG3 \\ 
+  23 & Hay adjusted acreage     (ha.) & FSIZAJHY \\ 
+  24 & Silage adjusted acreage  (ha.) & FSIZAJSL \\ 
+  25 & Rough grazing            (ha.) & FSIZRGAC \\ 
+  26 & Remainder of farm        (ha.) & FSIZREMA \\ 
+  27 & Area of forestry (new \& old acs.) & FSIZFORT \\ 
+  28 & Acreage equivalent of rough grazing (acs & FSIZRGEQ \\ 
+  29 & Acreage equivalent of commonage (ha.) & FSIZCMEQ \\ 
+  30 & Acres rented - family -retirement sch & FSIZRTFE \\ 
+  31 & Acres rented - non-family -retirement & FSIZRTNE \\ 
+  32 & Grazing - area treated   (ha.) & FSIZGZAC \\ 
+  33 & N. on grazing    (kg.) & FSIZNGRZ \\ 
+  34 & P. on grazing    (kg.) & FSIZPGRZ \\ 
+  35 & K. on grazing    (kg.) & FSIZKGRZ \\ 
+  36 & Grassland - area treated (ha.) & FSIZPSAC \\ 
+  37 & N. on grassland  (kg.) & FSIZNGRS \\ 
+  38 & P. on grassland  (kg.) & FSIZPGRS \\ 
+  39 & K. on grassland  (kg.) & FSIZKGRS \\ 
+  40 & Labour units  Unpaid (family) & FLABUNPD \\ 
+  41 & Labour units  Paid & FLABPAID \\ 
+  42 & Total labour units & FLABTOTL \\ 
+  43 & Standard man days & FLABSMDS \\ 
+  44 & Investment :- Estimated value of farm & FAINVFRM \\ 
+  45 & INVESTMENT     In machinery & FAINVMCH \\ 
+  46 & INVESTMENT     Livestock & FAINVLST \\ 
+  47 & INVESTMENT     Buildings & FAINVBLD \\ 
+  48 & INVESTMENT     Land Improvements & FAINVLIM \\ 
+  49 & Gross Output                     (€) & FARMGO \\ 
+  50 & Direct Costs                     (€) & FARMDC \\ 
+  51 & Gross Margin                     (€) & FARMGM \\ 
+  52 & Overhead Costs                   (€) & FARMOHCT \\ 
+  53 & Family Farm Income               (€) & FARMFFI \\ 
+  54 & Income from land let             (€) & FINCLDLT \\ 
+  55 & Inventory Change                 (€) & FINVCHG \\ 
+  56 & Produce consumed in House        (€) & FPRDCONH \\ 
+  57 & Gross Sales and Receipts         (€) & FGSALREC \\ 
+  58 & Crop sales                       (€) & FCROPSAL \\ 
+  59 & Livestock Sales                  (€) & FLIVSALE \\ 
+  60 & Sales of other livestock         (€) & FSLOTHLV \\ 
+  61 & Livestock Purchases              (€) & FLIVPUR \\ 
+  62 & Purchase of other livestock      (€) & FPROTHLV \\ 
+  63 & Value of Family Labour           (€) & FVALFLAB \\ 
+  64 & Management and Investment Income (€) & FMGMIVTI \\ 
+  65 & Labour Management and Investment Income( & FLMGMIVT \\ 
+  66 & Net Capital Expenditure          (€) & FNTCAPEX \\ 
+  67 & Size of dairy herd  (avg. number) & FAVNODRY \\ 
+  68 & Dairy Livestock units (incl. bulls) & FNODRYLU \\ 
+  69 & Cattle livestock units & FNOCATLU \\ 
+  70 & Sheep livestock units & FNOSHPLU \\ 
+  71 & Horse livestock units & FNOHORLU \\ 
+  72 & Deer livestock units & FNODERLU \\ 
+  73 & Total Livestock Units & FTOTALLU \\ 
+  74 & Purchased Concentrates      (€) & FDPURCON \\ 
+  75 & Purchased Bulky Feed        (€) & FDPURBLK \\ 
+  76 & Fertiliser                  (€) & FDFERFIL \\ 
+  77 & Crop Protection Expenses    (€) & FDCRPPRO \\ 
+  78 & Purchased seed              (€) & FDPURSED \\ 
+  79 & Hire of Machinery Costs     (€) & FDMACHIR \\ 
+  80 & Transport Costs             (€) & FDTRANS \\ 
+  81 & Livestock Maintenance       (€) & FDLIVMNT \\ 
+  82 & A.I. \& service fees         (€) & FDAIFEES \\ 
+  83 & Vet and medicine            (€) & FDVETMED \\ 
+  84 & Casual Labour               (€) & FDCASLAB \\ 
+  85 & Cost of leasing quota       (€) & FDMQLEAS \\ 
+  86 & Miscellaneous Direct Costs  (€) & FDMISCEL \\ 
+  87 & Misc livestock expenses     (€) & FDMISCLV \\ 
+  88 & Misc crop expenses          (€) & FDMISCCP \\ 
+  89 & Direct costs - expenditure  (€) & FDEXPEND \\ 
+  90 & Fodder crop adjustment      (€) & FDFODADJ \\ 
+  91 & Total direct costs          (€) & FDTOTAL \\ 
+  92 & Waste of direct costs which connot be al & FDNOTALT \\ 
+  93 & Rent of Conacre              (€) & FORNTCON \\ 
+  94 & Car,Electricity and Telephone(€) & FOCARELP \\ 
+  95 & Hired Labour ( casual excl.) (€) & FOHIRLAB \\ 
+  96 & Interest payments (incl H.P.interest)(€) & FOINTPAY \\ 
+  97 & Depreciation of Machinery    (€) & FOMACDPR \\ 
+  98 & Machinery Operating Expenses (€) & FOMACOPT \\ 
+  99 & Depreciation of Buildings    (€) & FOBLDDPR \\ 
+  100 & Building Maintenance         (€) & FOBLDMNT \\ 
+  101 & Depreciatiion of land imp.   (€) & FODPRLIM \\ 
+  102 & General upkeep of land       (€) & FOUPKPLD \\ 
+  103 & Expenditure on lime          (€) & FOEXLIME \\ 
+  104 & Annuities                    (€) & FOANNUIT \\ 
+  105 & Rates                        (€) & FORATES \\ 
+  106 & Insurance                    (€) & FOINSURE \\ 
+  107 & Fuel + lubs                  (€) & FOFUELLU \\ 
+  108 & Farm share of electricity    (€) & FOELECFS \\ 
+  109 & Farm share of telephone      (€) & FOPHONFS \\ 
+  110 & Allowances + wages + other   (€) & FOLABEXP \\ 
+  111 & Cost of rent land -family -retirement & FORTFMER \\ 
+  112 & Cost of rent land - non-family -retire & FORTNFER \\ 
+  113 & Inheritance/Aquisition costs (€) & FOINHACQ \\ 
+  114 & Misc overhead costs          (€) & FOMISCEL \\ 
+  115 & Total overhead costs         (€) & FOTOTAL \\ 
+  116 & Total costs                  (€) & FTOTALCT \\ 
+  117 & Dairying gross output    (€) & FDAIRYGO \\ 
+  118 & Dairying direct costs    (€) & FDAIRYDC \\ 
+  119 & Dairying gross margin    (€) & FDAIRYGM \\ 
+  120 & Cattle   gross output    (€) & FCATLEGO \\ 
+  121 & Cattle   direct costs    (€) & FCATLEDC \\ 
+  122 & Cattle   gross margin    (€) & FCATLEGM \\ 
+  123 & Sheep    gross output    (€) & FSHEEPGO \\ 
+  124 & Sheep    direct costs    (€) & FSHEEPDC \\ 
+  125 & Sheep    gross margin    (€) & FSHEEPGM \\ 
+  126 & Pigs     gross output    (€) & FPIGSGO \\ 
+  127 & Pigs     direct costs    (€) & FPIGSDC \\ 
+  128 & Pigs     gross margin    (€) & FPIGSGM \\ 
+  129 & Poultry  gross output    (€) & FPOULTGO \\ 
+  130 & Poultry  direct costs    (€) & FPOULTDC \\ 
+  131 & Poultry  gross margin    (€) & FPOULTGM \\ 
+  132 & Horses   gross output    (€) & FHORSEGO \\ 
+  133 & Horses   direct costs    (€) & FHORSEDC \\ 
+  134 & Horses   gross margin    (€) & FHORSEGM \\ 
+  135 & Other    gross output    (€) & FOTHERGO \\ 
+  136 & Other    direct cost     (€) & FOTHERDC \\ 
+  137 & Other    gross margin    (€) & FOTHERGM \\ 
+  138 & Total livestock  gross output  (€) & FLIVSTGO \\ 
+  139 & Total Livestock  direct costs  (€) & FLIVSTDC \\ 
+  140 & Total Livestock  gross margin  (€) & FLIVSTGM \\ 
+  141 & Gross output of fodder crops sold (€) & FFODCPGO \\ 
+  142 & Direct costs of fodder crops sold + fail & FFODCPDC \\ 
+  143 & Gross margin of fodder crops sold + fail & FFODCPGM \\ 
+  144 & Output from inventory of misc cash crp & FMISCCGO \\ 
+  145 & Direct costs inventory of misc cash crp & FMISCCDC \\ 
+  146 & Total crops      gross output  (€) & FCROPSGO \\ 
+  147 & Total crops      direct costs  (€) & FCROPSDC \\ 
+  148 & Total crops      gross margin  (€) & FCROPSGM \\ 
+  149 & Crop and lvstk   gross output  (€) & FCPLIVGO \\ 
+  150 & Crop and lvstk   direct costs  (€) & FCRLIVDC \\ 
+  151 & Crop and lvstk   gross margin  (€) & FCPLIVGM \\ 
+  152 & Hire of machinery revenue      (€) & FRHIREMH \\ 
+  153 & Other current receipts         (€) & FREVOTH \\ 
+  154 & Other grants and subsidies     (€) & FGRNTSUB \\ 
+  155 & Inter enterprise transfers     (€) & FINTTRAN \\ 
+  156 & Gross Output                   (€) & FARMGO \\ 
+  157 & Direct Costs                   (€) & FARMDC \\ 
+  158 & Gross Margin                   (€) & FARMGM \\ 
+  159 & Opening inventory of cash crops    (€) & FVOPCSHC \\ 
+  160 & Closing inventory of cash crops    (€) & FVCLCSHC \\ 
+  161 & Opening inventory of fodder crops  (€) & FVOPFODC \\ 
+  162 & Closing inventory of fodder crops  (€) & FVCLFODC \\ 
+  163 & Opening inventory of Stores        (€) & FVOPSTOR \\ 
+  164 & Closing inventory of Stores        (€) & FVCLSTOR \\ 
+  165 & Opening inventory - All livestock  (€) & FVOPLVST \\ 
+  166 & Closing inventory - All livestock  (€) & FVCLLVST \\ 
+  167 & Opening inventory of other livestock(€) & FVOPOTLV \\ 
+  168 & Closing inventory of other livestock(€) & FVCLOTLV \\ 
+  169 & Closing inventory value - Car   (€) & FCARCLIV \\ 
+  170 & Depreciation - Car              (€) & FCARDEPR \\ 
+  171 & Total fuel - Car                (€) & FCARFUEL \\ 
+  172 & Repairs - Car                   (€) & FCARREPR \\ 
+  173 & Tax - Car                       (€) & FCARTAX \\ 
+  174 & Insurance - Car                 (€) & FCARINSU \\ 
+  175 & Total costs - Car               (€) & FCARTCST \\ 
+  176 & Farm share (expressed by decimal) Car & FCARSHAR \\ 
+  177 & Car purchases                   (€) & FCARPURC \\ 
+  178 & Car sales                       (€) & FCARSALE \\ 
+  179 & Concentrates opening inventory (50kg) & ICOPINVQ \\ 
+  180 & Concentrates opening inventory (value) & ICOPINVV \\ 
+  181 & Concentrates purchased         (50kg) & ICPURQTY \\ 
+  182 & Concentrates purchased         (value) & ICPURVAL \\ 
+  183 & Concentrates allocated         (50kg) & ICALLQTY \\ 
+  184 & Concentrates allocated         (value) & ICALLVAL \\ 
+  185 & Concentrates closing inventory (50kg) & ICCLINVQ \\ 
+  186 & Concentrates closing inventory (value) & ICCLINVV \\ 
+  187 & Concentrates allocation- Dairy (50kg) & ICALLDYQ \\ 
+  188 & Concentrates allocation- Dairy (Value) & ICALLDYV \\ 
+  189 & Concentrates allocation- Cattle (50kg) & ICALLCQT \\ 
+  190 & Concentrates allocation- Cattle (value) & ICALLCVL \\ 
+  191 & Concentrates allocation- Sheep (50kg) & ICALLSQT \\ 
+  192 & Concentrates allocation- Sheep (value) & ICALLSVL \\ 
+  193 & Concentrates allocation- Horses (50kg) & ICALLHQT \\ 
+  194 & Concentrates allocation- Horses (value) & ICALLHVL \\ 
+  195 & Concentrates allocation- Pigs  (50kg) & ICALLPGQ \\ 
+  196 & Concentrates allocation- Pigs  (value) & ICALLPGV \\ 
+  197 & Concentrates allocation- Poultry (50kg) & ICALLPYQ \\ 
+  198 & Concentrates allocation- Poultry (value) & ICALLPYV \\ 
+  199 & Concentrates allocation- Deer  (50kg) & ICALLDRQ \\ 
+  200 & Concentrates allocation- Deer (value) & ICALLDRV \\ 
+  201 & Concentrates allocation- Goats (50kg) & ICALLGQT \\ 
+  202 & Concentrates allocation- Goats (value) & ICALLGVL \\ 
+  203 & Concentrates allocation- Oth Lvs (50kg) & ICALLOLQ \\ 
+  204 & Concentrates allocation- Oth lvs (value) & ICALLOLV \\ 
+  205 & Concentrates allocation- Waste (50kg) & ICWASTEQ \\ 
+  206 & Concentrates allocation- Waste (value) & ICWASTEV \\ 
+  207 & Milk substitutes fed to calves (50kg) & ICMKSUBQ \\ 
+  208 & Milk substitutes fed to calves (value) & ICMKSUBV \\ 
+  209 & Vet and Med - opening inventory (€) & IVMOPINV \\ 
+  210 & Vet and Med - closing inventory (€) & IVMCLINV \\ 
+  211 & Vet, Med, AI and service - purchases (€) & IVMPURCH \\ 
+  212 & Vet and Med allocated - Pigs    (€) & IVMALLPG \\ 
+  213 & AI and service fees - Pigs      (€) & IAISFPIG \\ 
+  214 & Vet and Med allocated - Poultry (€) & IVMALLPY \\ 
+  215 & Vet and Med allocated - Dairy   (€) & IVMALLDY \\ 
+  216 & AI and service fees - Dairy     (€) & IAISFDY \\ 
+  217 & Vet and Med allocated - Cattle  (€) & IVMALLC \\ 
+  218 & AI and service fees - Cattle    (€) & IAISFCAT \\ 
+  219 & Vet and Med allocated - Sheep   (€) & IVMALLSP \\ 
+  220 & AI and service fees - Sheep     (€) & IAISFSHP \\ 
+  221 & Vet and Med allocated - Horses  (€) & IVMALLH \\ 
+  222 & AI and service fees - Horses    (€) & IAISFHRS \\ 
+  223 & Vet and Med allocated - Deer    (€) & IVMALLDR \\ 
+  224 & Vet and Med allocated - Goats   (€) & IVMALLG \\ 
+  225 & Vet and Med allocated - other livestock & IVMALLOL \\ 
+  226 & Total Vet, Med, AI and services all (€) & IVMALLTL \\ 
+  227 & Transport expenses - Pigs       (€) & ITEPIGS \\ 
+  228 & Miscellaneous expenses - Pigs   (€) & IMISCPIG \\ 
+  229 & Transport expenses - Poultry    (€) & ITEPOLTY \\ 
+  230 & Miscellaneous expenses - Poultry(€) & IMISCPTY \\ 
+  231 & Transport expenses - Dairy      (€) & ITEDAIRY \\ 
+  232 & Miscellaneous expenses - Dairy  (€) & IMISCDRY \\ 
+  233 & Transport expenses - Cattle     (€) & ITECATTL \\ 
+  234 & Miscellaneous expenses - Cattle (€) & IMISCCTL \\ 
+  235 & Transport expenses - Sheep      (€) & ITESHEEP \\ 
+  236 & Miscellaneous expenses - Sheep  (€) & IMISCSHP \\ 
+  237 & Transport expenses - Horses     (€) & ITEHORSE \\ 
+  238 & Miscellaneous expenses - Horses (€) & IMISCHRS \\ 
+  239 & Misc. expenses incl. transport-Deer (€) & IMISCDER \\ 
+  240 & Misc. expenses incl. transport-Goats(€) & IMISCGTS \\ 
+  241 & Misc. exp incl. transport-other Lvsk(€) & IMISCOLV \\ 
+  242 & Transport and Misc exp total allocated & ITEMCALL \\ 
+  243 & Other grants and subsidies      (€) & FGRTSUBS \\ 
+  244 & Sale of turf                    (€) & FSLTURFV \\ 
+  245 & Total misc receipts             (€) & FMISCREC \\ 
+  246 & Value of misc items used in house (€) & FVMISUHS \\ 
+  247 & Fuel and lubs opening inventory   (€) & FOOPINFL \\ 
+  248 & Fuel and lubs purchased           (€) & FOPURFLV \\ 
+  249 & Fuel and lubs closing inventory   (€) & FOCLINFL \\ 
+  250 & Quantity of fuel used        (litres) & FOFUELQT \\ 
+  251 & Machinery repairs                 (€) & FOMACRPR \\ 
+  252 & Machinery tax                     (€) & FOMACTAX \\ 
+  253 & Machinery insurance               (€) & FOMACINS \\ 
+  254 & Fire insurance - Farm buildings   (€) & FOBLDINS \\ 
+  255 & Accountants and consultants fees  (€) & FOACCFEE \\ 
+  256 & Teagasc advisory fees             (€) & FOADVFEE \\ 
+  257 & Casual labour cost to dairy       (€) & FLABCCDY \\ 
+  258 & Casual labour cost to cattle      (€) & FLABCCCT \\ 
+  259 & Casual labour cost to sheep       (€) & FLABCCSH \\ 
+  260 & Casual labour cost to pigs        (€) & FLABCCPG \\ 
+  261 & Casual labour cost to poultry     (€) & FLABCCPY \\ 
+  262 & Casual labour cost to deer        (€) & FLABCCDR \\ 
+  263 & Casual labour cost to goats       (€) & FLABCCGT \\ 
+  264 & Casual labour cost to Other livestock(€) & FLABCCOL \\ 
+  265 & Non-allocable casual labour & FLABCCNA \\ 
+  266 & Total casual labour cost          (€) & FLABCCTL \\ 
+  267 & Purchases - power machinery        (€) & FAPRPMAC \\ 
+  268 & Grants in relation to power machinery(€) & FAGRPMAC \\ 
+  269 & Major repairs - power machinery    (€) & FAMRPMAC \\ 
+  270 & Sales \& trade-ins - power machinery (€) & FASLPMAC \\ 
+  271 & Purchases - other machinery        (€) & FAPROMAC \\ 
+  272 & Grants in relation to other machinery(€) & FAGROMAC \\ 
+  273 & Major repairs - other machinery    (€) & FAMROMAC \\ 
+  274 & Sales \& trade-ins - other machinery (€) & FASLOMAC \\ 
+  275 & Cost of new buildings  (during acc.year) & FACTNBLD \\ 
+  276 & Major repairs buildings(during acc year) & FAMRBLDS \\ 
+  277 & Grants in relation to farm buildings & FAGRBLDS \\ 
+  278 & Major land improvements           (€) & FALDIMPR \\ 
+  279 & Grants in relation to land improvements & FAGRLIMP \\ 
+  280 & Major improvements in permanent crops & FAPCPIMP \\ 
+  281 & Grants in relation to permanent crops & FAGRPCRP \\ 
+  282 & Est. value of farm- beginning of year & FAVLFRBY \\ 
+  283 & Land purchases              (acres) & FAPRLDAC \\ 
+  284 & Land purchases              (€) & FAPRLDVL \\ 
+  285 & Land sales                  (acres) & FASLLDAC \\ 
+  286 & Land sales                  (€) & FASLLDVL \\ 
+  287 & Estimated value of farm - end of year & FAVLFREY \\ 
+  288 & Marital status of Holder & OGMARSTH \\ 
+  289 & Sex - Holder & OGSEXHLD \\ 
+  290 & Age - Holder & OGAGEHLD \\ 
+  291 & Holder - off-farm job & OOJOBHLD \\ 
+  292 & Total Hours Worked by Holder & OOINCHLD \\ 
+  293 & Grouped income code - Holder       (€) & OOGINCHD \\ 
+  294 & Spouse - Off-farm job & OOJOBSPS \\ 
+  295 & Total Hours Worked by Spouse & OOINCSPS \\ 
+  296 & Grouped income code - Spouse       (€) & OOGINCSP \\ 
+  297 & No. of household members & OANOHSHM \\ 
+  298 & Household members under 5 years & OANOLT5Y \\ 
+  299 & Household members: 5 - 15 years & OANO515Y \\ 
+  300 & Household members: 16 - 19 years & OANO1619 \\ 
+  301 & Household members: 20 - 24 years & OANO2024 \\ 
+  302 & Household members: 25 - 44 years & OANO2544 \\ 
+  303 & Household members: 45 - 64 years & OANO4564 \\ 
+  304 & Household members: 65+ years & OANOGE65 \\ 
+  305 & Household members: in pre school & OAPRESCH \\ 
+  306 & Household members- primary education & OAPRIMED \\ 
+  307 & Household members-second-level education & OA2ndLED \\ 
+  308 & Household members- third-level education & OA3rdLED \\ 
+  309 & No. household members on farm full-time & OANOWFFT \\ 
+  310 & No. household members on farm part-time & OANOWFPT \\ 
+  311 & Pension - M/D and/or Spouse & OGPENMDS \\ 
+  312 & Pension - Other members & OGPENOTH \\ 
+  313 & Dole/Unemployment - M/D and/or Spouse & OGDOLMDS \\ 
+  314 & Dole/Unemployment - Other members & OGDOLOTH \\ 
+  315 & Purchased bulky feed alloc- dairy herd & IBALLDRY \\ 
+  316 & Purchased bulky feed allocated- cattle & IBALLCTL \\ 
+  317 & Purchased bulky feed allocated- sheep & IBALLSHP \\ 
+  318 & Purchased bulky feed allocated- horses & IBALLHRS \\ 
+  319 & Purchased bulky feed allocated- pigs & IBALLPIG \\ 
+  320 & Purchased bulky feed allocated- total & IBALLTOT \\ 
+  321 &  & GAP \\ 
+  322 & Hay - purchased - total allocated  (qty) & IBHAYATY \\ 
+  323 & Hay - purchased - total allocated  (€) & IBHAYAVL \\ 
+  324 & Hay - purchased alloc-dairy herd (qty) & IBHAYDQT \\ 
+  325 & Hay - purchased alloc-dairy herd (€) & IBHAYDVL \\ 
+  326 & Hay - purchased allocated cattle (qty) & IBHAYCQT \\ 
+  327 & Hay - purchased allocated cattle (€) & IBHAYCVL \\ 
+  328 & Hay - purchased allocated sheep  (qty) & IBHAYSQT \\ 
+  329 & Hay - purchased allocated sheep  (€) & IBHAYSVL \\ 
+  330 & Hay - purchased allocated horses (qty) & IBHAYHQT \\ 
+  331 & Hay - purchased allocated horses (€) & IBHAYHVL \\ 
+  332 & Hay - purchased allocated pigs   (qty) & IBHAYPQT \\ 
+  333 & Hay - purchased allocated pigs   (€) & IBHAYPVL \\ 
+  334 & Straw purchased - total allocated  (qty) & IBSTRAQT \\ 
+  335 & Straw purchased - total allocated  (€) & IBSTRAVL \\ 
+  336 & Straw purchased alloc-dairy herd (qty) & IBSTRDQT \\ 
+  337 & Straw purchased alloc-dairy herd (€) & IBSTRDVL \\ 
+  338 & Straw purchased allocated cattle (qty) & IBSTRCQT \\ 
+  339 & Straw purchased allocated cattle (€) & IBSTRCVL \\ 
+  340 & Straw purchased allocated sheep  (qty) & IBSTRSQT \\ 
+  341 & Straw purchased allocated sheep  (€) & IBSTRSVL \\ 
+  342 & Straw purchased allocated horses (qty) & IBSTRHQT \\ 
+  343 & Straw purchased allocated horses (€) & IBSTRHVL \\ 
+  344 & Straw purchased allocated pigs   (qty) & IBSTRPQT \\ 
+  345 & Straw purchased allocated pigs   (€) & IBSTRPVL \\ 
+  346 & Silage purchased - total allocated (qty) & IBSILAQT \\ 
+  347 & Silage purchased - total allocated  (€) & IBSILAVL \\ 
+  348 & Silage purchased alloc-dairy herd (qty) & IBSILDQT \\ 
+  349 & Silage purchased alloc-dairy herd (€) & IBSILDVL \\ 
+  350 & Silage purchased allocated cattle (qty) & IBSILCQT \\ 
+  351 & Silage purchased allocated cattle (€) & IBSILCVL \\ 
+  352 & Silage purchased allocated sheep  (qty) & IBSILSQT \\ 
+  353 & Silage purchased allocated sheep  (€) & IBSILSVL \\ 
+  354 & Silage purchased allocated horses (qty) & IBSILHQT \\ 
+  355 & Silage purchased allocated horses (€) & IBSILHVL \\ 
+  356 & Silage purchased allocated pigs   (qty) & IBSILPQT \\ 
+  357 & Silage purchased allocated pigs   (€) & IBSILPVL \\ 
+  358 & Existing loans - opening balance (€) & FBELOPBL \\ 
+  359 & Existing loans - closing balance (€) & FBELCLBL \\ 
+  360 & Amount borrowed - new loans      (€) & FBNLAMTB \\ 
+  361 & New loans - closing balance      (€) & FBNLCLBL \\ 
+  362 & Interest paid (excl H.P. interest) (€) & FBINTPAY \\ 
+  363 & Loans - Long term             (€) & FBTERMLG \\ 
+  364 & Loans - medium term           (€) & FBTERMMD \\ 
+  365 & Loans - short trem            (€) & FBTERMST \\ 
+  366 & Loans - overdraft             (€) & FBOVDRFT \\ 
+  367 & Loans - Hire purchase         (€) & FBHIREPR \\ 
+  368 & Loans source - finance company (€) & FBSRCFCO \\ 
+  369 & Loans source - Bank           (€) & FBSRCBNK \\ 
+  370 & Loans source - other          (€) & FBSRCOTH \\ 
+  371 & Loans source - co-op/creamery (€) & FBSRCCOP \\ 
+  372 & Loans source - endowment      (€) & FBSRCEND \\ 
+  373 & Loans purpose - livestock     (€) & FBPURLVS \\ 
+  374 & Loans purpose - machinery     (€) & FBPURMAC \\ 
+  375 & Loans purpose - land improvements (€) & FBPURLIM \\ 
+  376 & Loans purpose - land purchase     (€) & FBPURLPR \\ 
+  377 & Loans purpose - buildings     (€) & FBPURBLD \\ 
+  378 & Loans purpose - milk quota    (€) & FBPURMKQ \\ 
+  379 & Loans purpose - ewe quota     (€) & FBPUREWQ \\ 
+  380 & Loans purpose - suckler quota (€) & FBPURSCQ \\ 
+  381 & Loans purpose - forestry      (€) & FBPURFOR \\ 
+  382 & Loans purpose - Alternat enterprise (€) & FBPURAER \\ 
+  383 & Loans purpose - other         (€) & FBPUROTH \\ 
+  384 & Grants, premia - Horses      (€) & FSUBHORS \\ 
+  385 & Dairy classification code & DPCLASS \\ 
+  386 & Size of herd  (avg. number) & DPAVNOHD \\ 
+  387 & Number of livestock units (incl bulls) & DPNOLU \\ 
+  388 & All bulls (avg.no) & DPAVNOBL \\ 
+  389 & Jan .  Calf births & DPCFBJAN \\ 
+  390 & Feb    Calf births & DPCFBFEB \\ 
+  391 & Mar    Calf births & DPCFBMAR \\ 
+  392 & Apr    Calf births & DPCFBAPR \\ 
+  393 & May    Calf births & DPCFBMAY \\ 
+  394 & Jun.   Calf births & DPCFBJUN \\ 
+  395 & July   Calf births & DPCFBJUL \\ 
+  396 & Aug.   Calf births & DPCFBAUG \\ 
+  397 & Sept   Calf births & DPCFBSEP \\ 
+  398 & Oct.   Calf births & DPCFBOCT \\ 
+  399 & Nov.   Calf births & DPCFBNOV \\ 
+  400 & Dec.   Calf births & DPCFBDEC \\ 
+  401 & Total  Calf births & DPCFBTOT \\ 
+  402 & Opening Inventory  Dairy herd (€) & DPOPINVD \\ 
+  403 & Closing Inventory  Dairy Herd (€) & DPCLINVD \\ 
+  404 & Gross output Dairying  (€) & DOGROSSO \\ 
+  405 & Milk sold             (litres) & DOSLMKGL \\ 
+  406 & Milk fed to livestock (litres) & DOMKFDGL \\ 
+  407 & Milk - allowances     (litres) & DOMKALGL \\ 
+  408 & Total milk production (litres) & DOTOMKGL \\ 
+  409 & Creamery milk sold to creamery  (litres) & DOSLCMGL \\ 
+  410 & Liquid milk - sold             (litres) & DOSLLMGL \\ 
+  411 & Milk sold              (€) & DOSLMKVL \\ 
+  412 & Creamery milk sold to creamery (€) & DOSLCMVL \\ 
+  413 & Milk penalties                 (€) & DOMLKPEN \\ 
+  414 & Milk Bonuses                   (€) & DOMLKBON \\ 
+  415 & Liquid milk - Sold             (€) & DOSLLMVL \\ 
+  416 & Milk fed to livestock  (€) & DOMKFDVL \\ 
+  417 & Milk - allowances      (€) & DOMKALVL \\ 
+  418 & Total milk production  (€) & DOTOMKVL \\ 
+  419 & Value of change in numbers of dairy herd & DOVLCNOD \\ 
+  420 & Dairy herd - calf sales        (no) & DOCFSLNO \\ 
+  421 & Dairy herd - calf sales        (€) & DOCFSLVL \\ 
+  422 & Dairy herd - Calf transfers    (no) & DOCFTFNO \\ 
+  423 & Dairy herd - calf transfers    (€) & DOCFTFVL \\ 
+  424 & Dairy purchases-cows heifers bulls (no) & DOPCHBNO \\ 
+  425 & Dairy purchases-cows heifers bulls (€) & DOPCHBVL \\ 
+  426 & Dairy sales-cows heifers bulls  (no) & DOSCHBNO \\ 
+  427 & Dairy sales-cows heifers bulls  (€) & DOSCHBVL \\ 
+  428 & Dairy Transfers in cows hfrs bulls (no) & DOTICHBN \\ 
+  429 & Dairy Transfers in cows hfrs bulls (€) & DOTICHBV \\ 
+  430 & Dairy Transfers out cows hfrs bulls (no) & DOTOCHBN \\ 
+  431 & Dairy Transfers out cows hfrs bulls(€) & DOTOCHBV \\ 
+  432 & Value of dropped calves (sold+trans.) & DOVALCLF \\ 
+  433 & Sales: animals from dairy herd   (€) & DOSLDHRD \\ 
+  434 & Dairy herd - purchases           (€) & DOPRDHRD \\ 
+  435 & Dairy herd - subsidies     (no) & DOSUBSNO \\ 
+  436 & Dairy herd - subsidies     (€) & DOSUBSVL \\ 
+  437 & Relplacement cost of dairy herd  (€) & DOREPLCT \\ 
+  438 & Concentrates         (€) & DDCONVAL \\ 
+  439 & Pasture              (€) & DDPASTUR \\ 
+  440 & Winter forage        (€) & DDWINFOR \\ 
+  441 & Total feed           (€) & DDTOTFED \\ 
+  442 & Misc direct costs    (€) & DDMISCDC \\ 
+  443 & Total direct costs   (€) & DDTOTDC \\ 
+  444 & Gross margin         (€) & DDGRSMAR \\ 
+  445 & Super levy payments  (€) & DDSLVPAY \\ 
+  446 & Cost of leasing quota(€) & DDLEASEQ \\ 
+  447 & Own quota for current year (litres) & DQOWNQTY \\ 
+  448 & Estimated value of quota   (€) & DQVALUEQ \\ 
+  449 & Quota leased               (litres) & DQRENTGL \\ 
+  450 & Cost of leasing quota      (€) & DQMCLEAS \\ 
+  451 & Milk quota purchased       (litres) & DQPURGAL \\ 
+  452 & Cost of buying quota       (€) & DQCTBUY \\ 
+  453 & Milk quota inherited       (litres) & DQINHRGL \\ 
+  454 & Milk quota inherited       (€) & DQINHRVL \\ 
+  455 & Milk quota let             (litres) & DQLETGAL \\ 
+  456 & Income from quota let      (€) & DQIFQLET \\ 
+  457 & Milk quota sold            (litres) & DQSOLDGL \\ 
+  458 & Value of quota sold        (€) & DQVQSOLD \\ 
+  459 & Quota for current year     (litres) & DQCURYER \\ 
+  460 & Butter fat - Milk          (kgs) & DABOTFAT \\ 
+  461 & Protein - Milk             (kgs) & DAPROTEN \\ 
+  462 & Concentrates               (kgs) & DACONKGS \\ 
+  463 & Forage area                (acres) & DAFORARE \\ 
+  464 & Feed area equiv.           (acres) & DAFEDARE \\ 
+  465 & Quantity of milk not paid for  (litres) & DAQMKNPD \\ 
+  466 & Value of milk not paid for.    (€) & DAVMKNPD \\ 
+  467 & Age of buying/selling & CPAGECAT \\ 
+  468 & Seasonality of production & CPSEAPRD \\ 
+  469 & Type of rearing & CPTYREAR \\ 
+  470 & Number of livestock units & CPNOLU \\ 
+  471 & Total cattle numbers & CPTOTCNO \\ 
+  472 & Cows           (avg no.) & CPAVNOCW \\ 
+  473 & Hfr-in-calf    (avg no.) & CPAVNOHC \\ 
+  474 & Calves $<$ 6 mths       (avg no.) & CPAVNO06 \\ 
+  475 & 6 - 12 months cattle  (avg no.) & CPAVNO61 \\ 
+  476 & Cattle 1-2y.o.        (avg no.) & CPAVNO12 \\ 
+  477 & Cattle $>$ 2 y.o.       (avg no.) & CPAVNO2P \\ 
+  478 & Male cattle 1-2 years   (avg no.) & CPAVN12M \\ 
+  479 & Female cattle 1-2 years (avg no.) & CPAVN12F \\ 
+  480 & Male cattle   $>$ 2 years (avg no.) & CPAVN2PM \\ 
+  481 & Female cattle $>$ 2 years (avg no.) & CPAVN2PF \\ 
+  482 & Beef stock bulls        (avg no.) & CPAVNOBL \\ 
+  483 & Deaths of cows - number & CPDTHCOW \\ 
+  484 & Calf deaths -- number & CPDTHCLF \\ 
+  485 & Calves - Dead Births & CPDTHBIR \\ 
+  486 & Deaths of cattle $>$ 6 months & CPDTHC6M \\ 
+  487 & Opening Inventory Cattle herd (€) & CPOPINVC \\ 
+  488 & Closing Inventory Cattle herd (€) & CPCLINVC \\ 
+  489 & Cattle opening inventory breeding stock & CPOPINVB \\ 
+  490 & Cattle closing inventory breeding stock & CPCLINVB \\ 
+  491 & Cattle opening inventory trading stock & CPOPINVT \\ 
+  492 & Cattle closing inventory trading stock & CPCLINVT \\ 
+  493 & Forage area (ha.) & CPFORACS \\ 
+  494 & Feed area equiv. (ha.) & CPFEDACS \\ 
+  495 & Concentrates   (50 kgs) & CPCONCKG \\ 
+  496 & Gross output Cattle         (€) & COGROSSO \\ 
+  497 & Sales (incl hse. consumption)(€) & COSALESV \\ 
+  498 & Purchases                   (€) & COPURVAL \\ 
+  499 & Transfers to the dairy herd (€) & COTFTDVL \\ 
+  500 & Transfers from dairy herd   (€) & COTFFDVL \\ 
+  501 & Number of transfers to dairy herd & COTFTDNO \\ 
+  502 & Number of transfers from dairy herd & COTFFDNO \\ 
+  503 & Number of purchases cattle & COPURCNO \\ 
+  504 & Number of sales cattle (incl hse.con) & COSALCNO \\ 
+  505 & Value of change in numbers   (€) & COVALCNO \\ 
+  506 & Cattle herd - total sales     (no.) & COSLTOTN \\ 
+  507 & Cattle herd - total sales     (€) & COSLTOTV \\ 
+  508 & Cattle sales                 (€) & COSALCVL \\ 
+  509 & Subsidies                    (€) & COSUBSID \\ 
+  510 & Calves Purchased -- number & COPRCFNO \\ 
+  511 & Calves purchased -- cost   (€) & COPRCFVL \\ 
+  512 & Calves sold      -- Number & COSLCFNO \\ 
+  513 & Calves sold      -- Value  (€) & COSLCFVL \\ 
+  514 & Weaners Purchased -- number & COPRWNNO \\ 
+  515 & Weaners puschased -- cost   (€) & COPRWNVL \\ 
+  516 & Weaners Sold      -- Number & COSLWNNO \\ 
+  517 & Weaners Sold      -- Value  (€) & COSLWNVL \\ 
+  518 & Stores Purchased -- number & COPRSTNO \\ 
+  519 & Stores Purchased -- cost   (€) & COPRSTVL \\ 
+  520 & Stores Sold -- Number & COSLSTNO \\ 
+  521 & Stores Sold -- Value     (€) & COSLSTVL \\ 
+  522 & Store cattle purchases - male   (no) & COPRMSNO \\ 
+  523 & Store cattle purchases - male   (val) & COPRMSVL \\ 
+  524 & Store cattle purchases - female (no) & COPRFSNO \\ 
+  525 & Store cattle purchases - female (val) & COPRFSVL \\ 
+  526 & Store cattle sales - male       (no) & COSLMSNO \\ 
+  527 & Store cattle sales -  male      (val) & COSLMSVL \\ 
+  528 & Store cattle sales - female     (no) & COSLFSNO \\ 
+  529 & Store cattle sales - female     (val) & COSLFSVL \\ 
+  530 & Finished Cattle Sold -- Number & COSLFCNO \\ 
+  531 & Finished Cattle sold -- Value  (€) & COSLFCVL \\ 
+  532 & Finished cattle sales - male    (no) & COSLMFNO \\ 
+  533 & Finished cattle sales - male    (val) & COSLFMVL \\ 
+  534 & Finished cattle sales - female  (no) & COSLFFNO \\ 
+  535 & Finished cattle sales - female  (val) & COSLFFVL \\ 
+  536 & Breeding herd Purchased -- number & COPRBHNO \\ 
+  537 & Breeding herd purchased -- cost   (€) & COPRBHVL \\ 
+  538 & Breeding herd Sold -- Number & COSLBHNO \\ 
+  539 & Breeding herd Sold -- Value    (€) & COSLBHVL \\ 
+  540 & Other Cattle Purchased -- number & COPROCNO \\ 
+  541 & Other Cattle cost        (€) & COPROCVL \\ 
+  542 & Other Cattle Sold -- Number & COSLOCNO \\ 
+  543 & Other Cattle sold -- Value  (€) & COSLOCVL \\ 
+  544 & Service receipts  (€) & COSERREC \\ 
+  545 & Other Cows Inventory difference -- numbe & COOCIDNO \\ 
+  546 & Other Cows Inventory difference -- value & COOCIDVL \\ 
+  547 & Concentrates                 (€) & CDCONCEN \\ 
+  548 & Pasture                      (€) & CDPASTUR \\ 
+  549 & Winter forage                (€) & CDWINFOR \\ 
+  550 & Milk and milk substitues     (€) & CDMILSUB \\ 
+  551 & Total feed costs             (€) & CDTOTFED \\ 
+  552 & Misc direct costs            (€) & CDMISCDC \\ 
+  553 & Total direct costs           (€) & CDTOTLDC \\ 
+  554 & Gross margin                 (€) & CDGRSMAR \\ 
+  555 & Suckler cow subsidy    (€) & CSSUCKCW \\ 
+  556 & Sheep system --- classification & SPCLASS \\ 
+  557 & Breed of ewes & SPBREEDE \\ 
+  558 & Breed of ram & SPBREEDR \\ 
+  559 & Hill/Lowland & SPHILLOW \\ 
+  560 & Number of livestock units & SPNOLU \\ 
+  561 & Avg. number of ewes & SPAVNOEW \\ 
+  562 & Avg. number Sheep 1-2 y.o. & SPAVNO12 \\ 
+  563 & Avg. number Sheep 2 y.o. plus & SPAVNO2P \\ 
+  564 & Avg. number Rams & SPAVNORM \\ 
+  565 & Avg. number lambs before weaning & SPAVNLBW \\ 
+  566 & Avg. number other lambs & SPAVNOOL \\ 
+  567 & Avg. number total Sheep & SPAVNOTS \\ 
+  568 & Number of ewes let to ram & SPNOEWER \\ 
+  569 & Number of barren ewes & SPNOBNEW \\ 
+  570 & Number of ewe lambs let to ram & SPNOEWLR \\ 
+  571 & Ewes mated with hormones & SPEWMHOR \\ 
+  572 & In-lamb ewes - net purchases  (no.) & SPINLENP \\ 
+  573 & No. of in-lamb ewes purchased & SPPRILEN \\ 
+  574 & No. of in-lamb ewes sold & SPSLINEN \\ 
+  575 & No of ewes with lambs at foot purchased & SPPRELFN \\ 
+  576 & No of ewes with lambs at foot sold & SPSLELFN \\ 
+  577 & No. of lambs at foot - purchased & SPPRLAFN \\ 
+  578 & No. of lambs at foot - sold & SPSLLAFN \\ 
+  579 & No. of ewes not let to ram & SPNOEWNR \\ 
+  580 & Lamb births & SPLAMBIR \\ 
+  581 & Lamb deaths & SPLAMDTH \\ 
+  582 & Ewe deaths & SPEWEDTH \\ 
+  583 & No. of fat lambs sold before June 1st & SPNOFLS1 \\ 
+  584 & Sheep shorn             (no.) & SPSHORN \\ 
+  585 & Opening Inventory Sheep flock   (€) & SPOPINVS \\ 
+  586 & Closing Inventory Sheep flock   (€) & SPCLINVS \\ 
+  587 & Sheep opening inventory breeding stock & SPOPINVB \\ 
+  588 & Sheep closing inventory breeding stock & SPCLINVB \\ 
+  589 & Sheep opening inventory trading stock & SPOPINVT \\ 
+  590 & Sheep closing inventory trading stock & SPCLINVT \\ 
+  591 & Opening Inventory of Wool (€) & SPOPINVW \\ 
+  592 & Closing Inventory of Wool (€) & SPCLINVW \\ 
+  593 & Concentrates fed to sheep (50kg.) & SPQCNFED \\ 
+  594 & Forage area (ha.) & SPFORACS \\ 
+  595 & Feed acres to sheep & SPFEDACS \\ 
+  596 & Gross Output Sheep and wool (€) & SOGROSSO \\ 
+  597 & Sales (sheep only - incl hse. consump)(£ & SOSALESO \\ 
+  598 & Purchases (sheep only)   (€) & SOPURSO \\ 
+  599 & Sheep sales (animals only) & SOSALEAN \\ 
+  600 & Fat lamb sales           (€) & SOSLFLVL \\ 
+  601 & Fat Lamb Sales           (no.) & SOSLFLNO \\ 
+  602 & Store lamb sales         (€) & SOSLSLVL \\ 
+  603 & Store Lamb Sales         (no.) & SOSLSLNO \\ 
+  604 & Store lamb purchases     (€) & SOPRSLVL \\ 
+  605 & Store Lambs purchases    (no.) & SOPRSLNO \\ 
+  606 & Sheep breeding stock purchased (€) & SOPRBDVL \\ 
+  607 & Sheep breeding stock purchased (no.) & SOPRBDNO \\ 
+  608 & Sheep breeding stock sold      (no.) & SOSLBDNO \\ 
+  609 & Hogget sales --    (no.) & SOSLHGNO \\ 
+  610 & Hogget sales --     (€) & SOSLHGVL \\ 
+  611 & Sales of wool             (€) & SOSLWLVL \\ 
+  612 & Sales of wool             (lbs) & SOSLWLlb \\ 
+  613 & Output of wool            (lbs) & SOWOOLlb \\ 
+  614 & Output of wool            (€) & SOWOOLVL \\ 
+  615 & Purchases - ewes and rams     (no.) & SOPRERNO \\ 
+  616 & Purchases - ewes and rams     (€) & SOPRERVL \\ 
+  617 & Purchases - breeding hoggets  (no.) & SOPRBHNO \\ 
+  618 & Purchases - breeding hoggets  (€) & SOPRBHVL \\ 
+  619 & Sales - Breeding hoggets      (no.) & SOSLBHNO \\ 
+  620 & Sales - Breeding hoggets      (€) & SOSLBHVL \\ 
+  621 & Sales - cull ewes and rams    (no.) & SOSLERNO \\ 
+  622 & Sales - cull ewes and rams    (€) & SOSLERVL \\ 
+  623 & Sales - breeding ewes         (no.) & SOSLBENO \\ 
+  624 & Sales - breeding ewes         (€) & SOSLBEVL \\ 
+  625 & Sheep - consumed in house     (no.) & SOCONHNO \\ 
+  626 & Sheep - consumed in house     (€) & SOCONHVL \\ 
+  627 & Wool shorn in current year    (lbs) & SOWLSYlb \\ 
+  628 & Value of change in numbers & SOVALCNO \\ 
+  629 & Subsidies                      (€) & SOSUBSID \\ 
+  630 & Concentrates              (€) & SDCONVAL \\ 
+  631 & Winter forage (less roots)(€) & SDWINFOR \\ 
+  632 & Roots                     (€) & SDROOTS \\ 
+  633 & Pasture                   (€) & SDPASTUR \\ 
+  634 & Total feed                (€) & SDTOTFED \\ 
+  635 & Other direct costs        (€) & SDOTHER \\ 
+  636 & Total direct costs        (€) & SDTOTLDC \\ 
+  637 & Gross Margin              (€) & SDGRSMAR \\ 
+  638 & Pig classification system  1 - 4 & PPCLASS \\ 
+  639 & Sows                (avg.no) & PPAVNSOW \\ 
+  640 & Gilts in pig        (avg.no) & PPAVNGLT \\ 
+  641 & Bonhams before weaning (avg.no) & PPAVNBBW \\ 
+  642 & Weaners             (avg.no) & PPAVNOWN \\ 
+  643 & Fatteners           (avg.no) & PPAVNOF \\ 
+  644 & Fattening sows      (avg.no) & PPAVNOFS \\ 
+  645 & Stock Boars         (avg.no) & PPAVNOSB \\ 
+  646 & Total pigs          (avg.no) & PPAVNOP \\ 
+  647 & Bonham births           (no.) & PPBIRBON \\ 
+  648 & Bonham deaths           (no.) & PPDTHBON \\ 
+  649 & Deaths of fat pigs      (no.) & PPDTHFPG \\ 
+  650 & Deaths - other pigs        (no) & PPDTHOTH \\ 
+  651 & Opening Inventory Pigs   (€) & PPOPINVP \\ 
+  652 & Closing Inventory pigs   (€) & PPCLINVP \\ 
+  653 & Pigs opening inventory breeding stock & PPOPINVB \\ 
+  654 & Pigs closing inventory breeding stock & PPCLINVB \\ 
+  655 & Pigs opening inventory trading stock & PPOPINVT \\ 
+  656 & Pigs closing inventory trading stock & PPCLINVT \\ 
+  657 & Bonhams weaned          (no.) & PPBONWN \\ 
+  658 & Farrowings              (no.) & PPFARWNO \\ 
+  659 & Est number of fat pigs produced & PPFPPDNO \\ 
+  660 & Gross Output pigs       (€) & POGROSSO \\ 
+  661 & Sales                   (€) & POSALESV \\ 
+  662 & Purchases               (€) & POPURCHV \\ 
+  663 & Value of change in nos. (€) & POVALCNO \\ 
+  664 & Subsidies               (€) & POSUBSID \\ 
+  665 & Weaners sold            (no.) & POSLWNNO \\ 
+  666 & Weaners sold            (€) & POSLWNVL \\ 
+  667 & Weaners bought          (no.) & POPRWNNO \\ 
+  668 & Weaners bought           (€) & POPRWNVL \\ 
+  669 & Fat pigs sold           (no.) & POSLFPNO \\ 
+  670 & Fat pigs sold            (€) & POSLFPVL \\ 
+  671 & Breeding pigs sold       (€) & POSLBPVL \\ 
+  672 & Breeding pigs purchased  (€) & POPRBPVL \\ 
+  673 & Sales cull sows and boars   (no) & POSLCSBN \\ 
+  674 & Sales cull sows and boars   (val) & POSLCSBV \\ 
+  675 & Pigs purchases of breeding stock  (no.) & POPRBPNO \\ 
+  676 & Pigs sales of breeding stock  (no.) & POSLBPNO \\ 
+  677 & Household consumption pigs(€) & POHSECON \\ 
+  678 & Total feed              (€) & PDTOTFED \\ 
+  679 & Vet + med.              (€) & PDVETMED \\ 
+  680 & Transport               (€) & PDTRANS \\ 
+  681 & Misc. direct costs      (€) & PDMISCDC \\ 
+  682 & Total direct costs      (€) & PDTOTLDC \\ 
+  683 & Purchased concentates  50kg. & PDPRCOkg \\ 
+  684 & Purchased concentrates  (€) & PDPRCONV \\ 
+  685 & Gross Margin            £ & PDGRSMAR \\ 
+  686 & Poultry  System code & EPCODE \\ 
+  687 & Average no. of laying hens & EPAVNOLH \\ 
+  688 & Average no. of chicks and pullets & EPAVNOCP \\ 
+  689 & Average no. of table fowl & EPAVNOTF \\ 
+  690 & Average no. of other fowl & EPAVNOOF \\ 
+  691 & Average no. of total fowl & EPAVNOF \\ 
+  692 & Opening Inventory Poultry      (€) & EPOPINVP \\ 
+  693 & Closing Inventory Poultry      (€) & EPCLINVP \\ 
+  694 & Poultry Gross output (€) & EOGROSSO \\ 
+  695 & Egg sales            (€) & EOSLEGGS \\ 
+  696 & Poultry sales        (€) & EOSLPLYV \\ 
+  697 & Poultry purchases    (€) & EOPRPLYV \\ 
+  698 & Other fowl purchases (€) & EOPROTHF \\ 
+  699 & Other fowl sales     (€) & EOSLOTHF \\ 
+  700 & Poultry subsidies    (€) & EOSUBSID \\ 
+  701 & Direct costs & EDTOTLDC \\ 
+  702 & Gross Margin & EDGRSMAR \\ 
+  703 & Horse lus & HPNOLU \\ 
+  704 & Average number Horses & HPAVNOH \\ 
+  705 & Average number Ponies & HPAVNOPN \\ 
+  706 & Average no. of mules jennets and asses & HPAVNOMJ \\ 
+  707 & Opening Inventory Horses      (€) & HPOPINVH \\ 
+  708 & Closing Inventory Horses      (€) & HPCLINVH \\ 
+  709 & Horses opening inventory breeding stock & HPOPINVB \\ 
+  710 & Horses closing inventory breeding stock & HPCLINVB \\ 
+  711 & Horses opening inventory trading stock & HPOPINVT \\ 
+  712 & Horses opening inventory trading stock & HPCLINVT \\ 
+  713 & Total forage acres & HPFORACS \\ 
+  714 & Gross Output - Horses & HOGROSSO \\ 
+  715 & Horse sales        (€) & HOSALESH \\ 
+  716 & Horse purchases    (€) & HOPURCHH \\ 
+  717 & Direct Costs & HDTOTLDC \\ 
+  718 & Gross Margin & HDGRSMAR \\ 
+  719 & Hay acreage (1st cut)    (ha.) & FSIZ1HAY \\ 
+  720 & Hay acreage (2nd cut)    (ha.) & FSIZ2HAY \\ 
+  721 & Hay acreage (3rd cut)    (ha.) & FSIZ3HAY \\ 
+  722 & Silage acreage (1st cut) (ha.) & FSIZSLG1 \\ 
+  723 & Silage acreage (2nd cut) (ha.) & FSIZSLG2 \\ 
+  724 & Silage acreage (3rd cut) (ha.) & FSIZSLG3 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
+\begin{kframe}
+
+{\ttfamily\noindent\bfseries\textcolor{errorcolor}{\#\# Error: no applicable method for 'xtable' applied to an object of class "character"}}\end{kframe}
+
+
+
+
+% <<echo=TRUE, results='markup'>>=
+% # create a logical vector for the comparison of total uaa
+% nfs05$in.range <- nfs05$fsizuaa >= .99*fadn05$Total.UAA & nfs05$fsizuaa <= 1.01*fadn05$Total.UAA
+% # copy the UAA variable and fadn farmcode from the fadn to the nfs data
+% nfs05$Total.UAA <- fadn05$Total.UAA
+% nfs05$Farm.Code <- fadn05$Farm.Code
+% # have a look at the data to double check it's what we expect
+% View(nfs05[in.range==TRUE,list(in.range, farmcode, fsizuaa, Farm.Code,  Total.UAA)])
+% #viewData(nfs05[in.range==TRUE,list(in.range, farmcode, fsizuaa, Farm.Code,  Total.UAA)]) # for viewing data within the GUI if you are using the most recent version of RStudio
+% 
+% # count of farmcodes with matching UAA in both datasets
+% length(nfs05[in.range==TRUE, farmcode])
+% 
+% # select one of these farmcodes to compare variable by variable for potential variable matches (creating a key). 
+% nfs.in.range <- nfs05[in.range==TRUE]
+% nfs.farm <- nfs.in.range[1] 
+% length(names(nfs.farm)) # number of variables starting out
+% nums <- nfs.farm[,sapply(.SD, is.numeric)] # numeric variables
+% nfs.farm <- nfs.farm[,nums==T, with=F] # select only those variables
+% length(names(nfs.farm)) # number of variables after selection
+% over0 <- nfs.farm[,sapply(.SD, function(x) x>0)] # variables with value > 0
+% nfs.farm <- nfs.farm[, over0==T, with=F] # select only those variables
+% length(names(nfs.farm)) # number of variables after selection
+% 
+% # store the corresponding farm ID's for each dataset
+% farmcode.sel <- nfs.farm[,farmcode]
+% Farm.Code.sel <- nfs.farm[,Farm.Code]
+% 
+% 
+% # extract corresponding row from FADN
+% fadn.farm <- fadn05[Farm.Code== Farm.Code.sel]
+% length(names(fadn.farm)) # number of variables starting out
+% nums <- fadn.farm[,sapply(.SD, is.numeric)] # numeric variables
+% fadn.farm <- fadn.farm[,nums==T, with=F]
+% length(names(fadn.farm)) # number of variables after selection
+% over0 <- fadn.farm[,sapply(.SD, function(x) x>0)] # variables with value > 0
+% fadn.farm <- fadn.farm[,over0==T, with=F]
+% length(names(fadn.farm)) # number of variables after selection
+% 
+% 
+% # transpose both and search fadn column for possible matches for each value of the NFS column
+% #nfs.farm <- data.table(na.omit(data.frame(nfs.names = names(nfs.farm), values=t(nfs.farm), row.names=NULL, stringsAsFactors=F)), key="values")
+% 
+% fadn.farm <- data.table(na.omit(data.frame(fadn.names = names(fadn.farm), values = t(fadn.farm), row.names=NULL, stringsAsFactors=F)), key="values")
+% 
+% # creates a logical matrix for potential matches
+% key <- nfs.farm[,sapply(.SD, function(x) ifelse(x >= .98*fadn.farm$values & x <= 1.02*fadn.farm$values, fadn.farm$fadn.name, NA))] # ], fadn.names=fadn.farm$fadn.names),by=nfs.names]
+% 
+% # now collapse that to a list of names of fadn variable names for each nfs variable name
+% 
+% key2 <- data.table(key)
+% key2 <- key2[, sapply(.SD, function(x) list(na.omit(x)))]
+% viewData(key2)
+% 
+% 
+% save(key2, file="key2.Rdata")
+% 
+% @
+% 
+% The output gives a data table with nfs varnames as the header row and fadn varnames that possibly match in the values. This data structure must have equal column lengths, so the lists of fadn names are repeated until all column lengths are the same. Nonetheless, this is a much more compact way of browsing the likely matches. 
+% 
+% Unfortunately, this technique did not prove effective. I'm now giving up this approach as I don't think that it will ever be fruitful in any sort of reasonable time. I will simply hardcode from the list Brian gave me, and from hard graft.
+
+\end{flushleft}
+\end{document}

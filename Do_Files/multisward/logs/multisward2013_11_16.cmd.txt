@@ -1,0 +1,7 @@
+describe, short
+tab country
+dir
+mv README.txt README_test.txt
+help mv
+help erase
+do msward_2013_11_15_meta.do

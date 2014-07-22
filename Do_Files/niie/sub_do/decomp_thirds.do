@@ -1,0 +1,188 @@
+/****************************************************
+*****************************************************
+
+ Generating cost thirds
+
+ Patrick R. Gillespie, Walsh Fellow
+
+   Thesis Supervisors: 
+
+ 	Cathal O'Donoghue , REDP Teagasc
+	Thia Hennessy	  , REDP Teagasc
+	Stephen Hynes	  , NUIG 
+	Fiona Thorne 	  , REDP Teagasc
+
+*****************************************************
+****************************************************/
+
+
+/*-----------------------------------------------
+ P.Gillespie: 
+-----------------------------------------------*/
+
+local outdatadir  	= "$outdatadir1"
+local logit_vlist 	= "$logit_vlist_1" 
+local panel_vlist 	= "$panel_vlist_1" 
+local filelist1	 "$filelist1"
+
+local micro_data_year_list = "$micro_data_year_list2"
+
+/*-----------------------------------------------
+ P.Gillespie:
+  Fixed (overhead) costs are not broken out by 
+   enterprise. Creating allocation weight for the
+   dairy enterprise to apply to fixed costs. 
+   After 2005, the weight should remove the 
+   Single Farm Payment and Disadvantaged Area 
+   Payments from the denominator. Then apply the 
+   allocation weight to generate fixed costs and
+   total costs for the dairy enterprise. Then 
+   break into per hectare and per litre. 
+-----------------------------------------------*/
+replace fdairygo   = cowsmilkandmilkproducts
+
+
+replace lfa 	   = lfasubsidies
+
+
+*replace fdairydc   = /*
+*/ ((otherlivestockspecificcosts + fdgrzlvstk) * dpalloclu) /*
+*/ + (fdferfil * dpallocgo)
+
+
+gen 	d_alloc_wt = fdairygo/farmgo
+replace d_alloc_wt = fdairygo/(farmgo - sfp - lfa) if year>=2005
+
+
+gen 	fdairyoh   = farmohct * d_alloc_wt
+gen 	fdairytct  = fdairydc + fdairyoh
+
+
+replace fdairygm   = fdairygo - fdairytct
+
+log on
+sum fdairygm fdairygo fdairydc fdairyoh fdairytct
+log off
+
+/*-----------------------------------------------
+ P.Gillespie:
+  Upon further review, I've realised that this 
+   cost grouping is inconsistent with the per 
+   litre cost grouping and is misleading. More 
+   intensive producers will have higher costs 
+   per hectare but lower costs per litre, and 
+   consequently higher margin per litre. The 
+   effect of using per ha cost could be to mix 
+   groups of farms that are too different to 
+   belong together. Furthermore, the cost grouping
+   should be consistent no matter which measure of
+   GM (per ha or per litre), so as to ensure that 
+   the graphs are in fact comparable. Code was 
+   changed to reflect these decisions on 
+   12 Oct,2012. 
+-----------------------------------------------*/
+replace fdairygm_ha = fdairygm/daforare
+gen fdairygo_ha = fdairygo/daforare
+gen fdairydc_ha = fdairydc/daforare
+gen fdairyoh_ha = fdairyoh/daforare
+gen fdairytct_ha = fdairytct/daforare
+
+gen fdairygm_lt = fdairygm/dairyproducts
+gen fdairygo_lt = fdairygo/dairyproducts
+gen fdairydc_lt = fdairydc/dairyproducts
+gen fdairyoh_lt = fdairyoh/dairyproducts
+gen fdairytct_lt = fdairytct/dairyproducts
+
+
+/*-----------------------------------------------
+ P.Gillespie:
+  Create cost groupings in this format: yyyy_g 
+   (i.e. 4 digit year then group number). This 
+   format allows you to easily collapse the 
+   dataset by year AND cost grouping (collapse 
+   usually allows only one grouping variable). 
+-----------------------------------------------*/
+
+
+levelsof country, local(clevels)
+
+
+/* Create single variable to contain country specific groupings.
+    This variable will report cost groups for all farms based on 
+    relevant country and year. It DOES NOT create combined dataset
+    cost groupings (i.e. cost thirds across the whole island).  */
+gen byte ct_grp = .
+
+foreach country of local clevels {
+
+	
+	* create empty country specific variable to fill as loop iterates
+	gen byte ct_grp_`country' = . 
+
+
+	* Create 3 groups of farms by total costs per litre in each year
+	di _dup(4) _newline
+	macro list _micro_data_year_list
+	foreach year of local micro_data_year_list {
+	
+	
+		* creates grouping for the year, missing in other years
+		qui xtile ct_grp_`country'_`year'=fdairytct_lt /*
+		*/ [weight=wt] /*
+		*/  if year==`year' & country == "`country'"           /*
+		*/ , nq(3)
+	
+	
+		/* Thia's convention is to number the categories from 
+		    highest cost to lowest cost, so reassign values to 
+		    match that by subtracting from 4. */ 
+		qui replace ct_grp_`country'_`year' =        /* 
+		*/ 4 - ct_grp_`country'_`year'           /* 
+		*/ if year==`year' & country == "`country'"
+	
+	
+		* Fill values as loop iterates.
+		qui replace ct_grp_`country' = ct_grp_`country'_`year'/*
+		*/ if year == `year' & country == "`country'"
+
+
+	}
+
+
+	* Fill values as loop iterates.
+	replace ct_grp = ct_grp_`country' if country == "`country'"
+
+	* Validation
+	tab ct_grp_`country'
+}
+
+log on
+
+
+* Validating - totals should match ct_grp_`country' totals
+tab ct_grp country
+label define ct_grp 1 "High Cost" 2 "Moderate Cost" 3 "Low Cost"
+label value ct_grp ct_grp
+
+foreach countryvalue of local clevels{
+	di _dup(2) _newline "`countryvalue' -- Per hectare GM, GO, DC, overheads and total cost by cost thirds"
+	tabstat fdairygm_ha fdairygo_ha fdairydc_ha fdairyoh_ha /* 
+        */ fdairytct_ha if country == "`countryvalue'"          /*
+        */ , by(ct_grp) stats(mean, sd) columns(statistics)     /* 
+	*/ longstub format(%9.0f)
+
+
+}
+
+
+foreach countryvalue of local clevels{
+	di _dup(2) _newline "`countryvalue' -- Per litre GM, GO, DC, overheads and total cost by cost thirds"
+	tabstat fdairygm_lt fdairygo_lt fdairydc_lt fdairyoh_lt /* 
+        */ fdairytct_lt if country == "`countryvalue'" & year==2006 /*
+        */ , by(ct_grp) stats(mean, sd) columns(statistics)     /* 
+	*/ longstub format(%9.2f)
+
+
+}
+
+log off

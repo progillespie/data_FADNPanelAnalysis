@@ -1,0 +1,13 @@
+ereturn list
+help matrix list
+matrix list e(gradient)
+matrix list e(gradient), noheader
+matrix list e(gradient), noheader nonames
+matrix list e(gradient)', noheader nonames
+matrix
+matrix define A = e(gradient)
+matrix list A
+matrix list A'
+matrix define A_t = A'
+matrix list A_t
+matrix list A_t, nonames

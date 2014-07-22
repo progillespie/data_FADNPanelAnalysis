@@ -1,0 +1,202 @@
+------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_11_21.txt
+  log type:  text
+ opened on:  21 Nov 2013, 14:46:56
+
+. di  "Job  Started  at  $S_TIME  on $S_DATE"
+Job  Started  at  14:46:56  on 21 Nov 2013
+
+. cmdlog using logs/$project$datestamp.cmd.txt, replace
+(cmdlog G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_11_21.cmd.txt opened)
+
+. 
+. 
+. 
+. 
+. preserve
+
+. 
+. 
+. drop country
+
+. gen int country = countrycode2
+
+. keep pid year country `dep_vlist' `indep_vlist' `z_vlist' TREND
+
+. 
+. outsheet _all using `fadnoutdatadir'/exported_data.csv, comma replace nolabel
+
+. save `fadnoutdatadir'/exported_data.dta, replace nolabel
+file G:\\Data/data_FADNPanelAnalysis/OutData/multisward/exported_data.dta saved
+
+. 
+. restore
+
+. 
+. 
+. 
+. * ===================
+. * MODEL COMMANDS HERE
+. * ===================
+. if "`cost'"=="cost"{
+.         local   tech_or_cost    "cost"
+. }
+
+. else{
+.         local   tech_or_cost    "tech"
+. }
+
+. /*
+> sfpanel `dep_vlist' `indep_vlist' TREND if country == "DEU", `cost' model(bc95) d(tnormal) posthessian rob
+> ust emean(`z_vlist') vsigma(TREND)
+> estimates store `model1name'_DEU_`tech_or_cost'
+> 
+> sfpanel `dep_vlist' `indep_vlist' TREND if country == "FRA", `cost' model(bc95) d(tnormal) posthessian rob
+> ust emean(`z_vlist') usigma(TREND) vsigma(TREND) 
+> estimates store `model1name'_FRA_`tech_or_cost'
+> 
+> sfpanel `dep_vlist' `indep_vlist' TREND if country == "IRE", `cost' model(bc95) d(tnormal) posthessian rob
+> ust emean(`z_vlist') usigma(TREND) vsigma(TREND)
+> estimates store `model1name'_IRE_`tech_or_cost'
+> 
+> sfpanel `dep_vlist' `indep_vlist' TREND if country == "UKI", `cost' model(bc95) d(tnormal) posthessian rob
+> ust emean(`z_vlist') usigma(TREND) vsigma(TREND)
+> estimates store `model1name'_UKI_`tech_or_cost'
+> 
+> sfpanel `dep_vlist' `indep_vlist' TREND if atl_plains == 1,  `cost' model(bc95) d(tnormal) posthessian rob
+> ust emean(`z_vlist') usigma(TREND) vsigma(TREND)
+> estimates store `model1name'_ATL_`tech_or_cost'
+> 
+> sfpanel `dep_vlist' `indep_vlist' TREND if cont_eur == 1,    `cost' model(bc95) d(tnormal) posthessian rob
+> ust emean(`z_vlist') usigma(TREND) vsigma(TREND)
+> estimates store `model1name'_CEU_`tech_or_cost'
+> */
+. sfpanel `dep_vlist' `indep_vlist' France Ireland Wales TREND , cost model(bc95) d(tnormal) posthessian rob
+> ust emean(`z_vlist') vsigma(TREND)
+
+
+initial:       Log pseudolikelihood = -276605.85
+Iteration 0:   Log pseudolikelihood = -276605.85  
+Iteration 1:   Log pseudolikelihood = -223918.91  (backed up)
+Iteration 2:   Log pseudolikelihood = -174477.34  (backed up)
+Iteration 3:   Log pseudolikelihood = -134227.54  (backed up)
+Iteration 4:   Log pseudolikelihood = -120208.67  (backed up)
+Iteration 5:   Log pseudolikelihood = -119970.83  
+Iteration 6:   Log pseudolikelihood = -119839.56  
+Iteration 7:   Log pseudolikelihood = -119159.95  (backed up)
+Iteration 8:   Log pseudolikelihood = -119098.39  
+Iteration 9:   Log pseudolikelihood = -119098.39  (backed up)
+Iteration 10:  Log pseudolikelihood = -118238.38  
+Iteration 11:  Log pseudolikelihood =  -113004.5  
+Iteration 12:  Log pseudolikelihood = -111980.35  
+Iteration 13:  Log pseudolikelihood = -108220.25  
+Iteration 14:  Log pseudolikelihood =    -103516  
+Iteration 15:  Log pseudolikelihood = -100955.06  
+Iteration 16:  Log pseudolikelihood = -99635.395  
+Iteration 17:  Log pseudolikelihood = -96845.034  
+Iteration 18:  Log pseudolikelihood = -95540.402  
+Iteration 19:  Log pseudolikelihood = -94277.566  
+Iteration 20:  Log pseudolikelihood = -93727.863  
+Iteration 21:  Log pseudolikelihood = -90314.672  
+Iteration 22:  Log pseudolikelihood = -89107.444  
+Iteration 23:  Log pseudolikelihood = -88292.694  (backed up)
+Iteration 24:  Log pseudolikelihood = -88215.065  (backed up)
+Iteration 25:  Log pseudolikelihood = -88182.311  (backed up)
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 26:  Log pseudolikelihood = -88179.976  (backed up)
+Iteration 27:  Log pseudolikelihood = -88174.417  (backed up)
+Iteration 28:  Log pseudolikelihood = -88171.876  (backed up)
+Iteration 29:  Log pseudolikelihood = -58744.489  (backed up)
+Iteration 30:  Log pseudolikelihood = -57205.068  (backed up)
+Iteration 31:  Log pseudolikelihood = -56161.444  (backed up)
+Iteration 32:  Log pseudolikelihood = -56045.613  (backed up)
+Iteration 33:  Log pseudolikelihood = -55746.976  (backed up)
+Iteration 34:  Log pseudolikelihood = -53492.618  (backed up)
+Iteration 35:  Log pseudolikelihood = -53465.477  (backed up)
+Iteration 36:  Log pseudolikelihood = -53465.477  (backed up)
+Iteration 37:  Log pseudolikelihood = -53067.802  
+Iteration 38:  Log pseudolikelihood = -52185.229  (backed up)
+Iteration 39:  Log pseudolikelihood = -52185.229  (backed up)
+Iteration 40:  Log pseudolikelihood = -52129.939  
+Iteration 41:  Log pseudolikelihood = -52129.939  (backed up)
+Iteration 42:  Log pseudolikelihood = -51711.031  
+Iteration 43:  Log pseudolikelihood = -51641.017  (backed up)
+Iteration 44:  Log pseudolikelihood =  -51487.86  
+Iteration 45:  Log pseudolikelihood =  -51487.86  (backed up)
+Iteration 46:  Log pseudolikelihood = -51246.853  
+Iteration 47:  Log pseudolikelihood = -50800.899  
+Iteration 48:  Log pseudolikelihood = -49357.315  
+Iteration 49:  Log pseudolikelihood = -48939.227  
+Iteration 50:  Log pseudolikelihood =  -48518.36  
+Iteration 51:  Log pseudolikelihood = -48335.299  
+Iteration 52:  Log pseudolikelihood = -48281.525  
+Iteration 53:  Log pseudolikelihood = -48273.522  
+Iteration 54:  Log pseudolikelihood = -48272.954  
+Iteration 55:  Log pseudolikelihood = -48272.906  
+Iteration 56:  Log pseudolikelihood = -48272.906  (backed up)
+Iteration 57:  Log pseudolikelihood = -48272.407  
+Iteration 58:  Log pseudolikelihood = -48270.373  
+Iteration 59:  Log pseudolikelihood = -48263.627  
+Iteration 60:  Log pseudolikelihood = -48259.052  
+Iteration 61:  Log pseudolikelihood = -48258.799  
+Iteration 62:  Log pseudolikelihood = -48258.799  (backed up)
+Iteration 63:  Log pseudolikelihood = -48258.348  
+Iteration 64:  Log pseudolikelihood = -48254.184  
+Iteration 65:  Log pseudolikelihood =  -48228.11  
+Iteration 66:  Log pseudolikelihood = -48180.898  
+Iteration 67:  Log pseudolikelihood = -48138.766  
+Iteration 68:  Log pseudolikelihood = -48114.334  
+Iteration 69:  Log pseudolikelihood = -48112.952  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 70:  Log pseudolikelihood = -48112.952  (backed up)
+Iteration 71:  Log pseudolikelihood = -45419.592  (backed up)
+Iteration 72:  Log pseudolikelihood = -42026.782  (backed up)
+Iteration 73:  Log pseudolikelihood = -41702.888  (backed up)
+Iteration 74:  Log pseudolikelihood = -40803.202  (backed up)
+Iteration 75:  Log pseudolikelihood = -40530.337  (backed up)
+Iteration 76:  Log pseudolikelihood = -40144.051  (backed up)
+Iteration 77:  Log pseudolikelihood =  -39801.24  (backed up)
+Iteration 78:  Log pseudolikelihood = -39699.309  (backed up)
+Iteration 79:  Log pseudolikelihood = -39661.536  (backed up)
+Iteration 80:  Log pseudolikelihood = -39259.155  (backed up)
+Iteration 81:  Log pseudolikelihood = -39187.684  (backed up)
+Iteration 82:  Log pseudolikelihood = -36022.061  (backed up)
+Iteration 83:  Log pseudolikelihood = -31825.204  
+Iteration 84:  Log pseudolikelihood =  -29845.94  
+Iteration 85:  Log pseudolikelihood = -28230.253  
+Iteration 86:  Log pseudolikelihood = -27072.923  
+Iteration 87:  Log pseudolikelihood = -16687.363  
+Iteration 88:  Log pseudolikelihood = -16626.072  (backed up)
+Iteration 89:  Log pseudolikelihood = -16541.994  (backed up)
+Iteration 90:  Log pseudolikelihood =  -16527.68  (backed up)
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 91:  Log pseudolikelihood = -16525.123  (backed up)
+Iteration 92:  Log pseudolikelihood = -15437.241  (backed up)
+Iteration 93:  Log pseudolikelihood = -15436.283  (backed up)
+Iteration 94:  Log pseudolikelihood = -15436.229  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+numerical derivatives are approximate
+nearby values are missing
+Iteration 95:  Log pseudolikelihood = -15436.228  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+numerical derivatives are approximate
+nearby values are missing
+Iteration 96:  Log pseudolikelihood = -15436.226  (backed up)
+could not calculate numerical derivatives -- discontinuous region with missing values encountered
+could not calculate numerical derivatives -- discontinuous region with missing values encountered
+estimates post: matrix has missing values
+r(504);
+
+end of do-file
+
+r(504);
+
+. log close
+      name:  <unnamed>
+       log:  G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_11_21.txt
+  log type:  text
+ closed on:  21 Nov 2013, 14:54:40
+------------------------------------------------------------------------------------------------------------

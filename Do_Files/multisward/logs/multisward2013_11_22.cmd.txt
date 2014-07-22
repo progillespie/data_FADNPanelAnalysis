@@ -1,0 +1,78 @@
+di `e(converged)'
+predict, marginal
+sum *_M *_V
+tw scatter lngrassratio lngrassratio_M
+tw scatter lngrassratio_M lngrassratio
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < 400000
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < 4000
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < 50
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < 10
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < 1
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < .01
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < .001
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < .0000001
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < -10
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < 0
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < -.005
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < -.006
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < -.0055
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < -.0054
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < -.0055
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < -.0054
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < -.00541
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < -.005413
+tw scatter lngrassratio_M lngrassratio if lngrassratio_M < -.0054131
+count if lngrassratio_M < -.0054
+count if lngrassratio_M => -.0054
+count if lngrassratio_M >= -.0054
+count if lngrassratio_M >= 0
+count if lngrassratio_M >= 1
+count if lngrassratio_M >= 10
+count if lngrassratio_M >= 100
+count if lngrassratio_M >= 1000
+count if lngrassratio_M >= 10000
+count if lngrassratio_M >= 100000
+count if lngrassratio_M >= 1000000
+count if lngrassratio_M >= 10000000
+count if lngrassratio_M >= 100000000
+count if lngrassratio_M >= 1000000000
+count if lngrassratio_M >= 10000000000
+count if lngrassratio_M >= 100000000000
+count if lngrassratio_M >= 1000000000000
+count if lngrassratio_M >= 10000000000000
+count if lngrassratio_M >= 100000000000000
+count if lngrassratio_M >= 1000000000000000
+count if lngrassratio_M > 1000000000000000
+count if lngrassratio_M > 1000000000000000=
+count if lngrassratio_M > 10000000000000000
+count if lngrassratio_M > 1 & lngrassratio_M <= .
+count if lngrassratio_M > 1 & lngrassratio_M < .
+count if lngrassratio_M > 0 & lngrassratio_M < .
+count if lngrassratio_M > 10 & lngrassratio_M < .
+count if lngrassratio_M > 100 & lngrassratio_M < .
+count if lngrassratio_M > 1000 & lngrassratio_M < .
+sfpanel lntotalspecificcosts lndairyproducts lnPTotalCattle lnPCompoundfeedingstuffsforcatt lnPFERTILISERSANDSOILIMPROVERS TREND if lngrassratio_M <= 1, cost model(bc95) d(tnormal) posthessian robust emean(lngrassratio lnspecial) usigma(lngrassratio lnspecial) vsigma(TREND)
+di `e(converged)'
+do msward_2013_11_21_cost.do
+do msward_2013_11_21_cost.do
+di `e(hessian)'
+matrix liste(hessian)
+matrix list e(hessian)
+di 1/1.021172
+lincom lndairyproducts -1
+do msward_2013_11_21_cost.do
+do msward_2013_11_22_cost.do
+do msward_2013_11_22_cost.do
+do msward_2013_11_22_cost.do
+do msward_2013_11_22_cost.do
+do msward_2013_11_22_cost.do
+do msward_2013_11_22_cost.do
+do msward_2013_11_22_cost.do
+do msward_2013_11_22_cost.do
+do msward_2013_11_22_cost.do
+dir logs
+dir logs/
+dir logs/results/
+dir logs/
+view logs/multisward2013_11_22.txt
+log close

@@ -1,0 +1,24 @@
+tab pid if year ==2007, by(region)
+tab pid region
+help tab
+tab pid grassregion
+tab pid year if region=="Bretagne"
+codebook region
+codebook grassregion
+tabstat pid if year==2007, by(grassregion)
+tabstat pid if year==2007, by(grassregion) stats(count)
+tabstat pid if year==2007, by(grassregion) over(year)stats(count)
+tabstat pid if year==2007, by(grassregion) over(year) stats(count)
+egen greg_yr = concatenate(grassregion, "_", year)
+help concatenate
+help  str_func
+help string functions
+tabstat pid if year==1999, by(grassregion) stats(count)
+tabstat pid if year==2000, by(grassregion) stats(count)
+tabstat pid if year==2001, by(grassregion) stats(count)
+tabstat pid if year==2002, by(grassregion) stats(count)
+tabstat pid if year==2003, by(grassregion) stats(count)
+tabstat pid if year==2004, by(grassregion) stats(count)
+tabstat pid if year==2005, by(grassregion) stats(count)
+tabstat pid if year==2006, by(grassregion) stats(count)
+tabstat pid if year==2007, by(grassregion) stats(count)

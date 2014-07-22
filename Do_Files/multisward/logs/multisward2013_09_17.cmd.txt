@@ -1,0 +1,59 @@
+di _b[lnfdferfil] +_b[lnfeedforgrazinglivestockpurch] + _b[lnfsizuaa] + _b[lndpnolu] + _b[lnlabourinputhours] + _b[lnmachinery] + _b[lnbuildings]
+corr fdferfil feedforgrazinglivestockpurch fsizuaa dpnolu labourinputhours machinery buildings
+sfpanel lndairyproducts lnfsizuaa TREND, model(bc95) d(tnormal) emean(lnfdratio)
+sfpanel lndairyproducts lnfsizuaa TREND if country=="IRE", model(bc95) d(tnormal) emean(lnfdratio)
+sfpanel lndairyproducts lnfsizuaa lnfdferfil TREND if country=="IRE", model(bc95) d(tnormal) emean(lnfdratio)
+sfpanel lndairyproducts lnfsizuaa lnfdferfil lnfeedforgrazinglivestockpurch TREND if country=="IRE", model(bc95) d(tnormal) emean(lnfdratio)
+sfpanel lndairyproducts lnfsizuaa lnfdferfil lnfeedforgrazinglivestockpurch lndpnolu TREND if country=="IRE", model(bc95) d(tnormal) emean(lnfdratio)
+sfpanel lndairyproducts lnfsizuaa lnfeedforgrazinglivestockpurch lndpnolu TREND if country=="IRE", model(bc95) d(tnormal) emean(lnfdratio)
+sfpanel lndairyproducts lnfsizuaa lnfdferfil lndpnolu TREND if country=="IRE", model(bc95) d(tnormal) emean(lnfdratio)
+gen stocking = dpnolu/daforare
+gen lnstocking = ln(stocking)
+count if stocking <= 0
+sfpanel lndairyproducts lnstocking lnfdferfil lnfeedforgrazinglivestockpurch lndpnolu TREND if country=="IRE", model(bc95) d(tnormal) emean(lnfdratio)
+sfpanel lndairyproducts lnstocking lnfdferfil lnfeedforgrazinglivestockpurch lndpnolu lnmachinery lnbuildings lnlabourinputhours TREND if country=="IRE", model(bc95) d(tnormal) emean(lnfdratio)
+di _b[lnfdferfil] +_b[lnfeedforgrazinglivestockpurch] + _b[lnstocking] + _b[lndpnolu] + _b[lnlabourinputhours] + _b[lnmachinery] + _b[lnbuildings]
+test _b[lnfdferfil] +_b[lnfeedforgrazinglivestockpurch] + _b[lnstocking] + _b[lndpnolu] + _b[lnlabourinputhours] + _b[lnmachinery] + _b[lnbuildings] = 1
+gen lndotomkgl_ha = ln(dotomkgl_ha)
+gen dotomkgl_ha = dairyproducts/daforare
+gen lndotomkgl_ha = ln(dotomkgl_ha)
+count if dotomkgl_ha <= 0
+gen fdferfil_ha  = fdferfil/daforare
+replace fdferfil_ha  = fdferfil/daforare
+count if fdferfil_ha <= 0
+count if fdferfil <= 0
+count if fertiliser <= 0
+count if feedforgrazinglivestockpurch  <= 0
+count if dpnolu <= 0
+count if machinery <= 0
+count if buildings <= 0
+count if labourinputhours  <= 0
+count if daforare  <= 0
+drop if daforare <= 0
+drop if buildings  <= 0
+drop if machinery   <= 0
+drop if dpnolu  <= 0
+drop if feedforgrazinglivestockpurch   <= 0
+drop if fdferfil  <= 0
+count if dairyproducts <= 0
+sfpanel lndairyproducts lndaforare lnlabourinputhours lndpnolu lnmachinery lnbuildings lnfdferfil lnfeedforgrazinglivestockpurch TREND, model(bc95) d(tnormal) emean(lnfdratio)
+plot daforare dairyproducts
+predict xb, xb
+drop xb
+predict xb, xb
+drop u
+predict u, jlms
+gen v = dairyproducts - xb + u
+plot v lndaforare
+plot u lndaforare
+plot xb lndaforare
+sfpanel lndairyproducts lndaforare lnlabourinputhours lndpnolu lnmachinery lnbuildings lnfdferfil lnfeedforgrazinglivestockpurch TREND, model(bc95) d(tnormal) emean(lnfdratio) sigma_v(daforare)
+sfpanel lndairyproducts lndaforare lnlabourinputhours lndpnolu lnmachinery lnbuildings lnfdferfil lnfeedforgrazinglivestockpurch TREND, model(bc95) d(tnormal)
+xtreg lndairyproducts lndaforare lnlabourinputhours lndpnolu lnmachinery lnbuildings lnfdferfil lnfeedforgrazinglivestockpurch TREND, fe
+di _b[lndaforare] + _b[lnlabourinputhours] + _b[lndpnolu] + _b[lnmachinery] + _b[lnbuildings] + _b[lnfdferfil] + _b[lnfeedforgrazinglivestockpurch]
+test _b[lndaforare] + _b[lnlabourinputhours] + _b[lndpnolu] + _b[lnmachinery] + _b[lnbuildings] + _b[lnfdferfil] + _b[lnfeedforgrazinglivestockpurch] = 1
+constraint define 2  _b[lndaforare] + _b[lnlabourinputhours] + _b[lndpnolu] + _b[lnmachinery] + _b[lnbuildings] + _b[lnfdferfil] + _b[lnfeedforgrazinglivestockpurch] = 1
+sfpanel lndairyproducts lndaforare lnlabourinputhours lndpnolu lnmachinery lnbuildings lnfdferfil lnfeedforgrazinglivestockpurch TREND, model(bc95) d(tnormal) constraints(2)
+sfpanel lndairyproducts lndaforare lnlabourinputhours lndpnolu lnmachinery lnbuildings lnfdferfil lnfeedforgrazinglivestockpurch TREND, model(bc95) d(tnormal) emean(fdratio daforare) usigma(fdratio daforare) vsigma(fdratio daforare) constraints(2)
+sfpanel lndairyproducts lndaforare lnlabourinputhours lndpnolu lnmachinery lnbuildings lnfdferfil lnfeedforgrazinglivestockpurch TREND if country=="IRE", model(bc95) d(tnormal) emean(fdratio daforare) usigma(fdratio daforare) vsigma(fdratio daforare) constraints(2)
+exit, clear

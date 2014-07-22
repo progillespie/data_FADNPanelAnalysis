@@ -1,0 +1,7 @@
+predict u_cont, u
+graph tw (kdensity u_cont if year==1999) (kdensity u_cont if year==2003) (kdensity u_cont if year==2007)
+graph tw (kdensity u_cont if year==1999 & cont_eur==1) (kdensity u_cont if year==2003  & cont_eur==1) (kdensity u_cont if year==2007  & cont_eur==1)
+graph tw (kdensity u_cont if year==1999 & cont_eur==1, legend(label("1999")) (kdensity u_cont if year==2003  & cont_eur==1) (kdensity u_cont if year==2007  & cont_eur==1)
+graph tw (kdensity u_cont if year==1999 & cont_eur==1, legend(label("1999"))) (kdensity u_cont if year==2003  & cont_eur==1) (kdensity u_cont if year==2007  & cont_eur==1)
+help graph
+exit, clear

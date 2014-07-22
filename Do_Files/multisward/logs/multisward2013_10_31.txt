@@ -1,0 +1,220 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_10_31.txt
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}31 Oct 2013, 21:04:30
+{txt}
+{com}. di  "Job  Started  at  $S_TIME  on $S_DATE"
+{res}Job  Started  at  21:04:30  on 31 Oct 2013
+{txt}
+{com}. cmdlog using logs/$project$datestamp.cmd.txt, replace
+{txt}(cmdlog G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_10_31.cmd.txt opened)
+
+{com}. 
+. 
+. 
+. 
+. preserve
+{txt}
+{com}. 
+. 
+. drop country
+{txt}
+{com}. gen int country = countrycode2
+{txt}
+{com}. keep pid year country `dep_vlist' `indep_vlist' `z_vlist' TREND
+{txt}
+{com}. 
+. outsheet _all using `fadnoutdatadir'/exported_data.csv, comma replace nolabel
+{txt}
+{com}. save `fadnoutdatadir'/exported_data.dta, replace nolabel
+{txt}file G:\\Data/data_FADNPanelAnalysis/OutData/multisward/exported_data.dta saved
+
+{com}. 
+. restore
+{txt}
+{com}. 
+. 
+. 
+. * ===================
+. * MODEL COMMANDS HERE
+. * ===================
+. 
+. *sfpanel `dep_vlist' `indep_vlist' TREND if country=="DEU", model(bc95) cost d(tnormal) emean(`z_vlist')
+. *estimates store DEU
+. 
+. *sfpanel `dep_vlist' `indep_vlist' TREND if country=="FRA", model(bc95) cost d(tnormal) emean(`z_vlist')
+. *estimates store FRA
+. 
+. sfpanel `dep_vlist' `indep_vlist' `location_vlist' TREND, model(bc95) cost d(tnormal)  emean(`z_vlist')
+
+{res}
+{txt}initial:{col 16}Log likelihood = {res: -11907283}
+Iteration 0:{space 3}Log likelihood = {res: -11907283}  
+{err}{p}
+could not calculate numerical derivatives -- flat or discontinuous region encountered
+{p_end}
+{p}
+could not calculate numerical derivatives -- flat or discontinuous region encountered
+{p_end}
+estimates post: matrix has missing values
+{txt}{search r(504):r(504);}
+
+end of do-file
+
+{search r(504):r(504);}
+
+{com}. cd ../../
+{res}G:\Data\data_FADNPanelAnalysis
+
+{com}. cd OutData/IGM/
+{res}G:\Data\data_FADNPanelAnalysis\OutData\IGM
+
+{com}. view FADNModel_Chow.smcl
+
+. estimates use chow_dotomkgl
+{res}
+{com}. xtfrontier
+
+{txt}Time-invariant inefficiency model{col 49}Number of obs{col 68}={col 70}{res}     2450
+{txt}Group variable: {res}farmcode{col 49}{txt}Number of groups{col 68}={col 70}{res}      584
+
+{txt}{col 49}Obs per group: min{col 68}={col 70}{res}        1
+{txt}{col 64}avg{col 68}={col 70}{res}      4.2
+{txt}{col 64}max{col 68}={col 70}{res}        9
+
+{txt}{col 49}Wald chi2({res}23{txt}){col 68}={col 70}{res}  4061.81
+{txt}Log likelihood  = {res} 1169.0017{col 49}{txt}Prob > chi2{col 68}={res}{col 73}0.0000
+
+{txt}{hline 20}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}         lndotomkgl{col 21}{c |}      Coef.{col 33}   Std. Err.{col 45}      z{col 53}   P>|z|{col 61}     [95% Con{col 74}f. Interval]
+{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 7}lnlandval_ha {c |}{col 21}{res}{space 2}-.0319533{col 33}{space 2} .0121419{col 44}{space 1}   -2.63{col 53}{space 3}0.008{col 61}{space 4} -.055751{col 74}{space 3}-.0081557
+{txt}{space 6}lnfdferfil_ha {c |}{col 21}{res}{space 2} .0051087{col 33}{space 2} .0104805{col 44}{space 1}    0.49{col 53}{space 3}0.626{col 61}{space 4}-.0154328{col 74}{space 3} .0256501
+{txt}{space 6}lndaforare_lu {c |}{col 21}{res}{space 2}-.5408891{col 33}{space 2} .0308138{col 44}{space 1}  -17.55{col 53}{space 3}0.000{col 61}{space 4} -.601283{col 74}{space 3}-.4804951
+{txt}{space 4}lnfdgrzlvstk_lu {c |}{col 21}{res}{space 2} .1052623{col 33}{space 2} .0127092{col 44}{space 1}    8.28{col 53}{space 3}0.000{col 61}{space 4} .0803528{col 74}{space 3} .1301719
+{txt}{space 6}lnflabpaid_lu {c |}{col 21}{res}{space 2}-.0132679{col 33}{space 2} .0033211{col 44}{space 1}   -4.00{col 53}{space 3}0.000{col 61}{space 4}-.0197772{col 74}{space 3}-.0067586
+{txt}{space 6}lnflabunpd_lu {c |}{col 21}{res}{space 2}-.1860519{col 33}{space 2} .0136524{col 44}{space 1}  -13.63{col 53}{space 3}0.000{col 61}{space 4}-.2128101{col 74}{space 3}-.1592938
+{txt}{space 11}ogagehld {c |}{col 21}{res}{space 2}  .000343{col 33}{space 2} .0005172{col 44}{space 1}    0.66{col 53}{space 3}0.507{col 61}{space 4}-.0006708{col 74}{space 3} .0013567
+{txt}{space 10}lnfsizuaa {c |}{col 21}{res}{space 2} .6708897{col 33}{space 2} .0250094{col 44}{space 1}   26.83{col 53}{space 3}0.000{col 61}{space 4} .6218722{col 74}{space 3} .7199071
+{txt}{space 12}hasreps {c |}{col 21}{res}{space 2}-.0050168{col 33}{space 2} .0125027{col 44}{space 1}   -0.40{col 53}{space 3}0.688{col 61}{space 4}-.0295217{col 74}{space 3} .0194882
+{txt}{space 9}lnmin_temp {c |}{col 21}{res}{space 2}-.2329072{col 33}{space 2} .4330227{col 44}{space 1}   -0.54{col 53}{space 3}0.591{col 61}{space 4}-1.081616{col 74}{space 3} .6158018
+{txt}{space 13}azone2 {c |}{col 21}{res}{space 2} .0106973{col 33}{space 2} .0619481{col 44}{space 1}    0.17{col 53}{space 3}0.863{col 61}{space 4}-.1107188{col 74}{space 3} .1321134
+{txt}{space 3}lnlandval_ha_cg2 {c |}{col 21}{res}{space 2} .0689105{col 33}{space 2} .0263745{col 44}{space 1}    2.61{col 53}{space 3}0.009{col 61}{space 4} .0172175{col 74}{space 3} .1206036
+{txt}{space 2}lnfdferfil_ha_cg2 {c |}{col 21}{res}{space 2} .0239097{col 33}{space 2} .0181154{col 44}{space 1}    1.32{col 53}{space 3}0.187{col 61}{space 4}-.0115959{col 74}{space 3} .0594153
+{txt}{space 2}lndaforare_lu_cg2 {c |}{col 21}{res}{space 2}-.0466646{col 33}{space 2} .0528033{col 44}{space 1}   -0.88{col 53}{space 3}0.377{col 61}{space 4}-.1501571{col 74}{space 3} .0568279
+{txt}lnfdgrzlvstk_lu_cg2 {c |}{col 21}{res}{space 2} .0965828{col 33}{space 2} .0246755{col 44}{space 1}    3.91{col 53}{space 3}0.000{col 61}{space 4} .0482196{col 74}{space 3}  .144946
+{txt}{space 2}lnflabpaid_lu_cg2 {c |}{col 21}{res}{space 2}-.0185585{col 33}{space 2} .0074336{col 44}{space 1}   -2.50{col 53}{space 3}0.013{col 61}{space 4}-.0331281{col 74}{space 3}-.0039888
+{txt}{space 2}lnflabunpd_lu_cg2 {c |}{col 21}{res}{space 2}-.1997444{col 33}{space 2} .0280534{col 44}{space 1}   -7.12{col 53}{space 3}0.000{col 61}{space 4}-.2547281{col 74}{space 3}-.1447607
+{txt}{space 7}ogagehld_cg2 {c |}{col 21}{res}{space 2} .0009434{col 33}{space 2} .0009786{col 44}{space 1}    0.96{col 53}{space 3}0.335{col 61}{space 4}-.0009746{col 74}{space 3} .0028614
+{txt}{space 6}lnfsizuaa_cg2 {c |}{col 21}{res}{space 2} .1741567{col 33}{space 2} .0435942{col 44}{space 1}    3.99{col 53}{space 3}0.000{col 61}{space 4} .0887136{col 74}{space 3} .2595998
+{txt}{space 8}hasreps_cg2 {c |}{col 21}{res}{space 2}  .056148{col 33}{space 2}  .022496{col 44}{space 1}    2.50{col 53}{space 3}0.013{col 61}{space 4} .0120565{col 74}{space 3} .1002394
+{txt}{space 5}lnmin_temp_cg2 {c |}{col 21}{res}{space 2} 1.276618{col 33}{space 2} .7510785{col 44}{space 1}    1.70{col 53}{space 3}0.089{col 61}{space 4}-.1954686{col 74}{space 3} 2.748705
+{txt}{space 9}azone2_cg2 {c |}{col 21}{res}{space 2}-.1363388{col 33}{space 2} .0895477{col 44}{space 1}   -1.52{col 53}{space 3}0.128{col 61}{space 4}-.3118491{col 74}{space 3} .0391716
+{txt}{space 7}chow_group_2 {c |}{col 21}{res}{space 2} -2.49633{col 33}{space 2} 1.245673{col 44}{space 1}   -2.00{col 53}{space 3}0.045{col 61}{space 4}-4.937804{col 74}{space 3}-.0548566
+{txt}{space 14}_cons {c |}{col 21}{res}{space 2} 8.349218{col 33}{space 2} .7339644{col 44}{space 1}   11.38{col 53}{space 3}0.000{col 61}{space 4} 6.910674{col 74}{space 3} 9.787762
+{txt}{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+                /mu {c |}{col 21}{res}{space 2} .6154682{col 33}{space 2} .0437281{col 44}{space 1}   14.07{col 53}{space 3}0.000{col 61}{space 4} .5297627{col 74}{space 3} .7011736
+{txt}          /lnsigma2 {c |}{col 21}{res}{space 2}-2.509761{col 33}{space 2} .0670995{col 44}{space 1}  -37.40{col 53}{space 3}0.000{col 61}{space 4}-2.641273{col 74}{space 3}-2.378248
+{txt}         /ilgtgamma {c |}{col 21}{res}{space 2} 1.845895{col 33}{space 2} .0878825{col 44}{space 1}   21.00{col 53}{space 3}0.000{col 61}{space 4} 1.673649{col 74}{space 3} 2.018142
+{txt}{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}             sigma2{col 21}{c |}{res}{space 2} .0812877{col 33}{space 2} .0054544{col 61}{space 4} .0712705{col 74}{space 3} .0927129
+{col 1}{txt}              gamma{col 21}{c |}{res}{space 2} .8636444{col 33}{space 2} .0103493{col 61}{space 4} .8420617{col 74}{space 3} .8826887
+{col 1}{txt}           sigma_u2{col 21}{c |}{res}{space 2} .0702037{col 33}{space 2} .0054771{col 61}{space 4} .0594688{col 74}{space 3} .0809385
+{col 1}{txt}           sigma_v2{col 21}{c |}{res}{space 2}  .011084{col 33}{space 2} .0003739{col 61}{space 4} .0103512{col 74}{space 3} .0118169
+{txt}{hline 20}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. do FADNModel_2013_11_01
+{err}{p 0 4 2}
+file FADNModel_2013_11_01.do
+not found
+{p_end}
+{txt}{search r(601):r(601);}
+
+{com}. cd G:\Data\data_FADNPanelAnalysis\Do_Files\IGM\
+{res}G:\Data\data_FADNPanelAnalysis\Do_Files\IGM
+
+{com}. do FADNModel_2013_11_01
+{txt}
+{com}. /*********************************************************************
+> **********************************************************************
+> 
+>  Farm Level Microsimulation Model
+> 
+>  Cathal O'Donoghue, RERC Teagasc
+> 
+>    - adapted for FADN data by
+> 
+>        Patrick Gillespie, Walsh Fellow
+> 
+> **********************************************************************
+> *********************************************************************/
+. 
+. 
+. /*-----------------------------------------------------------------
+>  P.Gillespie: 
+> 
+> -  You will find comments from me throughout this file. 
+>    Search the file with the tag "P.Gillespie" (no quotes, no spaces) 
+>    for my commentary. This will also apply to comments in sub files, 
+>    though it may be a bit more spotty from time to time.
+> 
+> - You will note I use hard returns to limit text to fit on half a screen
+>    to facilitate editing multiple files at once. I find this more readable
+>    than relying on word wrap, which can be arbitrary at times.
+> 
+>  - For the same reason, I also break up long commands where practical
+>     using multi-line comments (/* */) around the hard return. This has 
+>     the effect of making commands mult-line, even though normal Stata
+>     syntax does not admit this. It seems quite common on Statalist.
+> 
+> - This file runs the IGM framework using FADN data instead of NFS
+>    data. Everything is run inside of data_FADNPanelAnalysis, which is
+>    the FADN version of data_NFSPanelAnalysis I created. 
+> 
+> - All of this required fairly heavy editing. I cannot yet vouch for
+>    the accuracy of the simulation results, but a simulation does run
+>    for modeltype == 1 at least.
+> 
+> - Files are read and saved in the places you'd expect inside this 
+>    new parent directory. NFS has been replaced with FADN in filenames, 
+>    and `filenumber' is used to differentiate output files created from
+>    the `i' different data`i'.dta respectfully. 
+> 
+> - You will have also noticed that I append yyyy_mm_dd of editing to 
+>    the filename of master files I work on. This is a way of recording
+>    progress/changes. This master file can always be renamed to whatever
+>    name is desired --- it will still run. However, any file that looks for
+>    this file in the future (none do at the time of writing) will break.
+>    
+> - For the most part the file naming conventions remain consistent
+>    with the NFS version of IGM.
+> 
+> - I've been running this on two separate Windows machines. As far
+>   as I can tell, if you have the data in the appropriate directories
+>   everything runs smoothly.
+> 
+> - Replacing NFSDataprep.do with FADNprep.do required copying over
+>    my sub_do subdirectory, adding a couple of macros, and some 
+>    additions to FADNprep.do itself. 
+> 
+> - My general approach has been to be as consistent with the existing
+>    files as possible, and to code in as extensible a way as I can 
+>    manage within a reasonable amount of effort. By this I mean that,
+>    where practical, any given routine will run after, e.g. swapping
+>    in new vars, changing the number of groups, creating new definitions 
+>    , adding more data etc. There is, of course, a limit to this 
+>    flexibility, but you should find the code to be reasonably robust.
+>    If this is not your experience, I'd like to know about it.
+> 
+>    patrick.gillespie@teagasc.ie
+> -----------------------------------------------------------------*/
+. 
+. 
+. *Initialise
+. macro drop _all
+{txt}
+{com}. capture log close
+{smcl}
+{com}{sf}{ul off}

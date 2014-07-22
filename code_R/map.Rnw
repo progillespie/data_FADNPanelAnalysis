@@ -1,0 +1,406 @@
+\documentclass{article}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{datetime}
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+  \begin{flushleft}
+    \hrule
+    \vspace{6pt}
+    \begin{quote}
+      Patrick R. Gillespie\\
+      Walsh Fellow\\
+      Teagasc, REDP\\
+      Athenry, Co Galway, Ireland\\
+      patrick.gillespie@teagasc.ie
+    \end{quote}
+    \vspace{6pt}
+    \hrule
+    \vspace{6pt}
+    File: \textbf{\jobname.Rnw}
+    
+    \today \  at \currenttime.
+    \vspace{6pt}
+    \hrule
+    \vspace{1cm}
+    
+    
+    \begin{quote}
+      The following document was generated to aid in mapping FADN variable names to the NFS variable
+      names. This document was generated dynamically from \textbf{R} and \LaTeX\ code using the
+      \textbf{R} package \emph{knitr}, which reads an ``.Rnw'' file and outputs a ``.tex'' file. The process is as follows:
+      
+      \vspace{12pt}
+      \textbf{nidy.Rnw} $\rightarrow$ 
+      \textbf{map.Rnw} $\rightarrow$
+      \textbf{map.tex} $\rightarrow$ \textbf{map.pdf}
+      \vspace{12pt}
+    
+      All of which sounds complicated, but is really pretty simple (once you get your head around
+      it). The most important thing to realise is that you must run the first file in the chain 
+      (\textbf{nidy.Rnw}) to get an updated table if that's what you're after. 
+      
+      \vspace{12pt}
+      
+      To edit \textbf{R} or \LaTeX\ code generating this document, edit \textbf{map.Rnw} then 
+      re-run \textbf{nidy.Rnw}, which will call \textbf{map.Rnw} after generating some data which
+      it needs.Also, \textbf{nidy.Rnw} requires that you have certain files and directories stored
+      on your computer --- see the header of that file or the associated README for instructions on
+      how to run it.
+      
+      \vspace{12pt}
+      
+      Both \textbf{map.tex} and \textbf{map.pdf} will be over-written by \textbf{map.Rnw}, so if
+      you really want to edit those directly, then rename them first.
+      
+      \vspace{12pt}
+      
+      The chief benefits of this approach are:
+      
+      \vspace{6pt}
+      
+      \begin{itemize}
+        \item {that this document is fully traceable back to the data, hence it is reproducible,
+              and}
+        \item {this document is \emph{dynamic, i.e.} as underlying code or data changes, so does   
+              the output.}
+      \end{itemize}
+     \end{quote}
+     
+     \vspace{24pt}
+     
+     \textbf{End of Cover Sheet.}
+
+% % map[1:50]
+% % Wed Dec 19 14:14:58 2012
+% \begin{table}[ht]
+% \begin{center}
+% \begin{tabular}{ll}
+%   \hline
+% NFS & FADN \\ 
+%   \hline
+% amountborrowednewloans & Forestry.specific.costs, Cereals.UAA \\ 
+%   aslcuclq & Stocking.Density \\ 
+%   aslcufkq & Total.Labour.Input..AWU. \\ 
+%   aslcufnq & Size.Class, Exchange.rate \\ 
+%   aslcumcv & Sample.farms, Sample.farms \\ 
+%   aslfddcq & Total.subsidies.on.livestock \\ 
+%   aslopclv & Forestry.specific.costs \\ 
+%   aslopfdq & Feed.for.pigs...poultry \\ 
+%   cdwinfor & Subsidies.dairying \\ 
+%   cogrosso & FWU \\ 
+%   coprbhno & Exchange.rate \\ 
+%   coprstno & Other.Crop.Output.Value \\ 
+%   coprwnno & Feed.for.pigs...poultry \\ 
+%   coslcfvl & Sample.farms \\ 
+%   coslfcno & Less.Favoured.Area \\ 
+%   coslfsvl & Subsidies.dairying \\ 
+%   coslmsvl & Other.Field.Crops.UAA, Total.subsidies.on.livestock \\ 
+%   coslocvl & Total.Labour.Input..AWU. \\ 
+%   coslstvl & Forestry.specific.costs \\ 
+%   covalcno & Common.age.UAA, AWU, FWU \\ 
+%   cpavn2pf & Total.Labour.Input..AWU. \\ 
+%   cpavn2pm & Other.Field.Crops.UAA, Subsidies.dairying, Other.Crop.Output.Value \\ 
+%   cpdthbir & Total.Labour.Input..AWU. \\ 
+%   cpdthcow & Sub.region \\ 
+%   cpopinvc & Sheep.and.Goats.LUs \\ 
+%   cqscqcls & Feed.for.pigs...poultry \\ 
+%   cqscqopn & Feed.for.pigs...poultry \\ 
+%   cqscqtot & Feed.for.pigs...poultry \\ 
+%   csextens & Total.Labour.Input..AWU. \\ 
+%   dabotfat & Sheep.and.Goats.LUs \\ 
+%   daconkgs & Size.Class \\ 
+%   dafedare & Total.subsidies.on.livestock, Less.Favoured.Area \\ 
+%   ddwinfor & Stocking.Density \\ 
+%   docftfvl & Stocking.Density, Forestry.specific.costs \\ 
+%   dogrosso & Feed.for.pigs...poultry, Structural.Funds \\ 
+%   domkfdgl & Cereals.UAA \\ 
+%   domkfdvl & Rented.UAA \\ 
+%   dopchbno & Forestry.specific.costs \\ 
+%   dotochbn & Structural.Funds, Other.Field.Crops.UAA, Sub.region \\ 
+%   dotochbv & Total.Labour.Input..AWU. \\ 
+%   dotomkvl & Seeds.and.Plants.Home.Grown, Feed.for.pigs...poultry, Structural.Funds \\ 
+%   dovlcnod & Subsidies.dairying \\ 
+%   dpavnobl & Total.Labour.Input..AWU. \\ 
+%   dpavnohd & Cereals.UAA, Cereals.UAA \\ 
+%   dpnolu & Cereals.UAA, Cereals.UAA \\ 
+%   dpopinvd & Size.Class \\ 
+%   dqcomlrd & Structural.Funds \\ 
+%   dqsoldgl & Woodland.Area, Size.Class \\ 
+%   dqvalueq & Size.Class, Size.Class \\ 
+%   edtotldc & Exchange.rate \\ 
+%    \hline
+% \end{tabular}
+% \end{center}
+% \end{table}
+% 
+% \newpage
+% 
+% % map[51:100]
+% % Wed Dec 19 14:16:36 2012
+% \begin{table}[ht]
+% \begin{center}
+% \begin{tabular}{ll}
+%   \hline
+% NFS & FADN \\ 
+%   \hline
+% existingloansclosingbalance & Size.Class \\ 
+%   fagromac & Seeds.and.Plants.Home.Grown \\ 
+%   fainvbld & Structural.Funds \\ 
+%   fainvfrm & Woodland.Area \\ 
+%   fainvlim & Less.Favoured.Area \\ 
+%   faprldac & Total.Labour.Input..AWU. \\ 
+%   faprldvl & Rented.UAA \\ 
+%   faprpmac & Less.Favoured.Area \\ 
+%   farmdc & Wheat.Yield \\ 
+%   farmohct & Size.Class \\ 
+%   faslomac & Sample.farms \\ 
+%   favlfrey & Woodland.Area \\ 
+%   favnodry & Cereals.UAA, Cereals.UAA \\ 
+%   fbelclbl & Size.Class \\ 
+%   fbnlamtb & Forestry.specific.costs, Cereals.UAA \\ 
+%   fbovdrft & Other.Field.Crops.UAA, Total.subsidies.on.livestock, Exchange.rate \\ 
+%   fbsrcbnk & Size.Class \\ 
+%   fbsrcfco & Other.Field.Crops.UAA, Total.subsidies.on.livestock \\ 
+%   fbtcucpv & Forestry.specific.costs \\ 
+%   fbtcuylq & Total.Labour.Input..AWU. \\ 
+%   fcarinsu & Total.Labour.Input..AWU. \\ 
+%   fcartax & Feed.for.pigs...poultry, AWU \\ 
+%   fcartcst & Cereals.UAA \\ 
+%   fcatlego & FWU \\ 
+%   fcrlivdc & Sheep.and.Goats.LUs, Sheep.and.Goats.LUs \\ 
+%   fdairygo & Feed.for.pigs...poultry, Structural.Funds \\ 
+%   fdcaslab & Common.age.UAA, AWU, FWU \\ 
+%   fdexpend & Wheat.Yield \\ 
+%   fdlivmnt & Stocking.Density \\ 
+%   fdmachir & Stocking.Density, Forestry.specific.costs \\ 
+%   fdpurcon & Cereals.UAA \\ 
+%   fdpursed & Common.age.UAA, AWU, FWU \\ 
+%   fdtotal & Wheat.Yield \\ 
+%   fdtrans & Size.Class \\ 
+%   fdvetmed & Less.Favoured.Area \\ 
+%   fertilisercost & Seeds.and.Plants.Home.Grown, FWU \\ 
+%   fertiliserk & Total.Labour.Input..AWU. \\ 
+%   fertiliserp & AWU \\ 
+%   ffregvat & Forestry.specific.costs \\ 
+%   fgrntsub & Structural.Funds \\ 
+%   fgrtsubs & Other.Field.Crops.UAA \\ 
+%   fhorsego & AWU \\ 
+%   flabccdy & Common.age.UAA, AWU, FWU \\ 
+%   flabsmds & Common.age.UAA, AWU, FWU \\ 
+%   flabtotl & Structural.Funds, Other.Field.Crops.UAA, Sub.region \\ 
+%   flabunpd & Altitude.Zone \\ 
+%   flivpur & Altitude.Zone \\ 
+%   flivsale & FWU \\ 
+%   fnodrylu & Cereals.UAA, Cereals.UAA \\ 
+%   fntcapex & Cereals.UAA \\ 
+%    \hline
+% \end{tabular}
+% \end{center}
+% \end{table}
+% 
+% \newpage
+% 
+% % map[101:150]
+% % Wed Dec 19 14:17:51 2012
+% \begin{table}[ht]
+% \begin{center}
+% \begin{tabular}{ll}
+%   \hline
+% NFS & FADN \\ 
+%   \hline
+% foblddpr & FWU \\ 
+%   fobldins & Size.Class \\ 
+%   fohirlab & Altitude.Zone \\ 
+%   fomacdpr & Seeds.and.Plants.Home.Grown \\ 
+%   fomacins & Size.Class \\ 
+%   fomactax & Structural.Funds \\ 
+%   fomiscel & Altitude.Zone \\ 
+%   fortnfer & Total.Labour.Input..AWU. \\ 
+%   fototal & Size.Class \\ 
+%   fpoultdc & Exchange.rate \\ 
+%   fsheepgo & Less.Favoured.Area \\ 
+%   fsizajsl & Size.Class, Common.age.UAA \\ 
+%   fsizcrps & Sample.farms, Sample.farms \\ 
+%   fsizeadj & Sample.farms, Sample.farms, Size.Class \\ 
+%   fsizesu & Cereals.UAA, Cereals.UAA \\ 
+%   fsizkgrz & Total.Labour.Input..AWU. \\ 
+%   fsizldlt & Feed.for.pigs...poultry \\ 
+%   fsizldrt & Less.Favoured.Area \\ 
+%   fsizpgrz & AWU \\ 
+%   fsizuaa & Size.Class, Exchange.rate \\ 
+%   fsizunad & Cereals.UAA, Cereals.UAA \\ 
+%   fsubchen & Sub.region \\ 
+%   fsubchpp & Forestry.specific.costs, Cereals.UAA \\ 
+%   fsubexpp & Total.Labour.Input..AWU. \\ 
+%   fsubextp & Total.Labour.Input..AWU. \\ 
+%   fsubforh & Less.Favoured.Area \\ 
+%   fsubreps & Subsidies.dairying \\ 
+%   fsubshno & Total.subsidies.on.livestock \\ 
+%   ftotalct & Seeds.and.Plants.Home.Grown, Feed.for.pigs...poultry, Structural.Funds \\ 
+%   fvclcshc & Sample.farms \\ 
+%   fvclfodc & Stocking.Density \\ 
+%   fvopfodc & Stocking.Density \\ 
+%   grzhay1p & AWU \\ 
+%   grzperta & Woodland.Area, Size.Class \\ 
+%   grzrgrta & Feed.for.pigs...poultry \\ 
+%   haycufnq & Sample.farms, Sample.farms, Size.Class \\ 
+%   haycufrv & Size.Class, Exchange.rate \\ 
+%   hayopclv & Sample.farms \\ 
+%   haypurchasedallocatedcattleqty & Altitude.Zone \\ 
+%   haypurchasedallocdairyherd & Exchange.rate \\ 
+%   haypurchasedallocdairyherdqty & Cereals.UAA \\ 
+%   hogrosso & AWU \\ 
+%   hpclinvt & Seeds.and.Plants.Home.Grown \\ 
+%   iballctl & AWU \\ 
+%   ibclinv & AWU \\ 
+%   ibhaycqt & Altitude.Zone \\ 
+%   ibhaydqt & Cereals.UAA \\ 
+%   ibhaydvl & Exchange.rate \\ 
+%   ibopinv & AWU \\ 
+%   ibsilcvl & Sample.farms \\ 
+%    \hline
+% \end{tabular}
+% \end{center}
+% \end{table}
+% 
+% \newpage
+% 
+% % map[151:200]
+% % Wed Dec 19 14:18:46 2012
+% \begin{table}[ht]
+% \begin{center}
+% \begin{tabular}{ll}
+%   \hline
+% NFS & FADN \\ 
+%   \hline
+% ibstrcvl & Total.subsidies.on.livestock, Less.Favoured.Area \\ 
+%   icallcqt & Total.Labour.Input..AWU. \\ 
+%   icallcvl & Less.Favoured.Area \\ 
+%   icallpyv & Exchange.rate \\ 
+%   icmksubv & Cereals.UAA, Cereals.UAA \\ 
+%   imiscctl & Total.Labour.Input..AWU. \\ 
+%   imiscdry & FWU, Cereals.UAA, Feed.for.pigs...poultry \\ 
+%   itedairy & Common.age.UAA, AWU \\ 
+%   ivmallsp & Total.Labour.Input..AWU. \\ 
+%   ivmalltl & Stocking.Density \\ 
+%   ivmpurch & Stocking.Density \\ 
+%   loansoverdraft & Other.Field.Crops.UAA, Total.subsidies.on.livestock, Exchange.rate \\ 
+%   loanssourcebank & Size.Class \\ 
+%   loanssourcefinancecompany & Other.Field.Crops.UAA, Total.subsidies.on.livestock \\ 
+%   mbycugov & Forestry.specific.costs \\ 
+%   mbycuslv & Forestry.specific.costs \\ 
+%   miscellaneouscost & Size.Class, Common.age.UAA \\ 
+%   mslcufpq & Less.Favoured.Area \\ 
+%   mslfdctq & Exchange.rate, Less.Favoured.Area \\ 
+%   mslopopv & Other.Field.Crops.UAA \\ 
+%   ofdcuclv & Forestry.specific.costs \\ 
+%   ofdcufnq & Forestry.specific.costs \\ 
+%   ofdcufrv & Forestry.specific.costs \\ 
+%   ogagehld & Sample.farms, Sample.farms \\ 
+%   pbscugmv & Sample.farms \\ 
+%   pbscumhv & Size.Class, Common.age.UAA \\ 
+%   pbsopfdv & Forestry.specific.costs \\ 
+%   pbsopopv & Forestry.specific.costs \\ 
+%   PCereals & Woodland.Area, Size.Class \\ 
+%   potcugov & Less.Favoured.Area, FWU \\ 
+%   potcusev & Sample.farms \\ 
+%   PPotatoes & Sample.farms \\ 
+%   sbecufkq & Feed.for.pigs...poultry \\ 
+%   sbecufrv & Common.age.UAA \\ 
+%   sbecumhv & Less.Favoured.Area \\ 
+%   sbecuslq & Altitude.Zone \\ 
+%   sbecutsv & Common.age.UAA \\ 
+%   sbycufrv & FWU \\ 
+%   sbycuslv & Other.Field.Crops.UAA \\ 
+%   sbyotsmd & Structural.Funds, Other.Field.Crops.UAA, Sub.region \\ 
+%   sdother & Total.subsidies.on.livestock, Less.Favoured.Area, FWU \\ 
+%   sdwinfor & Forestry.specific.costs \\ 
+%   silagepurchasedallocatedcattle & Sample.farms \\ 
+%   silcuclq & AWU \\ 
+%   silcuclv & Seeds.and.Plants.Home.Grown \\ 
+%   silcucwv & Forestry.specific.costs \\ 
+%   silcudcv & Wheat.Yield \\ 
+%   silcufdq & Sample.farms \\ 
+%   silcumhv & Less.Favoured.Area \\ 
+%   silfddcq & Seeds.and.Plants.Home.Grown \\ 
+%    \hline
+% \end{tabular}
+% \end{center}
+% \end{table}
+% 
+% \newpage
+% 
+% % map[200:length(map$FADN)]
+% % Wed Dec 19 14:19:41 2012
+% \begin{table}[ht]
+% \begin{center}
+% \begin{tabular}{ll}
+%   \hline
+% NFS & FADN \\ 
+%   \hline
+% sogrosso & Less.Favoured.Area \\ 
+%   soprslno & Stocking.Density \\ 
+%   sopurso & Exchange.rate \\ 
+%   soslbevl & Stocking.Density \\ 
+%   soslbhvl & Sample.farms \\ 
+%   soslflvl & Feed.for.pigs...poultry \\ 
+%   soslhgvl & Total.subsidies.on.livestock, Less.Favoured.Area \\ 
+%   soslwllb & Common.age.UAA \\ 
+%   sotcufdv & Sample.farms \\ 
+%   sotcufkq & Feed.for.pigs...poultry \\ 
+%   sotcumhv & Cereals.UAA \\ 
+%   spavnlbw & Structural.Funds, Other.Field.Crops.UAA, Sub.region \\ 
+%   spclinvs & AWU \\ 
+%   spopinvb & Less.Favoured.Area \\ 
+%   spopinvs & Common.age.UAA, AWU, FWU \\ 
+%   spshorn & FWU \\ 
+%   strawpurchasedallocatedcattle & Total.subsidies.on.livestock, Less.Favoured.Area \\ 
+%   stwcumcv & Altitude.Zone \\ 
+%   stwcumhv & Common.age.UAA \\ 
+%   stwcuslv & Feed.for.pigs...poultry \\ 
+%   stwcuylq & Total.Labour.Input..AWU. \\ 
+%   stwopopq & Structural.Funds, Other.Field.Crops.UAA, Sub.region \\ 
+%   swhcufkq & Other.Field.Crops.UAA, Subsidies.dairying \\ 
+%   swhcugov & AWU \\ 
+%   swhcuslq & Total.Labour.Input..AWU. \\ 
+%   swhopfdv & AWU \\ 
+%   swhopopv & AWU \\ 
+%   tmscudcv & Altitude.Zone \\ 
+%   tmscufpq & Less.Favoured.Area \\ 
+%   v159 & Wheat.Yield \\ 
+%   v179 & Forestry.specific.costs \\ 
+%   v183 & Forestry.specific.costs \\ 
+%   v190 & Less.Favoured.Area \\ 
+%   v201 & Less.Favoured.Area, FWU \\ 
+%   v208 & Total.Labour.Input..AWU. \\ 
+%   v215 & Less.Favoured.Area \\ 
+%   wt & Cereals.UAA, Cereals.UAA \\ 
+%   year & Rented.UAA \\ 
+%    \hline
+% \end{tabular}
+% \end{center}
+% % \end{table}
+% 
+\newpage
+<<echo=FALSE, results='asis'>>=
+print(xtable(map[1:50,1:2]), include.rownames=F)
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+print(xtable(map[51:100,1:2]), include.rownames=F)
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+print(xtable(map[101:150,1:2]), include.rownames=F)
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+print(xtable(map[151:200,1:2]), include.rownames=F)
+@
+\newpage
+<<echo=FALSE, results='asis'>>=
+print(xtable(map[201:length(map$FADN),1:2]), include.rownames=F)
+@
+
+\end{flushleft}
+\end{document}

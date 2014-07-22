@@ -1,0 +1,34 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}C:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_07_26.txt
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}26 Jul 2013, 18:48:18
+{txt}
+{com}. di  "Job  Started  at  $S_TIME  on $S_DATE"
+{res}Job  Started  at  18:48:18  on 26 Jul 2013
+{txt}
+{com}. cmdlog using logs/$project$datestamp.cmd.txt, replace
+{txt}(cmdlog C:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_07_26.cmd.txt opened)
+
+{com}. 
+. 
+. * model you selected above is run here
+. di "`model1command'"
+{res}sfpanel lnfdairygo_lu lnlandval_ha lnfdferfil_ha lndaforare lndpnolu_ha lnflabpaid lnflabunpd ogagehld lnfsizuaa lnfdratio azone2 azone3 hasreps teagasc France Ireland UnitedKingdom Bretagne NormandieHaute NormandieBasse Wales Bayern, model(bc88)
+{txt}
+{com}. `model1command' // <- needs a grass variable
+
+{res}
+{txt}initial:{col 16}Log likelihood = {res:-11709.736}
+Iteration 0:{space 3}Log likelihood = {res:-11709.736}  (not concave)
+Iteration 1:{space 3}Log likelihood = {res:-3453.7218}  (not concave)
+{err}{hline 2}Break{hline 2}
+{txt}{search r(1):r(1);}
+
+end of do-file
+
+{err}{hline 2}Break{hline 2}
+{txt}{search r(1):r(1);}
+
+{com}. exit, clear

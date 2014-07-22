@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{datetime}
+
+\begin{document}
+  \begin{flushleft}
+    \hrule
+    \vspace{6pt}
+    \begin{quote}
+      Patrick R. Gillespie\\
+      Walsh Fellow\\
+      Teagasc, REDP\\
+      Athenry, Co Galway, Ireland\\
+      patrick.gillespie@teagasc.ie
+    \end{quote}
+    \vspace{6pt}
+    \hrule
+    \vspace{6pt}
+    File: \textbf{\jobname.Rnw}
+    
+    \today \  at \currenttime.
+    \vspace{6pt}
+    \hrule
+    \vspace{1cm}
+    
+    
+    \begin{quote}
+      The following document was generated to aid in mapping FADN variable names to the NFS variable
+      names. This document was generated dynamically by \textbf{R} and \LaTeX using the \textbf{R} 
+      package \emph{knitr}. The process is as follows:
+      
+      \vspace{12pt}
+      \textbf{nidy.Rnw} $\rightarrow$ 
+      \textbf{map.Rnw} $\rightarrow$
+      \textbf{map.tex} $\rightarrow$ \textbf{map.pdf}
+      \vspace{12pt}
+    
+      All of which sounds complicated, but is really pretty simple (once you get your head around
+      it). 
+      
+      The most important thing to realise is that you must run the first file in the chain 
+      (\textbf{nidy.Rnw}) to get an updated table if that's what you're after. 
+      
+      To edit \textbf{R} or \LaTeX code generating this document, edit \textbf{map.Rnw} then re-run
+      \textbf{nidy.Rnw}, which will call \textbf{map.Rnw} after generating some data which it needs.
+      Also, \textbf{nidy.Rnw} requires that you have certain files and directories stored on your 
+      computer --- see the header of that file or the associated README for instructions on how
+      to run it.
+      
+      Both \textbf{map.tex} and \textbf{map.pdf} will be over-written by \textbf{map.Rnw}, so if you
+      really want to edit those directly, then rename them first.
+      
+      The chief benefits are:
+      \begin{itemize}
+        \item {that this document is fully traceable back to the data, hence it is reproducible,
+              and}
+        \item {this document is \emph{dynamic, i.e.} as underlying code or data changes, so does   
+              the output.}
+      \end{itemize}
+     \end{quote}
+ \end{flushleft}
+\end{document}

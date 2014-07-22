@@ -1,0 +1,15 @@
+count if fdratio > 0.5
+graph bar (count) farmsrepresented if fdratio > 0.5, by(country)
+graph bar (percent) farmsrepresented if fdratio > 0.5, over(country)
+help graph bar
+gen grassvar = 0
+replace grassvar = 1 if fdratio > 0.5
+tab grassvar country
+help tab
+codebook fdratio if country=="IRE"
+codebook fdratio if country=="UKI"
+codebook fdratio if country=="FRA"
+codebook fdratio if country=="DEU"
+replace grassvar = 1 if fdratio > 0.2
+tab grassvar country
+exit, clear

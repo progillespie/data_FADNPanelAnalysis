@@ -1,0 +1,267 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}D:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_08_16.txt
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}16 Aug 2013, 20:47:38
+{txt}
+{com}. di  "Job  Started  at  $S_TIME  on $S_DATE"
+{res}Job  Started  at  20:47:38  on 16 Aug 2013
+{txt}
+{com}. cmdlog using logs/$project$datestamp.cmd.txt, replace
+{txt}(cmdlog D:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_08_16.cmd.txt opened)
+
+{com}. 
+. 
+. * model you selected above is run here
+. macro list _model1command
+{txt}{p 0 16}
+_model1command:{space 1}{res}{res}sfpanel lntotalinputs lndotomkgl lnPFERTILISERSANDSOILIMPROVERS lnPMotorfuels lnPMACHINERYANDOTHEREQUIPMENT lnPMAINTENANCEOFBUILDINGS i.countrycode2 year if country=="IRE", model(bc95) cost d(tnormal) emean(fdratio, noconstant) usigma(fdratio, noconstant) vsigma(fdratio, noconstant) marginal(fdratio) constraint(1)
+{p_end}
+{txt}
+{com}. `model1command' 
+
+{txt}note: 1.countrycode2 identifies no observations in the sample
+note: 2.countrycode2 identifies no observations in the sample
+note: 3.countrycode2 omitted because of collinearity
+note: 4.countrycode2 identifies no observations in the sample
+{res}
+{txt}initial:{col 16}Log likelihood = {res:-1365.0548}
+Iteration 0:{space 3}Log likelihood = {res:-30473.041}  
+Iteration 1:{space 3}Log likelihood = {res:-6899.9429}  (backed up)
+Iteration 2:{space 3}Log likelihood = {res:-1440.7426}  (backed up)
+Iteration 3:{space 3}Log likelihood = {res:-1394.0696}  (backed up)
+Iteration 4:{space 3}Log likelihood = {res:-1180.7928}  (backed up)
+Iteration 5:{space 3}Log likelihood = {res:-1019.5019}  
+Iteration 6:{space 3}Log likelihood = {res:-936.78437}  (backed up)
+Iteration 7:{space 3}Log likelihood = {res:-910.72394}  
+Iteration 8:{space 3}Log likelihood = {res:-908.52225}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 9:{space 3}Log likelihood = {res:-867.87059}  
+Iteration 10:{space 2}Log likelihood = {res:-867.08444}  (backed up)
+Iteration 11:{space 2}Log likelihood = {res:-866.76205}  (backed up)
+Iteration 12:{space 2}Log likelihood = {res: -778.1013}  (backed up)
+Iteration 13:{space 2}Log likelihood = {res:-770.63458}  (backed up)
+Iteration 14:{space 2}Log likelihood = {res:-766.07257}  
+Iteration 15:{space 2}Log likelihood = {res:-765.85827}  (backed up)
+Iteration 16:{space 2}Log likelihood = {res:-740.23668}  
+Iteration 17:{space 2}Log likelihood = {res:-731.72056}  
+Iteration 18:{space 2}Log likelihood = {res:-726.12493}  
+Iteration 19:{space 2}Log likelihood = {res:-714.02611}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 20:{space 2}Log likelihood = {res:-711.50611}  
+Iteration 21:{space 2}Log likelihood = {res:-711.49761}  (backed up)
+Iteration 22:{space 2}Log likelihood = {res:-711.47645}  (backed up)
+Iteration 23:{space 2}Log likelihood = {res: -711.4669}  (backed up)
+Iteration 24:{space 2}Log likelihood = {res:-711.44936}  (backed up)
+Iteration 25:{space 2}Log likelihood = {res:-711.43365}  (backed up)
+Iteration 26:{space 2}Log likelihood = {res:-711.38817}  
+Iteration 27:{space 2}Log likelihood = {res:-711.38616}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 28:{space 2}Log likelihood = {res:-711.22871}  
+Iteration 29:{space 2}Log likelihood = {res:-711.22807}  (backed up)
+Iteration 30:{space 2}Log likelihood = {res:-711.22724}  (backed up)
+Iteration 31:{space 2}Log likelihood = {res:-711.22619}  (backed up)
+Iteration 32:{space 2}Log likelihood = {res:-711.22543}  (backed up)
+Iteration 33:{space 2}Log likelihood = {res:-711.22355}  
+Iteration 34:{space 2}Log likelihood = {res:-711.21779}  
+Iteration 35:{space 2}Log likelihood = {res:-711.20891}  
+Iteration 36:{space 2}Log likelihood = {res:-711.14673}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 37:{space 2}Log likelihood = {res:-710.96619}  
+Iteration 38:{space 2}Log likelihood = {res:-710.93091}  (backed up)
+Iteration 39:{space 2}Log likelihood = {res:-710.89682}  (backed up)
+Iteration 40:{space 2}Log likelihood = {res:  -710.851}  (backed up)
+Iteration 41:{space 2}Log likelihood = {res:-710.80636}  (backed up)
+Iteration 42:{space 2}Log likelihood = {res:-710.60211}  
+Iteration 43:{space 2}Log likelihood = {res:-710.54063}  
+Iteration 44:{space 2}Log likelihood = {res:-710.31543}  
+Iteration 45:{space 2}Log likelihood = {res:-710.29567}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 46:{space 2}Log likelihood = {res:-710.20784}  
+Iteration 47:{space 2}Log likelihood = {res:-710.18699}  (backed up)
+Iteration 48:{space 2}Log likelihood = {res: -710.1779}  (backed up)
+Iteration 49:{space 2}Log likelihood = {res:-710.15729}  (backed up)
+Iteration 50:{space 2}Log likelihood = {res:-710.12291}  (backed up)
+Iteration 51:{space 2}Log likelihood = {res: -710.1163}  (backed up)
+Iteration 52:{space 2}Log likelihood = {res:-710.06472}  
+Iteration 53:{space 2}Log likelihood = {res:-710.05765}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 54:{space 2}Log likelihood = {res:-710.01468}  
+Iteration 55:{space 2}Log likelihood = {res:-710.01422}  (backed up)
+Iteration 56:{space 2}Log likelihood = {res:-710.01224}  (backed up)
+Iteration 57:{space 2}Log likelihood = {res:-709.99932}  (backed up)
+Iteration 58:{space 2}Log likelihood = {res:-709.96998}  (backed up)
+Iteration 59:{space 2}Log likelihood = {res: -709.9697}  (backed up)
+Iteration 60:{space 2}Log likelihood = {res:-709.96881}  (backed up)
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 61:{space 2}Log likelihood = {res:-709.90436}  
+Iteration 62:{space 2}Log likelihood = {res:-709.90413}  (backed up)
+Iteration 63:{space 2}Log likelihood = {res:-709.90192}  (backed up)
+Iteration 64:{space 2}Log likelihood = {res:-709.90061}  (backed up)
+Iteration 65:{space 2}Log likelihood = {res:-709.88155}  (backed up)
+Iteration 66:{space 2}Log likelihood = {res:-709.87843}  (backed up)
+Iteration 67:{space 2}Log likelihood = {res:-709.87641}  
+Iteration 68:{space 2}Log likelihood = {res:-709.87223}  
+Iteration 69:{space 2}Log likelihood = {res:-709.86889}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 70:{space 2}Log likelihood = {res:-709.76171}  
+Iteration 71:{space 2}Log likelihood = {res:-709.76147}  (backed up)
+Iteration 72:{space 2}Log likelihood = {res:-709.75858}  (backed up)
+Iteration 73:{space 2}Log likelihood = {res:-709.75189}  (backed up)
+Iteration 74:{space 2}Log likelihood = {res:-709.74887}  (backed up)
+Iteration 75:{space 2}Log likelihood = {res:-709.74853}  
+Iteration 76:{space 2}Log likelihood = {res:-709.71642}  
+Iteration 77:{space 2}Log likelihood = {res:-709.71279}  (backed up)
+Iteration 78:{space 2}Log likelihood = {res:-709.69318}  
+Iteration 79:{space 2}Log likelihood = {res:-709.66953}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 80:{space 2}Log likelihood = {res:-709.41955}  
+Iteration 81:{space 2}Log likelihood = {res:-709.41953}  (backed up)
+Iteration 82:{space 2}Log likelihood = {res:-709.41951}  (backed up)
+Iteration 83:{space 2}Log likelihood = {res:-709.41945}  (backed up)
+Iteration 84:{space 2}Log likelihood = {res:-709.41833}  
+Iteration 85:{space 2}Log likelihood = {res:-709.41731}  (backed up)
+Iteration 86:{space 2}Log likelihood = {res:-709.40623}  
+Iteration 87:{space 2}Log likelihood = {res:-709.39193}  
+Iteration 88:{space 2}Log likelihood = {res: -709.3742}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 89:{space 2}Log likelihood = {res:-708.52855}  
+Iteration 90:{space 2}Log likelihood = {res:-708.48148}  (backed up)
+Iteration 91:{space 2}Log likelihood = {res:-708.46939}  (backed up)
+Iteration 92:{space 2}Log likelihood = {res:-708.36068}  (backed up)
+Iteration 93:{space 2}Log likelihood = {res:-708.14232}  (backed up)
+Iteration 94:{space 2}Log likelihood = {res:-708.07526}  (backed up)
+Iteration 95:{space 2}Log likelihood = {res:-707.64402}  
+Iteration 96:{space 2}Log likelihood = {res:-706.74445}  
+Iteration 97:{space 2}Log likelihood = {res:-706.72192}  
+{err}{p}
+cannot compute an improvement -- flat region encountered
+{p_end}
+
+{txt}Inefficiency effects model (truncated-normal){col 54}Number of obs {col 68}={col 70}{res}     2821
+{txt}Group variable: {res}pid{txt}{col 51}Number of groups{col 68}={col 70}{res}      605
+{txt}Time variable: {res}year{txt}{col 49}Obs per group: min{col 68}={col 70}{res}        1
+{col 64}{txt}avg{col 68}={col 70}{res}      4.7
+{col 64}{txt}max{col 68}={col 70}{res}        9
+
+{txt}{col 54}Prob > chi2   = {res}   0.0000
+{txt}Log likelihood = {res} -706.6060{txt}{col 54}Wald chi2({res}5{txt})  = {res} 15713.36
+
+{p 0 7}{space 1}{text:( 1)}{space 1} [Frontier]1b.countrycode2 = 0{p_end}
+{p 0 7}{space 1}{text:( 2)}{space 1} [Frontier]2o.countrycode2 = 0{p_end}
+{p 0 7}{space 1}{text:( 3)}{space 1} [Frontier]3o.countrycode2 = 0{p_end}
+{p 0 7}{space 1}{text:( 4)}{space 1} [Frontier]4o.countrycode2 = 0{p_end}
+{p 0 7}{space 1}{text:( 5)}{space 1} [Frontier]lndotomkgl + [Frontier]lnPFERTILISERSANDSOILIMPROVERS + [Frontier]lnPMotorfuels + [Frontier]lnPMACHINERYANDOTHEREQUIPMENT + [Frontier]lnPMAINTENANCEOFBUILDINGS = 1{p_end}
+{txt}{hline 31}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}                 lntotalinputs{col 32}{c |}      Coef.{col 44}   Std. Err.{col 56}      z{col 64}   P>|z|{col 72}     [95% Con{col 85}f. Interval]
+{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Frontier                       {txt}{c |}
+{space 20}lndotomkgl {c |}{col 32}{res}{space 2} .9707708{col 44}{space 2} .0077162{col 55}{space 1}  125.81{col 64}{space 3}0.000{col 72}{space 4} .9556473{col 85}{space 3} .9858944
+{txt}lnPFERTILISERSANDSOILIMPROVERS {c |}{col 32}{res}{space 2}-1.310969{col 44}{space 2} .1249938{col 55}{space 1}  -10.49{col 64}{space 3}0.000{col 72}{space 4}-1.555953{col 85}{space 3}-1.065986
+{txt}{space 17}lnPMotorfuels {c |}{col 32}{res}{space 2}  .483314{col 44}{space 2} .0906677{col 55}{space 1}    5.33{col 64}{space 3}0.000{col 72}{space 4} .3056085{col 85}{space 3} .6610195
+{txt}{space 1}lnPMACHINERYANDOTHEREQUIPMENT {c |}{col 32}{res}{space 2} .6357816{col 44}{space 2} .4107428{col 55}{space 1}    1.55{col 64}{space 3}0.122{col 72}{space 4}-.1692595{col 85}{space 3} 1.440823
+{txt}{space 5}lnPMAINTENANCEOFBUILDINGS {c |}{col 32}{res}{space 2} .2211027{col 44}{space 2} .3763255{col 55}{space 1}    0.59{col 64}{space 3}0.557{col 72}{space 4}-.5164818{col 85}{space 3} .9586872
+{txt}{space 30} {c |}
+{space 18}countrycode2 {c |}
+{space 28}3  {c |}{col 32}{res}{space 2}        0{col 44}{txt}  (omitted)
+{space 30} {c |}
+{space 26}year {c |}{col 32}{res}{space 2}-.0117597{col 44}{space 2} .0119871{col 55}{space 1}   -0.98{col 64}{space 3}0.327{col 72}{space 4}-.0352541{col 85}{space 3} .0117346
+{txt}{space 25}_cons {c |}{col 32}{res}{space 2} 19.72297{col 44}{space 2} 23.98889{col 55}{space 1}    0.82{col 64}{space 3}0.411{col 72}{space 4} -27.2944{col 85}{space 3} 66.74034
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Mu                             {txt}{c |}
+{space 23}fdratio {c |}{col 32}{res}{space 2} .9534315{col 44}{space 2} .0321964{col 55}{space 1}   29.61{col 64}{space 3}0.000{col 72}{space 4} .8903276{col 85}{space 3} 1.016535
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Usigma                         {txt}{c |}
+{space 23}fdratio {c |}{col 32}{res}{space 2}-6.184175{col 44}{space 2} .1040458{col 55}{space 1}  -59.44{col 64}{space 3}0.000{col 72}{space 4}-6.388101{col 85}{space 3}-5.980249
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Vsigma                         {txt}{c |}
+{space 23}fdratio {c |}{col 32}{res}{space 2}-18.02731{col 44}{space 2} .4744892{col 55}{space 1}  -37.99{col 64}{space 3}0.000{col 72}{space 4}-18.95729{col 85}{space 3}-17.09733
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+  E(sigma_u) {c |}  {res} .5277727                                 .5211209    .5344246
+{txt}  E(sigma_v) {c |}  {res} .2076973                                 .2001871    .2152074
+{txt}{hline 13}{c BT}{hline 64}
+
+{com}. STOP!!
+{err}unrecognized command:  STOP
+{txt}{search r(199):r(199);}
+
+end of do-file
+
+{search r(199):r(199);}
+
+{com}. matrix list e(b)
+{res}
+{txt}e(b)[1,14]
+        Frontier:     Frontier:     Frontier:     Frontier:     Frontier:     Frontier:     Frontier:
+                                                                                    1b.           2o.
+      lndotomkgl  lnPFERTILI~S  lnPMotorfu~s  lnPMACHINE~T  lnPMAINTEN~S  countrycode2  countrycode2
+y1 {res}    .97077085    -1.3109692     .48331403     .63578164     .22110268             0             0
+
+{txt}        Frontier:     Frontier:     Frontier:     Frontier:           Mu:       Usigma:       Vsigma:
+              3o.           4o.                                                                      
+    countrycode2  countrycode2          year         _cons       fdratio       fdratio       fdratio
+y1 {res}            0             0    -.01175974      19.72297     .95343148    -6.1841749    -18.027309
+{reset}
+{com}. matrix list e(b)[Usigma]
+{err}[ invalid name
+matrix [Usigma] not found
+{txt}{search r(111):r(111);}
+
+{com}. matrix list b_[Usigma]
+{err}matrix b_ not found
+{txt}{search r(111):r(111);}
+
+{com}. matrix list e(b)["Usigma"]
+{err}[ invalid name
+matrix ["Usigma"] not found
+{txt}{search r(111):r(111);}
+
+{com}. matrix list b_["Usigma"]
+{err}matrix b_ not found
+{txt}{search r(111):r(111);}
+
+{com}. matrix list e(b)_["Usigma"]
+{err}matrix _ not found
+{txt}{search r(111):r(111);}
+
+{com}. matrix list e(b)[1]
+{err}[ invalid name
+matrix [1] not found
+{txt}{search r(111):r(111);}
+
+{com}. matrix list e(b)[1,1]
+{err}[ invalid name
+matrix [1,1] not found
+{txt}{search r(111):r(111);}
+
+{com}. matrix list e(b)[1,2]
+{err}[ invalid name
+matrix [1,2] not found
+{txt}{search r(111):r(111);}
+
+{com}. di e(b)["Usigma"]
+{res}{err}invalid syntax
+{txt}{search r(198):r(198);}
+
+{com}. di e(b)[14]
+{res}{err}invalid syntax
+{txt}{search r(198):r(198);}
+
+{com}. di "e(b)[14]"
+{res}e(b)[14]
+
+{com}. di scalar(e(b)[14])
+{res}{err}invalid syntax
+{txt}{search r(198):r(198);}
+
+{com}. di e(b)[14]
+{res}{err}invalid syntax
+{txt}{search r(198):r(198);}
+
+{com}. di exp(-6.1841749)
+{res}.0020618
+
+{com}. clear
+
+. exit

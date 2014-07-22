@@ -1,0 +1,371 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}C:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_08_09.txt
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res} 9 Aug 2013, 18:00:03
+{txt}
+{com}. di  "Job  Started  at  $S_TIME  on $S_DATE"
+{res}Job  Started  at  18:00:03  on  9 Aug 2013
+{txt}
+{com}. cmdlog using logs/$project$datestamp.cmd.txt, replace
+{txt}(cmdlog C:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_08_09.cmd.txt opened)
+
+{com}. 
+. 
+. 
+. if `tests' == 1 {c -(}
+. 
+. 
+.         qui xtreg `dep_vlist' `indep_vlist', fe
+.         estimates store fixed
+.         
+.         
+.         qui xtreg `dep_vlist' `indep_vlist', re
+.         estimates store random
+.         
+.         
+.         /* Hausman specification test 
+>             H0: difference in coef not systematic (use RE) */ 
+.         qui hausman fixed random
+.         local hausman_test = "Prob>chi2 = `r(p)'"
+.         
+.         
+.         /* Test for time fixed effects 
+>             H0: Joint test of year effects =0   */ 
+.         qui xtreg `dep_vlist' `indep_vlist' i.year, fe
+.         qui testparm i.year
+.         local time_FE = "Prob>F = `r(p)'"
+.         
+.         
+.         /* Breusch-Pagan LM test of RE vs OLS 
+>             H0: Variances across entities are 0 
+>               (i.e. no panel effect)            */ 
+.         estimates restore random
+.         qui xttest0
+.         local BreuschPagan_LM_RE = "Prob>chi2 = `r(p)'"
+.         
+.         
+.         /* Wald test for groupwise heteroscedasticity (for FE)
+>              H0: Constant variance (i.e. homoscedasticity   */ 
+.         estimates restore fixed
+.         qui xttest3
+.         local wald_heterosc = "Prob>chi2 = `r(p)'"
+. 
+. 
+. {c )-}
+{txt}
+{com}. 
+. 
+. *keep `dep_vlist' `indep_vlist' `z_vlist' pid year farmcode country countrycode2
+. 
+. set matsize 5000
+{txt}
+{com}. 
+. * model you selected above is run here
+. macro list _model1command
+{txt}{p 0 16}
+_model1command:{space 1}{res}{res}sfpanel lntotalinputs lndotomkgl  lnPLand lnPTotalCattle lnPLabour lnPCompoundfeedingstuffsforcatt lnPCerealsandmillingbyproducts lnPFERTILISERSANDSOILIMPROVERS lnPMotorfuels lnPVETERINARYEXPENSES lnPSEEDSANDPLANTINGSTOCK lnPMAINTENANCEOFBUILDINGS  fdratio i.countrycode2 i.year if country=="IRE" | country=="UKI", model(bc95) cost d(tnormal) emean(fdratio, noconstant)  usigma(fdratio, noconstant) vsigma(fdratio, noconstant)
+{p_end}
+{txt}
+{com}. `model1command' 
+
+{txt}note: 1.countrycode2 identifies no observations in the sample
+note: 2.countrycode2 identifies no observations in the sample
+note: 4.countrycode2 omitted because of collinearity
+note: 2007.year omitted because of collinearity
+{res}
+{txt}initial:{col 16}Log likelihood = {res:-1561.7415}
+Iteration 0:{space 3}Log likelihood = {res:-1561.7415}  
+Iteration 1:{space 3}Log likelihood = {res:-1561.1647}  (backed up)
+Iteration 2:{space 3}Log likelihood = {res:-1527.4667}  (backed up)
+Iteration 3:{space 3}Log likelihood = {res:-1514.6917}  (backed up)
+Iteration 4:{space 3}Log likelihood = {res:-1510.0733}  (backed up)
+Iteration 5:{space 3}Log likelihood = {res:-1503.2485}  (backed up)
+Iteration 6:{space 3}Log likelihood = {res:-1500.4556}  (backed up)
+Iteration 7:{space 3}Log likelihood = {res: -1500.023}  (backed up)
+Iteration 8:{space 3}Log likelihood = {res:-1499.7921}  (backed up)
+Iteration 9:{space 3}Log likelihood = {res:-1495.4882}  (backed up)
+Iteration 10:{space 2}Log likelihood = {res:-1491.6612}  (backed up)
+Iteration 11:{space 2}Log likelihood = {res:-1485.8925}  (backed up)
+Iteration 12:{space 2}Log likelihood = {res:-1484.1211}  (backed up)
+Iteration 13:{space 2}Log likelihood = {res:-1483.9189}  (backed up)
+Iteration 14:{space 2}Log likelihood = {res:-1469.5734}  (backed up)
+Iteration 15:{space 2}Log likelihood = {res:-1469.5531}  (backed up)
+Iteration 16:{space 2}Log likelihood = {res:-1448.4949}  (backed up)
+Iteration 17:{space 2}Log likelihood = {res:-1442.0276}  
+Iteration 18:{space 2}Log likelihood = {res: -1409.121}  
+Iteration 19:{space 2}Log likelihood = {res:-1403.7494}  (backed up)
+Iteration 20:{space 2}Log likelihood = {res:-1396.8568}  
+Iteration 21:{space 2}Log likelihood = {res:-1386.7732}  
+Iteration 22:{space 2}Log likelihood = {res:-1385.8259}  
+Iteration 23:{space 2}Log likelihood = {res:-1383.7815}  
+Iteration 24:{space 2}Log likelihood = {res:-1382.5332}  
+Iteration 25:{space 2}Log likelihood = {res:-1381.2697}  
+Iteration 26:{space 2}Log likelihood = {res:-1376.0283}  
+Iteration 27:{space 2}Log likelihood = {res:-1374.8907}  
+Iteration 28:{space 2}Log likelihood = {res:-1373.7478}  
+Iteration 29:{space 2}Log likelihood = {res:-1373.2303}  
+Iteration 30:{space 2}Log likelihood = {res:-1373.0164}  
+Iteration 31:{space 2}Log likelihood = {res:-1372.7633}  
+Iteration 32:{space 2}Log likelihood = {res:-1372.1393}  
+Iteration 33:{space 2}Log likelihood = {res:-1369.8815}  
+Iteration 34:{space 2}Log likelihood = {res:-1368.7976}  
+Iteration 35:{space 2}Log likelihood = {res:-1368.0816}  
+Iteration 36:{space 2}Log likelihood = {res:  -1367.61}  
+Iteration 37:{space 2}Log likelihood = {res:-1367.4108}  
+Iteration 38:{space 2}Log likelihood = {res:-1366.9539}  
+Iteration 39:{space 2}Log likelihood = {res:-1366.1412}  
+Iteration 40:{space 2}Log likelihood = {res:  -1365.78}  
+Iteration 41:{space 2}Log likelihood = {res:-1365.7024}  
+Iteration 42:{space 2}Log likelihood = {res:-1365.6929}  
+Iteration 43:{space 2}Log likelihood = {res:-1365.6908}  
+Iteration 44:{space 2}Log likelihood = {res:-1365.6905}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 45:{space 2}Log likelihood = {res:-1365.6905}  
+Iteration 46:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 47:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 48:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 49:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 50:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 51:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 52:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 53:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 54:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 55:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 56:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 57:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 58:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 59:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 60:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 61:{space 2}Log likelihood = {res:-1365.6905}  (backed up)
+Iteration 62:{space 2}Log likelihood = {res:-1365.6905}  
+
+Inefficiency effects model (truncated-normal){col 54}Number of obs {col 68}={col 70}{res}     3912
+{txt}Group variable: {res}pid{txt}{col 51}Number of groups{col 68}={col 70}{res}     1326
+{txt}Time variable: {res}year{txt}{col 49}Obs per group: min{col 68}={col 70}{res}        1
+{col 64}{txt}avg{col 68}={col 70}{res}      3.0
+{col 64}{txt}max{col 68}={col 70}{res}        9
+
+{txt}{col 54}Prob > chi2   = {res}   0.0000
+{txt}Log likelihood = {res}-1365.6905{txt}{col 54}Wald chi2({res}20{txt})  = {res} 29989.15
+
+{txt}{hline 20}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}      lntotalinputs{col 21}{c |}      Coef.{col 33}   Std. Err.{col 45}      z{col 53}   P>|z|{col 61}     [95% Con{col 74}f. Interval]
+{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Frontier            {txt}{c |}
+{space 9}lndotomkgl {c |}{col 21}{res}{space 2} .9698784{col 33}{space 2} .0137327{col 44}{space 1}   70.63{col 53}{space 3}0.000{col 61}{space 4} .9429628{col 74}{space 3}  .996794
+{txt}{space 12}lnPLand {c |}{col 21}{res}{space 2} -.010729{col 33}{space 2}  .020705{col 44}{space 1}   -0.52{col 53}{space 3}0.604{col 61}{space 4}-.0513101{col 74}{space 3} .0298521
+{txt}{space 5}lnPTotalCattle {c |}{col 21}{res}{space 2} 2.600628{col 33}{space 2} 4.316169{col 44}{space 1}    0.60{col 53}{space 3}0.547{col 61}{space 4}-5.858909{col 74}{space 3} 11.06016
+{txt}{space 10}lnPLabour {c |}{col 21}{res}{space 2} .0457391{col 33}{space 2} .0204345{col 44}{space 1}    2.24{col 53}{space 3}0.025{col 61}{space 4} .0056883{col 74}{space 3} .0857899
+{txt}lnPCompoundfeedin~t {c |}{col 21}{res}{space 2} -1.89506{col 33}{space 2} 1.681938{col 44}{space 1}   -1.13{col 53}{space 3}0.260{col 61}{space 4}-5.191597{col 74}{space 3} 1.401477
+{txt}lnPCerealsandmill~s {c |}{col 21}{res}{space 2} .4130445{col 33}{space 2} 1.111285{col 44}{space 1}    0.37{col 53}{space 3}0.710{col 61}{space 4}-1.765034{col 74}{space 3} 2.591123
+{txt}lnPFERTILISERSAND~S {c |}{col 21}{res}{space 2}-1.061887{col 33}{space 2} .2206342{col 44}{space 1}   -4.81{col 53}{space 3}0.000{col 61}{space 4}-1.494322{col 74}{space 3}-.6294522
+{txt}{space 6}lnPMotorfuels {c |}{col 21}{res}{space 2} 1.420968{col 33}{space 2} .4998421{col 44}{space 1}    2.84{col 53}{space 3}0.004{col 61}{space 4} .4412954{col 74}{space 3}  2.40064
+{txt}lnPVETERINARYEXPE~S {c |}{col 21}{res}{space 2} 2.400524{col 33}{space 2} 3.578636{col 44}{space 1}    0.67{col 53}{space 3}0.502{col 61}{space 4}-4.613473{col 74}{space 3} 9.414521
+{txt}lnPSEEDSANDPLANTI~K {c |}{col 21}{res}{space 2}-.0807546{col 33}{space 2} 1.051128{col 44}{space 1}   -0.08{col 53}{space 3}0.939{col 61}{space 4}-2.140927{col 74}{space 3} 1.979418
+{txt}lnPMAINTENANCEOFB~S {c |}{col 21}{res}{space 2}-3.572573{col 33}{space 2}  4.50702{col 44}{space 1}   -0.79{col 53}{space 3}0.428{col 61}{space 4}-12.40617{col 74}{space 3} 5.261025
+{txt}{space 12}fdratio {c |}{col 21}{res}{space 2}-.7842579{col 33}{space 2} .2780141{col 44}{space 1}   -2.82{col 53}{space 3}0.005{col 61}{space 4}-1.329155{col 74}{space 3}-.2393602
+{txt}{space 19} {c |}
+{space 7}countrycode2 {c |}
+{space 17}3  {c |}{col 21}{res}{space 2}-.1156661{col 33}{space 2} .0378365{col 44}{space 1}   -3.06{col 53}{space 3}0.002{col 61}{space 4}-.1898243{col 74}{space 3}-.0415079
+{txt}{space 17}4  {c |}{col 21}{res}{space 2}-2.76e-14{col 33}{txt}  (omitted)
+{space 19} {c |}
+{space 15}year {c |}
+{space 14}2000  {c |}{col 21}{res}{space 2}-.4346196{col 33}{space 2} .4186819{col 44}{space 1}   -1.04{col 53}{space 3}0.299{col 61}{space 4}-1.255221{col 74}{space 3} .3859819
+{txt}{space 14}2001  {c |}{col 21}{res}{space 2} .2334429{col 33}{space 2} .1497782{col 44}{space 1}    1.56{col 53}{space 3}0.119{col 61}{space 4} -.060117{col 74}{space 3} .5270029
+{txt}{space 14}2002  {c |}{col 21}{res}{space 2} .3224558{col 33}{space 2} .1293876{col 44}{space 1}    2.49{col 53}{space 3}0.013{col 61}{space 4} .0688607{col 74}{space 3} .5760508
+{txt}{space 14}2003  {c |}{col 21}{res}{space 2} .1302622{col 33}{space 2} .1125355{col 44}{space 1}    1.16{col 53}{space 3}0.247{col 61}{space 4}-.0903034{col 74}{space 3} .3508277
+{txt}{space 14}2004  {c |}{col 21}{res}{space 2} .0051333{col 33}{space 2} .0481933{col 44}{space 1}    0.11{col 53}{space 3}0.915{col 61}{space 4}-.0893238{col 74}{space 3} .0995904
+{txt}{space 14}2005  {c |}{col 21}{res}{space 2}-.1479123{col 33}{space 2} .2083664{col 44}{space 1}   -0.71{col 53}{space 3}0.478{col 61}{space 4}-.5563029{col 74}{space 3} .2604783
+{txt}{space 14}2006  {c |}{col 21}{res}{space 2}-.3752496{col 33}{space 2} .3826556{col 44}{space 1}   -0.98{col 53}{space 3}0.327{col 61}{space 4}-1.125241{col 74}{space 3} .3747416
+{txt}{space 14}2007  {c |}{col 21}{res}{space 2} 1.44e-13{col 33}{txt}  (omitted)
+{space 19} {c |}
+{space 14}_cons {c |}{col 21}{res}{space 2} 12.81577{col 33}{space 2} 10.69367{col 44}{space 1}    1.20{col 53}{space 3}0.231{col 61}{space 4}-8.143451{col 74}{space 3} 33.77498
+{txt}{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Mu                  {txt}{c |}
+{space 12}fdratio {c |}{col 21}{res}{space 2}-197.2572{col 33}{space 2} 11.70938{col 44}{space 1}  -16.85{col 53}{space 3}0.000{col 61}{space 4}-220.2072{col 74}{space 3}-174.3073
+{txt}{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Usigma              {txt}{c |}
+{space 12}fdratio {c |}{col 21}{res}{space 2} 8.760506{col 33}{space 2} 1.130575{col 44}{space 1}    7.75{col 53}{space 3}0.000{col 61}{space 4}  6.54462{col 74}{space 3} 10.97639
+{txt}{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Vsigma              {txt}{c |}
+{space 12}fdratio {c |}{col 21}{res}{space 2}-17.69992{col 33}{space 2} 4.127398{col 44}{space 1}   -4.29{col 53}{space 3}0.000{col 61}{space 4}-25.78947{col 74}{space 3}-9.610372
+{txt}{hline 20}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+  E(sigma_u) {c |}  {res} 2.540001                                 2.470295    2.609708
+{txt}  E(sigma_v) {c |}  {res} .3784653                                 .3688654    .3880651
+{txt}{hline 13}{c BT}{hline 64}
+
+{com}. estimates stats
+
+{txt}{hline 13}{c TT}{hline 63}
+       Model {c |}    Obs    ll(null)   ll(model)     df          AIC         BIC
+{hline 13}{c +}{hline 63}
+{ralign 12:.}{col 14}{c |}{res}{col 17} 3912{col 25}        .{col 37} -1365.69{col 48}   24{col 57} 2779.381{col 69} 2929.904
+{txt}{hline 13}{c BT}{hline 63}
+{p 15 22 2}
+Note:  N=Obs used in calculating BIC; see {helpb bic_note:[R] BIC note}
+{p_end}
+
+{com}. 
+. 
+. 
+. * store estimates and predict ind. TE scores
+. qui estimates store `model1name'
+{txt}
+{com}. 
+. 
+. /* Display exponentiated parameters for convenience 
+>  (currently All, whether that makes sense or not...
+>   will not change actual stored estimates)          */ 
+. matrix define B = e(b)
+{txt}
+{com}. matrix define expB = B
+{txt}
+{com}. 
+. local i = 1
+{txt}
+{com}. while `i' <= colsof(B) {c -(}
+{txt}  2{com}. 
+.         matrix define expB[1,`i'] = exp(B[1,`i'])
+{txt}  3{com}. 
+.         local i = `i' + 1
+{txt}  4{com}. {c )-}
+{txt}
+{com}. matrix define Bcomb = [B, expB]
+{txt}
+{com}. matrix define Bcomb = Bcomb' 
+{txt}
+{com}. 
+. 
+. qui estimates save  `fadnoutdatadir'/`model1name'$datestamp$timestamp.ster, replace
+{txt}
+{com}. qui capture drop te_`model1name'
+{txt}
+{com}. qui predict te_`model1name', `predict_opts'
+{txt}
+{com}. 
+. 
+. * constructs ind. level CI's for TE scores
+. qui frontier_teci te_`model1name'_ci 
+{txt}
+{com}. 
+. /*
+> * store estimates and predict ind. TE scores
+> qui estimates store `model2name'
+> qui estimates save  `model2name'$datestamp.ster, replace
+> qui capture drop te_`model2name'
+> qui predict te_`model2name', `predict_opts'
+> */
+. 
+. save `fadnoutdatadir'/$datanameSFA_post, replace
+{txt}file C:\\Data/data_FADNPanelAnalysis/OutData/multisward/.dta saved
+
+{com}. 
+. 
+. ********************************************************
+. * End of MODELLING section              
+. ********************************************************
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. ********************************************************
+. * GENERATING DESCRIPTIVES 
+. ********************************************************
+. 
+. * for supporting discussion of positive sign on hasreps in
+. * production function (unexpected)
+. corr `dep_vlist' `indep_vlist'
+{txt}(obs=8122)
+
+             {c |} lntota~s lndoto~l  lnPLand lnPTot~e lnPLab~r lnPCom~t lnPCer~s lnPFER~S
+{hline 13}{c +}{hline 72}
+lntotalinp~s {c |}{res}   1.0000
+  {txt}lndotomkgl {c |}{res}   0.9197   1.0000
+     {txt}lnPLand {c |}{res}   0.0183   0.1208   1.0000
+{txt}lnPTotalCa~e {c |}{res}   0.1620   0.1242  -0.1453   1.0000
+   {txt}lnPLabour {c |}{res}   0.1478   0.1449   0.0012   0.1459   1.0000
+{txt}lnPCompoun~t {c |}{res}   0.0966   0.0754  -0.0495   0.5323   0.1404   1.0000
+{txt}lnPCereals~s {c |}{res}   0.0866   0.0944  -0.0065   0.4557   0.1427   0.7674   1.0000
+{txt}lnPFERTILI~S {c |}{res}   0.2153   0.2010  -0.1272   0.8120   0.2239   0.6635   0.5357   1.0000
+{txt}lnPMotorfu~s {c |}{res}   0.1979   0.1614  -0.1492   0.9103   0.1780   0.5387   0.3381   0.9055
+{txt}lnPVETERIN~S {c |}{res}  -0.0786  -0.0267  -0.0154   0.5506   0.1602   0.5536   0.5152   0.5654
+{txt}lnPSEEDSAN~K {c |}{res}   0.1093   0.1361   0.0056   0.4087   0.1835   0.6802   0.7578   0.6377
+{txt}lnPMAINTEN~S {c |}{res}   0.0273   0.0806  -0.0437   0.6595   0.2118   0.5936   0.5953   0.7813
+
+             {txt}{c |} lnPMot~s lnPVET~S lnPSEE~K lnPMAI~S
+{hline 13}{c +}{hline 36}
+lnPMotorfu~s {c |}{res}   1.0000
+{txt}lnPVETERIN~S {c |}{res}   0.5363   1.0000
+{txt}lnPSEEDSAN~K {c |}{res}   0.4688   0.5873   1.0000
+{txt}lnPMAINTEN~S {c |}{res}   0.6896   0.8927   0.7210   1.0000
+
+{txt}
+{com}. 
+. 
+. * some descriptives of the TE scores
+. tabstat te_`model1name', stats(mean sem) by(country)
+
+{txt}Summary for variables: te_bc95
+{col 6}by categories of: country (a24)
+
+{ralign 7:country} {...}
+{c |}      mean  se(mean)
+{hline 8}{c +}{hline 20}
+{ralign 7:DEU} {...}
+{c |}{...}
+ {res} .8211701  .0043624
+{txt}{ralign 7:FRA} {...}
+{c |}{...}
+ {res} .8235068  .0110634
+{txt}{ralign 7:IRE} {...}
+{c |}{...}
+ {res} .8930373  .0039327
+{txt}{ralign 7:UKI} {...}
+{c |}{...}
+ {res} .8799823  .0042532
+{txt}{hline 8}{c +}{hline 20}
+{ralign 7:Total} {...}
+{c |}{...}
+ {res} .8529382  .0025699
+{txt}{hline 8}{c BT}{hline 20}
+
+{com}. 
+. * describes the relationsip of fdratio to te_tfe
+. tw (sc te_`modelname' fdratio) (lfit te_`modelname' fdratio, lwidth(thick))  if country=="IRE" | country=="UKI"
+{res}{txt}
+{com}. ** shows weak relation to mean, but stronger for heterscedasiticy
+. ** therefore, put z's into sigma_u
+. ********************************************************
+. * End of GENERATING DESCRIPTIVES section
+. ********************************************************
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+. ********************************************************
+. * CLEANING UP             
+. ********************************************************
+. 
+. * report the model parameters you selected in the log
+. capture macro list _dep_vlist _indep_vlist _location_vlist _model1command _model1name _predict_opts databuild ms sectors dataname datadir project 
+{txt}
+{com}. 
+. 
+. *clear
+. capture erase blank.dta
+{txt}
+{com}. capture log close
+{smcl}
+{com}{sf}{ul off}

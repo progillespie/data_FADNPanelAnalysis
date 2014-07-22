@@ -1,0 +1,3 @@
+*hist fdratio, by(country, note("")) xsize(4) saving(output/graphs/feed/fdratio, replace)
+hist fdratio if climatezone < ., by(region, note("")) xsize(4) saving(output/graphs/feed/fdratio, replace)
+graph export output/graphs/feed/fdratio.pdf

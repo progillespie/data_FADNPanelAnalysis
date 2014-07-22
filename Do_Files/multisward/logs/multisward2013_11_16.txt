@@ -1,0 +1,164 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_11_16.txt
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}16 Nov 2013, 17:21:37
+{txt}
+{com}. di  "Job  Started  at  $S_TIME  on $S_DATE"
+{res}Job  Started  at  17:21:37  on 16 Nov 2013
+{txt}
+{com}. cmdlog using logs/$project$datestamp.cmd.txt, replace
+{txt}(cmdlog G:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_11_16.cmd.txt opened)
+
+{com}. 
+. 
+. 
+. 
+. preserve
+{txt}
+{com}. 
+. 
+. drop country
+{txt}
+{com}. gen int country = countrycode2
+{txt}
+{com}. keep pid year country `dep_vlist' `indep_vlist' `z_vlist' TREND
+{txt}
+{com}. 
+. outsheet _all using `fadnoutdatadir'/exported_data.csv, comma replace nolabel
+{txt}
+{com}. save `fadnoutdatadir'/exported_data.dta, replace nolabel
+{txt}file G:\\Data/data_FADNPanelAnalysis/OutData/multisward/exported_data.dta saved
+
+{com}. 
+. restore
+{txt}
+{com}. 
+. 
+. 
+. * ===================
+. * MODEL COMMANDS HERE
+. * ===================
+. sfpanel `dep_vlist' `indep_vlist' `location_vlist' TREND, model(bc95) cost d(tnormal)  emean(`z_vlist') usigma(`z_vlist')
+
+{err}no observations
+no observations
+{res}
+{err}too many initial values for equation 2
+{txt}{search r(3498):r(3498);}
+
+end of do-file
+
+{search r(3498):r(3498);}
+
+{com}. describe, short
+
+{txt}Contains data from {res}G:\\Data/data_FADNPanelAnalysis/OutData/multisward/multisward.dta
+{txt}  obs:{res}        19,141                          describe data1.dta
+{txt} vars:{res}         2,116                          16 Nov 2013 17:21
+{txt} size:{res}   163,349,294                          
+{txt}Sorted by:  {res}pid  year
+     Note:  dataset has changed since last saved
+
+{com}. tab country
+
+        {txt}a24 {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+        DEU {c |}{res}     11,103       58.01       58.01
+        {txt}FRA {c |}{res}      2,934       15.33       73.33
+        {txt}IRE {c |}{res}          9        0.05       73.38
+        {txt}UKI {c |}{res}      5,095       26.62      100.00
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res}     19,141      100.00
+
+{com}. dir
+{txt}  <dir>  11/16/13 17:20  {res}.                 
+{txt}  <dir>  10/13/13  9:15  {res}..                
+{txt}  36.0k   8/02/13 15:58  {res}.msward_2013_08_02.do.swp
+{txt}  40.0k   8/10/13 12:44  {res}.msward_2013_08_09.do.swp
+{txt}  48.0k   9/23/13 11:17  {res}.msward_2013_09_11_prod.do.swp
+{txt}  60.0k  11/16/13 17:27  {res}.msward_2013_11_15_meta.do.swp
+{txt}  12.0k   9/18/13 19:07  {res}.swp              
+{txt}   7.6k   8/08/13 12:35  {res}1                 
+{txt}   7.6k   8/09/13 12:24  {res}2                 
+{txt}   0.3k  11/16/13 17:20  {res}blank.dta         
+{txt}   0.1k   8/01/13 21:01  {res}bot.tex           
+{txt}   7.6k   8/01/13 21:01  {res}examples_tab.do   
+{txt}   9.6k   8/01/13 21:01  {res}examples_tex.do   
+{txt}  83.5k   8/10/13 12:43  {res}heteroscedasticity.gph
+{txt}  12.4k   8/10/13 12:38  {res}kdensity.gph      
+{txt}  <dir>  11/16/13 17:21  {res}logs              
+{txt}  13.4k   7/26/13 17:48  {res}msward_2013_07_26.do~
+{txt}  13.8k   8/01/13 12:02  {res}msward_2013_07_29.do
+{txt}  16.1k   8/01/13 18:55  {res}msward_2013_08_01.do
+{txt}  16.2k   8/02/13 18:26  {res}msward_2013_08_02.do
+{txt}  16.1k   8/02/13 18:07  {res}msward_2013_08_02.do~
+{txt}  16.2k   8/05/13 14:07  {res}msward_2013_08_05.do
+{txt}  16.2k   8/05/13 11:18  {res}msward_2013_08_05.do~
+{txt}  16.2k   8/06/13 16:12  {res}msward_2013_08_06.do
+{txt}  18.1k   8/08/13 18:36  {res}msward_2013_08_08.do
+{txt}  18.1k   8/08/13 18:33  {res}msward_2013_08_08.do~
+{txt}  19.6k   8/10/13 12:43  {res}msward_2013_08_09.do
+{txt}  19.6k   8/10/13 12:43  {res}msward_2013_08_09.do~
+{txt}  22.3k   8/12/13 16:33  {res}msward_2013_08_12.do
+{txt}  22.3k   8/12/13 16:33  {res}msward_2013_08_12.do~
+{txt}  24.3k   8/13/13 13:03  {res}msward_2013_08_13.do
+{txt}  24.3k   8/13/13 16:47  {res}msward_cost_2013_06_05.do
+{txt}  25.2k   8/13/13 18:33  {res}msward_prod_2013_08_13.do
+{txt}  <dir>   6/27/13 16:17  {res}output            
+{txt}   3.2k   6/27/13 17:15  {res}README.txt        
+{txt}  <dir>  11/16/13 17:21  {res}sub_do            
+{txt} 306.4k   8/01/13 21:01  {res}tabout_tutorial.pdf
+{txt} 471.3k   8/01/13 18:56  {res}tfe2013_08_01.ster
+{txt}2351.2k   7/03/13 14:24  {res}tmp_NI.out        
+{txt}   0.2k   8/01/13 21:01  {res}top.tex           
+{txt}  12.3k   6/05/13 13:26  {res}msward_2013_06_05.do
+{txt}   9.0k   6/27/13 22:21  {res}msward_2013_06_27.do
+{txt}  10.8k   6/28/13 21:03  {res}msward_2013_06_28.do
+{txt}  11.7k   6/29/13 19:26  {res}msward_2013_06_29.do
+{txt}  11.7k   6/29/13 19:26  {res}msward_2013_06_29.do~
+{txt}  12.0k   6/30/13 14:26  {res}msward_2013_06_30.do
+{txt}  12.0k   6/30/13 13:19  {res}msward_2013_06_30.do~
+{txt}  11.5k   7/01/13  8:37  {res}msward_2013_07_01.do
+{txt}  13.4k   7/26/13 17:51  {res}msward_2013_07_26.do
+{txt}  27.1k   8/16/13 19:53  {res}msward_2013_08_16.do
+{txt}  13.4k   7/01/13 12:17  {res}msward_code_clarity.do
+{txt}  27.7k   8/23/13 10:07  {res}msward_2013_08_22.do
+{txt}  27.7k   8/23/13 10:07  {res}msward_2013_08_22.do~
+{txt}  28.4k   8/29/13 10:30  {res}msward_2013_08_23.do
+{txt}  28.4k   8/23/13 17:51  {res}msward_2013_08_23.do~
+{txt}  29.1k   8/26/13 16:11  {res}msward_2013_08_26 
+{txt}  29.4k   9/06/13 14:39  {res}msward_2013_08_26.do
+{txt}  29.4k   9/06/13 14:39  {res}msward_2013_08_26.do~
+{txt}  28.5k   8/26/13 14:31  {res}msward_2013_08_26~
+{txt}  30.5k   9/10/13 22:58  {res}msward_2013_08_30.do
+{txt}  30.3k   8/30/13 14:09  {res}msward_2013_08_30.do~
+{txt}  30.3k  10/13/13 10:11  {res}msward_2013_09_11.do
+{txt}  33.2k   9/13/13 11:20  {res}msward_2013_09_11_cost.do
+{txt}  33.5k   9/23/13 11:17  {res}msward_2013_09_11_prod.do
+{txt}  33.2k  10/30/13 17:00  {res}msward_2013_10_23.do
+{txt}  33.2k  10/30/13 17:04  {res}msward_2013_10_29.do
+{txt}  33.2k  10/30/13 20:06  {res}msward_2013_10_29_meta.do
+{txt}  33.9k  11/04/13  9:13  {res}msward_2013_10_30_meta.do
+{txt}  33.9k  11/04/13  9:30  {res}msward_2013_11_04_meta.do
+{txt}  36.2k  11/07/13 14:23  {res}msward_2013_11_04_zones.do
+{txt}  34.5k  11/16/13 17:20  {res}msward_2013_11_15_meta.do
+{txt}  36.2k  11/15/13 15:11  {res}msward_2013_11_15_zones.do
+{txt}  13.1k   3/13/13 16:57  {res}msward_2013_oldcode1.do
+{txt}  12.1k   6/05/13 12:23  {res}msward_2013_oldcode2.do
+
+{com}. mv README.txt README_test.txt
+{err}unrecognized command:  mv
+{txt}{search r(199):r(199);}
+
+{com}. help mv
+
+. help erase
+
+. do msward_2013_11_15_meta.do
+{txt}
+{com}. * Based on msward_code_clarity.do
+. capture log close
+{smcl}
+{com}{sf}{ul off}

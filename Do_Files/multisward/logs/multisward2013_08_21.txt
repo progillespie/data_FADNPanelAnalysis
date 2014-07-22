@@ -1,0 +1,264 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}D:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_08_21.txt
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}21 Aug 2013, 17:27:54
+{txt}
+{com}. di  "Job  Started  at  $S_TIME  on $S_DATE"
+{res}Job  Started  at  17:27:54  on 21 Aug 2013
+{txt}
+{com}. cmdlog using logs/$project$datestamp.cmd.txt, replace
+{txt}(cmdlog D:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_08_21.cmd.txt opened)
+
+{com}. 
+. corr `lnw_vlist'
+{txt}(obs=21945)
+
+             {c |} lnPCom~t lnPFER~S lnPMot~s
+{hline 13}{c +}{hline 27}
+lnPCompoun~t {c |}{res}   1.0000
+{txt}lnPFERTILI~S {c |}{res}   0.2646   1.0000
+{txt}lnPMotorfu~s {c |}{res}   0.2311   0.8754   1.0000
+
+{txt}
+{com}. 
+. * model you selected above is run here
+. macro list _model1command
+{txt}{p 0 16}
+_model1command:{space 1}{res}{res}sfpanel lntotalinputs lntotaloutput lnPFERTILISERSANDSOILIMPROVERS lnPMotorfuels i.countrycode2 year if country=="IRE", model(bc95) cost d(tnormal) constraint(1)
+{p_end}
+{txt}
+{com}. `model1command' 
+
+{txt}note: 1.countrycode2 identifies no observations in the sample
+note: 2.countrycode2 identifies no observations in the sample
+note: 3.countrycode2 omitted because of collinearity
+note: 4.countrycode2 identifies no observations in the sample
+{res}
+{txt}initial:{col 16}Log likelihood = {res: -5561.485}
+Iteration 0:{space 3}Log likelihood = {res:-4892.4243}  
+Iteration 1:{space 3}Log likelihood = {res:-4614.7508}  (backed up)
+Iteration 2:{space 3}Log likelihood = {res:-3713.9599}  (backed up)
+Iteration 3:{space 3}Log likelihood = {res: -3687.064}  (backed up)
+Iteration 4:{space 3}Log likelihood = {res:-3672.7391}  (backed up)
+Iteration 5:{space 3}Log likelihood = {res:-3027.8889}  
+Iteration 6:{space 3}Log likelihood = {res:-2964.9099}  (backed up)
+Iteration 7:{space 3}Log likelihood = {res:-1717.1043}  
+Iteration 8:{space 3}Log likelihood = {res:-1126.3862}  
+Iteration 9:{space 3}Log likelihood = {res:  -219.988}  
+Iteration 10:{space 2}Log likelihood = {res:-91.460826}  
+Iteration 11:{space 2}Log likelihood = {res:-30.818647}  
+Iteration 12:{space 2}Log likelihood = {res: 307.56168}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 13:{space 2}Log likelihood = {res: 323.74784}  
+Iteration 14:{space 2}Log likelihood = {res:  323.7729}  (backed up)
+Iteration 15:{space 2}Log likelihood = {res: 325.01648}  (backed up)
+Iteration 16:{space 2}Log likelihood = {res: 353.64478}  (backed up)
+Iteration 17:{space 2}Log likelihood = {res:  354.1369}  (backed up)
+Iteration 18:{space 2}Log likelihood = {res: 355.10854}  (backed up)
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 19:{space 2}Log likelihood = {res: 371.97574}  
+Iteration 20:{space 2}Log likelihood = {res: 372.49571}  (backed up)
+Iteration 21:{space 2}Log likelihood = {res: 372.54145}  (backed up)
+Iteration 22:{space 2}Log likelihood = {res: 374.83286}  (backed up)
+Iteration 23:{space 2}Log likelihood = {res: 375.68581}  (backed up)
+Iteration 24:{space 2}Log likelihood = {res: 375.91494}  (backed up)
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 25:{space 2}Log likelihood = {res: 379.85214}  
+Iteration 26:{space 2}Log likelihood = {res: 380.16997}  (backed up)
+Iteration 27:{space 2}Log likelihood = {res: 380.20135}  (backed up)
+Iteration 28:{space 2}Log likelihood = {res: 380.41485}  (backed up)
+Iteration 29:{space 2}Log likelihood = {res: 380.51032}  (backed up)
+Iteration 30:{space 2}Log likelihood = {res: 380.53758}  (backed up)
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 31:{space 2}Log likelihood = {res:  382.6411}  
+Iteration 32:{space 2}Log likelihood = {res: 383.20956}  (backed up)
+Iteration 33:{space 2}Log likelihood = {res: 383.31956}  (backed up)
+Iteration 34:{space 2}Log likelihood = {res: 383.37759}  (backed up)
+Iteration 35:{space 2}Log likelihood = {res: 383.46413}  (backed up)
+Iteration 36:{space 2}Log likelihood = {res: 383.51128}  (backed up)
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 37:{space 2}Log likelihood = {res: 387.06899}  
+Iteration 38:{space 2}Log likelihood = {res: 387.19502}  (backed up)
+Iteration 39:{space 2}Log likelihood = {res: 387.19557}  (backed up)
+Iteration 40:{space 2}Log likelihood = {res: 387.21926}  (backed up)
+Iteration 41:{space 2}Log likelihood = {res: 387.23001}  (backed up)
+Iteration 42:{space 2}Log likelihood = {res: 387.30277}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 43:{space 2}Log likelihood = {res: 389.41649}  
+Iteration 44:{space 2}Log likelihood = {res: 389.66699}  (backed up)
+Iteration 45:{space 2}Log likelihood = {res: 389.66785}  (backed up)
+Iteration 46:{space 2}Log likelihood = {res: 389.71024}  (backed up)
+Iteration 47:{space 2}Log likelihood = {res: 389.72214}  (backed up)
+Iteration 48:{space 2}Log likelihood = {res: 390.72141}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 49:{space 2}Log likelihood = {res: 391.99197}  (backed up)
+Iteration 50:{space 2}Log likelihood = {res:  392.0666}  (backed up)
+Iteration 51:{space 2}Log likelihood = {res: 392.06879}  (backed up)
+Iteration 52:{space 2}Log likelihood = {res: 392.07998}  (backed up)
+Iteration 53:{space 2}Log likelihood = {res: 392.08244}  (backed up)
+Iteration 54:{space 2}Log likelihood = {res: 392.11909}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 55:{space 2}Log likelihood = {res: 393.74126}  
+Iteration 56:{space 2}Log likelihood = {res: 393.83039}  (backed up)
+Iteration 57:{space 2}Log likelihood = {res: 393.83166}  (backed up)
+Iteration 58:{space 2}Log likelihood = {res: 393.85745}  (backed up)
+Iteration 59:{space 2}Log likelihood = {res: 393.86689}  (backed up)
+Iteration 60:{space 2}Log likelihood = {res: 393.87877}  (backed up)
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 61:{space 2}Log likelihood = {res: 395.05983}  
+Iteration 62:{space 2}Log likelihood = {res: 395.20794}  (backed up)
+Iteration 63:{space 2}Log likelihood = {res: 395.20868}  (backed up)
+Iteration 64:{space 2}Log likelihood = {res: 395.21407}  (backed up)
+Iteration 65:{space 2}Log likelihood = {res: 395.22042}  (backed up)
+Iteration 66:{space 2}Log likelihood = {res:  395.2265}  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 67:{space 2}Log likelihood = {res: 396.61139}  
+Iteration 68:{space 2}Log likelihood = {res: 396.64775}  (backed up)
+Iteration 69:{space 2}Log likelihood = {res: 396.64857}  (backed up)
+Iteration 70:{space 2}Log likelihood = {res: 396.66902}  (backed up)
+Iteration 71:{space 2}Log likelihood = {res: 396.66934}  (backed up)
+Iteration 72:{space 2}Log likelihood = {res: 396.67815}  (backed up)
+{err}{p}
+cannot compute an improvement -- flat region encountered
+{p_end}
+
+{txt}Inefficiency effects model (truncated-normal){col 54}Number of obs {col 68}={col 70}{res}     2818
+{txt}Group variable: {res}pid{txt}{col 51}Number of groups{col 68}={col 70}{res}      605
+{txt}Time variable: {res}year{txt}{col 49}Obs per group: min{col 68}={col 70}{res}        1
+{col 64}{txt}avg{col 68}={col 70}{res}      4.7
+{col 64}{txt}max{col 68}={col 70}{res}        9
+
+{txt}{col 54}Prob > chi2   = {res}   0.0000
+{txt}Log likelihood = {res}  397.6490{txt}{col 54}Wald chi2({res}3{txt})  = {res} 59137.97
+
+{p 0 7}{space 1}{text:( 1)}{space 1} [Frontier]1b.countrycode2 = 0{p_end}
+{p 0 7}{space 1}{text:( 2)}{space 1} [Frontier]2o.countrycode2 = 0{p_end}
+{p 0 7}{space 1}{text:( 3)}{space 1} [Frontier]3o.countrycode2 = 0{p_end}
+{p 0 7}{space 1}{text:( 4)}{space 1} [Frontier]4o.countrycode2 = 0{p_end}
+{p 0 7}{space 1}{text:( 5)}{space 1} [Frontier]lntotaloutput + [Frontier]lnPFERTILISERSANDSOILIMPROVERS + [Frontier]lnPMotorfuels = 1{p_end}
+{txt}{hline 31}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}                 lntotalinputs{col 32}{c |}      Coef.{col 44}   Std. Err.{col 56}      z{col 64}   P>|z|{col 72}     [95% Con{col 85}f. Interval]
+{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Frontier                       {txt}{c |}
+{space 17}lntotaloutput {c |}{col 32}{res}{space 2} .9682363{col 44}{space 2} .0061877{col 55}{space 1}  156.48{col 64}{space 3}0.000{col 72}{space 4} .9561087{col 85}{space 3}  .980364
+{txt}lnPFERTILISERSANDSOILIMPROVERS {c |}{col 32}{res}{space 2}-.4806252{col 44}{space 2} .0575037{col 55}{space 1}   -8.36{col 64}{space 3}0.000{col 72}{space 4}-.5933304{col 85}{space 3}-.3679201
+{txt}{space 17}lnPMotorfuels {c |}{col 32}{res}{space 2} .5123889{col 44}{space 2} .0571534{col 55}{space 1}    8.97{col 64}{space 3}0.000{col 72}{space 4} .4003703{col 85}{space 3} .6244076
+{txt}{space 30} {c |}
+{space 18}countrycode2 {c |}
+{space 28}3  {c |}{col 32}{res}{space 2}        0{col 44}{txt}  (omitted)
+{space 30} {c |}
+{space 26}year {c |}{col 32}{res}{space 2}-.0311845{col 44}{space 2} .0023926{col 55}{space 1}  -13.03{col 64}{space 3}0.000{col 72}{space 4}-.0358738{col 85}{space 3}-.0264951
+{txt}{space 25}_cons {c |}{col 32}{res}{space 2} 57.73931{col 44}{space 2} 4.790674{col 55}{space 1}   12.05{col 64}{space 3}0.000{col 72}{space 4} 48.34976{col 85}{space 3} 67.12885
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Mu                             {txt}{c |}
+{space 25}_cons {c |}{col 32}{res}{space 2}-8.940916{col 44}{space 2}        .{col 55}{space 1}       .{col 64}{space 3}    .{col 72}{space 4}        .{col 85}{space 3}        .
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Usigma                         {txt}{c |}
+{space 25}_cons {c |}{col 32}{res}{space 2} .0027051{col 44}{space 2} .0716888{col 55}{space 1}    0.04{col 64}{space 3}0.970{col 72}{space 4}-.1378024{col 85}{space 3} .1432125
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Vsigma                         {txt}{c |}
+{space 25}_cons {c |}{col 32}{res}{space 2}-3.415398{col 44}{space 2} .0459161{col 55}{space 1}  -74.38{col 64}{space 3}0.000{col 72}{space 4}-3.505392{col 85}{space 3}-3.325404
+{txt}{hline 31}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{col 1}{text}     sigma_u{col 14}{c |}{result}{space 2} 1.001353{col 26}{space 2} .0358929{col 37}{space 1}   27.90{col 46}{space 3}0.000{col 55}{space 3} .9334189{col 67}{space 3} 1.074232
+{col 1}{text}     sigma_v{col 14}{c |}{result}{space 2} .1812824{col 26}{space 2} .0041619{col 37}{space 1}   43.56{col 46}{space 3}0.000{col 55}{space 3} .1733061{col 67}{space 3} .1896259
+{col 1}{text}      lambda{col 14}{c |}{result}{space 2}  5.52372{col 26}{space 2} .0387419{col 37}{space 1}  142.58{col 46}{space 3}0.000{col 55}{space 3} 5.447787{col 67}{space 3} 5.599653
+{txt}{hline 13}{c BT}{hline 64}
+
+{com}. STOP!!
+{err}unrecognized command:  STOP
+{txt}{search r(199):r(199);}
+
+end of do-file
+
+{search r(199):r(199);}
+
+{com}. ereturn list
+
+{txt}scalars:
+               e(rank) =  {res}6
+                  {txt}e(N) =  {res}2818
+                 {txt}e(ic) =  {res}72
+                  {txt}e(k) =  {res}12
+               {txt}e(k_eq) =  {res}4
+               {txt}e(k_dv) =  {res}1
+          {txt}e(converged) =  {res}0
+                 {txt}e(rc) =  {res}0
+                 {txt}e(ll) =  {res}397.6490220350952
+         {txt}e(iterations) =  {res}73
+               {txt}e(Tbar) =  {res}2.506629925998024
+               {txt}e(Tcon) =  {res}0
+              {txt}e(g_min) =  {res}1
+              {txt}e(g_avg) =  {res}4.657851239669421
+              {txt}e(g_max) =  {res}9
+                {txt}e(N_g) =  {res}605
+            {txt}e(sigma_u) =  {res}1.001353440519219
+            {txt}e(sigma_v) =  {res}.1812824429333118
+               {txt}e(chi2) =  {res}59137.96721679822
+               {txt}e(df_m) =  {res}3
+                  {txt}e(p) =  {res}0
+
+{txt}macros:
+            e(cmdline) : "{res}sfpanel lntotalinputs lntotaloutput lnPFERTILISERSANDSOILIMPROVERS lnPMotorfuels{txt}.."
+              e(title) : "{res}Inefficiency effects model (truncated-normal){txt}"
+         e(covariates) : "{res}lntotaloutput lnPFERTILISERSANDSOILIMPROVERS lnPMotorfuels 1b.countrycode2 2o.co{txt}.."
+               e(dist) : "{res}tnormal{txt}"
+            e(cilevel) : "{res}95{txt}"
+               e(tvar) : "{res}year{txt}"
+               e(ivar) : "{res}pid{txt}"
+           e(function) : "{res}cost{txt}"
+          e(marginsok) : "{res}default xb{txt}"
+           e(crittype) : "{res}Log likelihood{txt}"
+              e(model) : "{res}bc95{txt}"
+             e(depvar) : "{res}lntotalinputs{txt}"
+                e(cmd) : "{res}sfpanel{txt}"
+            e(predict) : "{res}sfpanel_p{txt}"
+                e(opt) : "{res}moptimize{txt}"
+               e(user) : "{res}_tv_bc95(){txt}"
+          e(ml_method) : "{res}lf0{txt}"
+          e(technique) : "{res}bfgs{txt}"
+              e(which) : "{res}max{txt}"
+         e(properties) : "{res}b V{txt}"
+
+matrices:
+                  e(b) : {res} 1 x 12
+                  {txt}e(V) : {res} 12 x 12
+                {txt}e(Cns) : {res} 5 x 13
+               {txt}e(ilog) : {res} 1 x 20
+           {txt}e(gradient) : {res} 1 x 12
+
+{txt}functions:
+             e(sample)   
+
+{com}. matrix list e(cmdline)
+{err}matrix e(cmdline) not found
+{txt}{search r(111):r(111);}
+
+{com}. di `e(cmdline)'
+{res}{err}sfpanel not found
+{txt}{search r(111):r(111);}
+
+{com}. di "`e(cmdline)'"
+{res}sfpanel lntotalinputs lntotaloutput lnPFERTILISERSANDSOILIMPROVERS lnPMotorfuels i.countrycode2 year if country=={err}unknown function IRE", model()
+{txt}{search r(133):r(133);}
+
+{com}. sfpanel lntotalinputs lntotaloutput lnPFERTILISERSANDSOILIMPROVERS lnPMotorfuels
+
+{res}
+{txt}initial:{col 16}Log likelihood = {res:-55733.584}
+Iteration 0:{space 3}Log likelihood = {res:-55733.584}  (not concave)
+Iteration 1:{space 3}Log likelihood = {res: -19948.52}  (not concave)
+{err}{hline 2}Break{hline 2}
+{txt}{search r(1):r(1);}
+
+{com}. 
+.                 i.countrycode2 year if country=="IRE", model(bc95) cost d(tnormal)
+{err}unrecognized command:  i.countrycode2 invalid command name
+{txt}{search r(199):r(199);}
+
+{com}. exit
+{err}no; data in memory would be lost
+{txt}{search r(4):r(4);}
+
+{com}. exit, clear

@@ -1,0 +1,130 @@
+% Header
+\documentclass{article}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{datetime}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\hrule
+\begin{quote}
+  \begin{flushleft}
+    Patrick R. Gillespie\\
+    Walsh Fellow\\
+    Teagasc, REDP\\
+    Athenry, Co Galway, Ireland\\
+    patrick.gillespie@teagasc.ie\\
+  \end{flushleft}
+\end{quote}
+\hrule
+\begin{flushleft}
+  \textbf{\jobname.Rnw}\\
+  \today at \currenttime
+\end{flushleft}
+\hrule
+\vspace{1cm}
+
+\begin{flushleft}
+\subsection*{Clearing and loading}
+<<echo=T, results='markup'>>=
+rm(list=ls()) 
+paneldir <- "/media/MyPassport/Data/data_NFSPanelAnalysis/"
+#paneldir <- "G:\\Data/data_NFSPanelAnalysi/"
+source(paste(paneldir, "code_R/dirstruct.R", sep='')) 
+setwd(Rdir)
+library(foreign) #...for the ability to read .dta files
+library(data.table) #... useful for big datasets (makes manipulation faster \& easier)
+library(xtable) #... to get nice looking tables.
+@
+ 
+\subsection*{Data import and set up}
+
+Next code chunk does the following:
+\begin{itemize}
+  \item {Read the NFS dataset into a data.table (type of data.frame - useful for large datasets) and ID the key
+        variables (like subscripts for the data). Sorts by those too.}
+  \item {Select only Specialist Dairying}
+  \item {Tabulate farm numbers by year}
+\end{itemize}
+<<echo=TRUE, results='markup'>>=
+nfs <- data.table(read.dta(paste(nfsdatadir, "nfs_data.dta", sep='')), key="fffadnsy")
+nfs <- nfs[fffadnsy==411]
+setkey(nfs, farmcode, year) # reset key
+nfs.farms <- nfs[year>1998 & year<2008, length(farmcode), by=year] 
+@
+
+Then do the following for the FADN data to get a comparable dataset: 
+\begin{itemize}
+  \item{Load the Irish FADN dataset}
+  \item{Select Specialist Dairying (A30==4110)}
+  \item{Tabulate farm numbers by year}
+\end{itemize}
+<<echo=TRUE, results='markup'>>=
+fadn <- data.table(read.csv(paste(fadndir9907, "Ireland.csv", sep='')), key="A30")
+fadn <- fadn[A30==4110]
+setkey(fadn, Farm.Code, YEAR) # reset key
+fadn.farms <- fadn[, length(Farm.Code), by=YEAR]
+@
+
+\subsection*{Comparison of datasets}
+\subsubsection*{Farm numbers by year}
+Compare farm numbers to choose an easier year for individual variable comparison... 
+
+<<echo=FALSE, results='asis'>>=
+xtable(data.frame(NFS=nfs.farms$V1, FADN=fadn.farms$V1, row.names=nfs.farms$year), "Sampled Specialist Dairy farms by year")
+@
+
+... which shows that the years 2004 and 2005 were exactly the same size as unweighted samples. Gives some confidence that there's no difference in the system code (and there shouldn't be any difference). 
+
+FADN weights differ from NFS weights, so I can't compare weighted samples. 
+
+I'll select one year to compare, say 2005,  as I'd guess the two should be most similar in the most recent year that matches up the sampled farms. Start by calculating means for all variables in each dataset and store in two vectors for comparison. Sort the variables by means to make it easier to compare the two vectors. 
+
+<<echo=TRUE, results='markup'>>=
+# create two new data tables, with varnames and mean values
+nfs05 <- data.table(nfs.names=names(nfs), Means = nfs[year==2005, sapply(.SD, mean)])  
+fadn05 <-data.table(fadn.names=names(fadn), Means= fadn[YEAR==2005, sapply(.SD, mean)])
+nfs05 <- na.omit(nfs05)   # dropping variables for which return NA (strings and factors)
+fadn05 <- na.omit(fadn05)
+# round off the means in hopes of getting exact matches this way
+#nfs05[, Means:=round(Means)]
+#fadn05[, Means:=round(Means)]
+
+# set the same key for each for sorting and merging
+setkey(nfs05, Means)
+setkey(fadn05, Means)
+
+#  merge the two using the smaller as the superset and the larger as the subset (has the effect of
+#  adding rows values to the superset)
+# comparison <- fadn05[nfs05]
+# comparison[is.na(Means)==T, length(Means)]
+# comparison[is.na(fadn.names)==T, length(Means)]
+# comparison[is.na(nfs.names)==T, length(Means)]
+@
+
+That obviously didn't work... Have to review my merging with data.table.
+
+<<echo=TRUE, results='markup'>>=
+nfs.in.range <- nfs05[Means!=0,list(Means >= .98*fadn05$Means & Means <= 1.02*fadn05$Means, fadn.names=fadn05$fadn.names), by=nfs.names]
+nfs.in.range <- nfs.in.range[V1==TRUE]
+nsf.in.range <- nfs.in.range[,V1:=NULL]
+map <- aggregate(nfs.in.range$fadn.names, by=list(nfs.in.range$nfs.names), FUN=c)
+tmp <- list(lapply(map$x, function(i) nfs.in.range[i, fadn.names]))
+tmp <- t(data.table(do.call(rbind, tmp)))
+map$NFS <- map$Group.1
+map$FADN <- paste(tmp)
+map$vector.positions <- map$x
+map$Group.1 <- NULL
+map$x <- NULL
+# this next line looks complex, but it just cleans up the FADN variable names (removes quotes, full stops, etc)
+map$FADN <- gsub('\\.', '', gsub('\\)', '', gsub('c\\(', '', gsub('\\"', '',map$FADN))))
+@
+
+% now print it off in a nicely formatted table. will carry this out in a separate Rnw file, so that the map is a standalone document (and can be turned on or off by commenting out the source command)
+<<echo=FALSE, results='hide'>>=
+knit("map.Rnw")
+system("pdflatex map.tex")
+@
+
+
+\end{flushleft}
+\end{document}

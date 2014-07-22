@@ -1,0 +1,182 @@
+args bmw
+/*
+ - Makes tables of decompositions at enterprise level
+ - Uses exchange rate adjustment
+ - Scaled to per hectare units
+*/
+
+capture log close
+capture cmdlog close
+
+log using "D:\Data/data_FADNPanelAnalysis/Do_Files/IGM/cex_`bmw'entdecomp_ha.txt", replace text
+
+********************************************************************************************
+* Ireland
+********************************************************************************************
+
+	* Small herd (IE)
+	tabstat           /// 
+	cex_fdairydc_ha   /// 
+	cex_ddfeedgl_ha   /// 
+	cex_ddfeedpp_ha   /// 
+	cex_ddothlivsc_ha /// 
+	cex_ddseeds_ha    /// 
+	cex_ddfert_ha     /// 
+	cex_ddcroppro_ha  /// 
+	cex_ddothcrop_ha  /// 
+	cex_ddforestsc_ha /// 
+	if cntry==1 & dpnolu <= 45 [weight=wt],stats(mean) by(year)
+	
+	tabstat              /// 
+	cex_fdairyoh_ha      /// 
+	cex_dohcontwork_ha   /// 
+	cex_dohmchbldcurr_ha /// 
+	cex_dohenergy_ha     /// 
+	cex_dohothdirin_ha   /// 
+	cex_dohdep_ha        /// 
+	cex_dohwages_ha      /// 
+	cex_dohrent_ha       /// 
+	cex_dohintst_ha      /// 
+	if cntry==1 & dpnolu <= 45 [weight=wt],stats(mean) by(year)
+	
+
+	* Moderate herd (IE)
+	tabstat           /// 
+	cex_fdairydc_ha   /// 
+	cex_ddfeedgl_ha   /// 
+	cex_ddfeedpp_ha   /// 
+	cex_ddothlivsc_ha /// 
+	cex_ddseeds_ha    /// 
+	cex_ddfert_ha     /// 
+	cex_ddcroppro_ha  /// 
+	cex_ddothcrop_ha  /// 
+	cex_ddforestsc_ha /// 
+	if cntry==1 & dpnolu > 45 & dpnolu <= 65 [weight=wt],stats(mean) by(year)
+	
+	tabstat              /// 
+	cex_fdairyoh_ha      /// 
+	cex_dohcontwork_ha   /// 
+	cex_dohmchbldcurr_ha /// 
+	cex_dohenergy_ha     /// 
+	cex_dohothdirin_ha   /// 
+	cex_dohdep_ha        /// 
+	cex_dohwages_ha      /// 
+	cex_dohrent_ha       /// 
+	cex_dohintst_ha      /// 
+	if cntry==1 & dpnolu > 45 & dpnolu <= 65 [weight=wt],stats(mean) by(year)
+	
+
+	* Large herd (IE)
+	tabstat           /// 
+	cex_fdairydc_ha   /// 
+	cex_ddfeedgl_ha   /// 
+	cex_ddfeedpp_ha   /// 
+	cex_ddothlivsc_ha /// 
+	cex_ddseeds_ha    /// 
+	cex_ddfert_ha     /// 
+	cex_ddcroppro_ha  /// 
+	cex_ddothcrop_ha  /// 
+	cex_ddforestsc_ha /// 
+	if cntry==1 & dpnolu > 65 [weight=wt],stats(mean) by(year)
+	
+	tabstat              /// 
+	cex_fdairyoh_ha      /// 
+	cex_dohcontwork_ha   /// 
+	cex_dohmchbldcurr_ha /// 
+	cex_dohenergy_ha     /// 
+	cex_dohothdirin_ha   /// 
+	cex_dohdep_ha        /// 
+	cex_dohwages_ha      /// 
+	cex_dohrent_ha       /// 
+	cex_dohintst_ha      /// 
+	if cntry==1 & dpnolu > 65 [weight=wt],stats(mean) by(year)
+	
+
+
+
+********************************************************************************************
+* Northern Ireland
+********************************************************************************************
+
+
+	* Small herd (NI)
+	tabstat           /// 
+	cex_fdairydc_ha   /// 
+	cex_ddfeedgl_ha   /// 
+	cex_ddfeedpp_ha   /// 
+	cex_ddothlivsc_ha /// 
+	cex_ddseeds_ha    /// 
+	cex_ddfert_ha     /// 
+	cex_ddcroppro_ha  /// 
+	cex_ddothcrop_ha  /// 
+	cex_ddforestsc_ha /// 
+	if cntry==2 & dpnolu <= 45 [weight=wt],stats(mean) by(year)
+	
+	tabstat              /// 
+	cex_fdairyoh_ha      /// 
+	cex_dohcontwork_ha   /// 
+	cex_dohmchbldcurr_ha /// 
+	cex_dohenergy_ha     /// 
+	cex_dohothdirin_ha   /// 
+	cex_dohdep_ha        /// 
+	cex_dohwages_ha      /// 
+	cex_dohrent_ha       /// 
+	cex_dohintst_ha      /// 
+	if cntry==2 & dpnolu <= 45 [weight=wt],stats(mean) by(year)
+	
+
+
+	* Moderate herd (NI)
+	tabstat           /// 
+	cex_fdairydc_ha   /// 
+	cex_ddfeedgl_ha   /// 
+	cex_ddfeedpp_ha   /// 
+	cex_ddothlivsc_ha /// 
+	cex_ddseeds_ha    /// 
+	cex_ddfert_ha     /// 
+	cex_ddcroppro_ha  /// 
+	cex_ddothcrop_ha  /// 
+	cex_ddforestsc_ha /// 
+	if cntry==2 & dpnolu > 45 & dpnolu <= 85 [weight=wt],stats(mean) by(year)
+	
+	tabstat              /// 
+	cex_fdairyoh_ha      /// 
+	cex_dohcontwork_ha   /// 
+	cex_dohmchbldcurr_ha /// 
+	cex_dohenergy_ha     /// 
+	cex_dohothdirin_ha   /// 
+	cex_dohdep_ha        /// 
+	cex_dohwages_ha      /// 
+	cex_dohrent_ha       /// 
+	cex_dohintst_ha      /// 
+	if cntry==2 & dpnolu > 45 & dpnolu <= 85 [weight=wt],stats(mean) by(year)
+	
+
+
+	* Large herd (NI)
+	tabstat           /// 
+	cex_fdairydc_ha   /// 
+	cex_ddfeedgl_ha   /// 
+	cex_ddfeedpp_ha   /// 
+	cex_ddothlivsc_ha /// 
+	cex_ddseeds_ha    /// 
+	cex_ddfert_ha     /// 
+	cex_ddcroppro_ha  /// 
+	cex_ddothcrop_ha  /// 
+	cex_ddforestsc_ha /// 
+	if cntry==2 & dpnolu > 85 [weight=wt],stats(mean) by(year)
+	
+	tabstat              /// 
+	cex_fdairyoh_ha      /// 
+	cex_dohcontwork_ha   /// 
+	cex_dohmchbldcurr_ha /// 
+	cex_dohenergy_ha     /// 
+	cex_dohothdirin_ha   /// 
+	cex_dohdep_ha        /// 
+	cex_dohwages_ha      /// 
+	cex_dohrent_ha       /// 
+	cex_dohintst_ha      /// 
+	if cntry==2 & dpnolu > 85 [weight=wt],stats(mean) by(year)
+	
+
+log close

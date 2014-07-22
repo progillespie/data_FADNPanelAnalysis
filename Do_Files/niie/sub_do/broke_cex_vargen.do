@@ -1,0 +1,727 @@
+args bmw
+/*
+ - Creates variables decomposing DC and OH
+ - Calculates in scaled units and shares
+ - Adjusts for large exchange rate movements in 2008, 2009
+
+ - Exchange rate adjustmet - 
+    edits values such that exchange rate is held constant
+    for NI. Involves three steps:
+	1. Convert NI values back to GBP
+	2. Create constant exchange rate var 
+	3. Convert NI GBP back using constant exchange rate
+	    (will use cex prefix in varname for C-onstant EX-change)
+*/
+
+capture log close
+capture cmdlog close
+
+********************************************************************************************
+* Generating share variables
+********************************************************************************************
+
+
+/*-----------------------------------------------
+We are defining these in FADNallocationmethod.do now, 
+so don't drop them. To be removed after testing. 
+-----------------------------------------------
+* Clear out vars created below, so file can be run repeatedly
+
+capture drop ddfeedgl
+capture drop ddothlivsc
+capture drop ddseeds
+capture drop ddfert
+capture drop ddcroppro
+capture drop ddothcrop
+capture drop ddforestsc
+ 
+
+To be removed after testing 
+-----------------------------------------------*/
+
+* These three aren't in fdairygo, so create them here for farmgo
+capture drop ddfeedpp
+gen ddfeedpp      = feedforpigspoultry              * dpalloclu
+
+capture drop ddothcrop
+gen ddothcrop     = othercropspecific               * dpalloclu
+
+capture drop ddforestsc
+gen ddforestsc    = forestryspecificcosts           * dpalloclu
+
+capture drop sh_feedgl
+capture drop sh_feedpp
+capture drop sh_othlivsc
+capture drop sh_seeds
+capture drop sh_fert
+capture drop sh_croppro
+capture drop sh_othcrop
+capture drop sh_forestsc
+
+capture drop ddfeedgl_lt
+capture drop ddfeedpp_lt
+capture drop ddothlivsc_lt
+capture drop ddseeds_lt
+capture drop ddfert_lt
+capture drop ddcroppro_lt
+capture drop ddothcrop_lt
+capture drop ddforestsc_lt
+
+capture drop ddfeedgl_lu
+capture drop ddfeedpp_lu
+capture drop ddothlivsc_lu
+capture drop ddseeds_lu
+capture drop ddfert_lu
+capture drop ddcroppro_lu
+capture drop ddothcrop_lu
+capture drop ddforestsc_lu
+
+capture drop ddfeedgl_ha
+capture drop ddfeedpp_ha
+capture drop ddothlivsc_ha
+capture drop ddseeds_ha
+capture drop ddfert_ha
+capture drop ddcroppro_ha
+capture drop ddothcrop_ha
+capture drop ddforestsc_ha
+
+capture drop ddfeedgl_labu1
+capture drop ddfeedpp_labu1
+capture drop ddothlivsc_labu1
+capture drop ddseeds_labu1
+capture drop ddfert_labu1
+capture drop ddcroppro_labu1
+capture drop ddothcrop_labu1
+capture drop ddforestsc_labu1
+
+capture drop sh_ddfeedgl
+capture drop sh_ddfeedpp
+capture drop sh_ddothlivsc
+capture drop sh_ddseeds
+capture drop sh_ddfert
+capture drop sh_ddcroppro
+capture drop sh_ddothcrop
+capture drop sh_ddforestsc
+
+
+/*-----------------------------------------------
+We are defining these in FADNallocationmethod.do now, 
+so don't drop them. To be removed after testing. 
+-----------------------------------------------
+
+capture drop dohcontwork
+capture drop dohmchbldcurr
+capture drop dohenergy
+capture drop dohothdirin
+capture drop dohdep
+capture drop dohwages
+capture drop dohrent
+capture drop dohintst
+
+To be removed after testing 
+-----------------------------------------------*/
+capture drop sh_contwork
+capture drop sh_mchbldcurr
+capture drop sh_energy
+capture drop sh_othdirin
+capture drop sh_dep
+capture drop sh_wages
+capture drop sh_rent
+capture drop sh_intst	
+capture drop sh_dohcontwork
+capture drop sh_dohmchbldcurr
+capture drop sh_dohenergy
+capture drop sh_dohothdirin
+capture drop sh_dohdep
+capture drop sh_dohwages
+capture drop sh_dohrent
+capture drop sh_dohintst
+capture drop sh_dc_farmgo
+capture drop sh_dc_fdairygo
+capture drop sh_oh_farmgo
+capture drop sh_oh_fdairygo
+
+capture drop dohcontwork_lt
+capture drop dohmchbldcurr_lt
+capture drop dohenergy_lt
+capture drop dohothdirin_lt
+capture drop dohdep_lt
+capture drop dohwages_lt
+capture drop dohrent_lt
+capture drop dohintst_lt
+
+capture drop dohcontwork_lu
+capture drop dohmchbldcurr_lu
+capture drop dohenergy_lu
+capture drop dohothdirin_lu
+capture drop dohdep_lu
+capture drop dohwages_lu
+capture drop dohrent_lu
+capture drop dohintst_lu
+
+capture drop dohcontwork_ha
+capture drop dohmchbldcurr_ha
+capture drop dohenergy_ha
+capture drop dohothdirin_ha
+capture drop dohdep_ha
+capture drop dohwages_ha
+capture drop dohrent_ha
+capture drop dohintst_ha
+
+capture drop dohcontwork_labu1
+capture drop dohmchbldcurr_labu1
+capture drop dohenergy_labu1
+capture drop dohothdirin_labu1
+capture drop dohdep_labu1
+capture drop dohwages_labu1
+capture drop dohrent_labu1
+capture drop dohintst_labu1
+
+capture drop TREND
+capture drop cex		
+capture drop gbp_fdairydc	
+capture drop gbp_ddfeedgl
+capture drop gbp_ddfeedpp
+capture drop gbp_ddothlivsc	
+capture drop gbp_ddseeds
+capture drop gbp_ddfert
+capture drop gbp_ddcroppro
+capture drop gbp_ddothcrop
+capture drop gbp_ddforestsc	
+capture drop cex_fdairydc	
+capture drop cex_ddfeedgl
+capture drop cex_ddfeedpp
+capture drop cex_ddothlivsc	
+capture drop cex_ddseeds
+capture drop cex_ddfert
+capture drop cex_ddcroppro
+capture drop cex_ddothcrop
+capture drop cex_ddforestsc	
+capture drop gbp_fdairyoh	
+capture drop gbp_dohcontwork
+capture drop gbp_dohmchbldcurr	
+capture drop gbp_dohenergy
+capture drop gbp_dohothdirin
+capture drop gbp_dohdep
+capture drop gbp_dohwages
+capture drop gbp_dohrent
+capture drop gbp_dohintst
+capture drop cex_fdairyoh	
+capture drop cex_dohcontwork
+capture drop cex_dohmchbldcurr	
+capture drop cex_dohenergy
+capture drop cex_dohothdirin
+capture drop cex_dohdep
+capture drop cex_dohwages
+capture drop cex_dohrent
+capture drop cex_dohintst
+
+capture drop cex_fdairydc_lt
+capture drop cex_ddfeedgl_lt
+capture drop cex_ddfeedpp_lt
+capture drop cex_ddothlivsc_lt
+capture drop cex_ddseeds_lt
+capture drop cex_ddfert_lt
+capture drop cex_ddcroppro_lt
+capture drop cex_ddothcrop_lt
+capture drop cex_ddforestsc_lt
+capture drop cex_fdairyoh_lt
+capture drop cex_dohcontwork_lt
+capture drop cex_dohmchbldcurr_lt
+capture drop cex_dohenergy_lt
+capture drop cex_dohothdirin_lt
+capture drop cex_dohdep_lt
+capture drop cex_dohwages_lt
+capture drop cex_dohrent_lt
+capture drop cex_dohintst_lt
+
+capture drop cex_fdairydc_lu
+capture drop cex_ddfeedgl_lu
+capture drop cex_ddfeedpp_lu
+capture drop cex_ddothlivsc_lu
+capture drop cex_ddseeds_lu
+capture drop cex_ddfert_lu
+capture drop cex_ddcroppro_lu
+capture drop cex_ddothcrop_lu
+capture drop cex_ddforestsc_lu
+capture drop cex_fdairyoh_lu
+capture drop cex_dohcontwork_lu
+capture drop cex_dohmchbldcurr_lu
+capture drop cex_dohenergy_lu
+capture drop cex_dohothdirin_lu
+capture drop cex_dohdep_lu
+capture drop cex_dohwages_lu
+capture drop cex_dohrent_lu
+capture drop cex_dohintst_lu
+
+capture drop cex_fdairydc_ha
+capture drop cex_ddfeedgl_ha
+capture drop cex_ddfeedpp_ha
+capture drop cex_ddothlivsc_ha
+capture drop cex_ddseeds_ha
+capture drop cex_ddfert_ha
+capture drop cex_ddcroppro_ha
+capture drop cex_ddothcrop_ha
+capture drop cex_ddforestsc_ha
+capture drop cex_fdairyoh_ha
+capture drop cex_dohcontwork_ha
+capture drop cex_dohmchbldcurr_ha
+capture drop cex_dohenergy_ha
+capture drop cex_dohothdirin_ha
+capture drop cex_dohdep_ha
+capture drop cex_dohwages_ha
+capture drop cex_dohrent_ha
+capture drop cex_dohintst_ha
+
+capture drop cex_fdairydc_labu1
+capture drop cex_ddfeedgl_labu1
+capture drop cex_ddfeedpp_labu1
+capture drop cex_ddothlivsc_labu1
+capture drop cex_ddseeds_labu1
+capture drop cex_ddfert_labu1
+capture drop cex_ddcroppro_labu1
+capture drop cex_ddothcrop_labu1
+capture drop cex_ddforestsc_labu1
+capture drop cex_fdairyoh_labu1
+capture drop cex_dohcontwork_labu1
+capture drop cex_dohmchbldcurr_labu1
+capture drop cex_dohenergy_labu1
+capture drop cex_dohothdirin_labu1
+capture drop cex_dohdep_labu1
+capture drop cex_dohwages_labu1
+capture drop cex_dohrent_labu1
+capture drop cex_dohintst_labu1
+
+capture drop gbp_cereals
+capture drop gbp_sugarbeet
+capture drop gbp_fruit
+capture drop gbp_foragecrops
+capture drop gbp_proteincrops
+capture drop gbp_oilseedrape
+capture drop gbp_citrus
+capture drop gbp_othercropoutput
+capture drop gbp_energycrops
+capture drop gbp_indlcrops
+capture drop gbp_wineandgrapes
+capture drop gbp_potatoes
+capture drop gbp_vegandflowers
+capture drop gbp_olivesoliveoil
+capture drop gbp_pigmeat
+capture drop gbp_eggs
+capture drop gbp_cowmilkdairy
+capture drop gbp_sheepandgoats
+capture drop gbp_ewesandgoatsmilk
+capture drop gbp_beefandveal
+capture drop gbp_poultrymeat
+capture drop gbp_othlvstkandprod
+capture drop gbp_otheroutput	
+
+capture drop cex_cereals
+capture drop cex_sugarbeet
+capture drop cex_fruit
+capture drop cex_foragecrops
+capture drop cex_proteincrops
+capture drop cex_oilseedrape
+capture drop cex_citrus
+capture drop cex_othercropoutput
+capture drop cex_energycrops
+capture drop cex_indlcrops
+capture drop cex_wineandgrapes
+capture drop cex_potatoes
+capture drop cex_vegandflowers
+capture drop cex_olivesoliveoil
+capture drop cex_pigmeat
+capture drop cex_eggs
+capture drop cex_cowmilkdairy
+capture drop cex_sheepandgoats
+capture drop cex_ewesandgoatsmilk
+capture drop cex_beefandveal
+capture drop cex_poultrymeat
+capture drop cex_othlvstkandprod
+capture drop cex_otheroutput	
+
+
+*-----------------------------------------------------------------------
+* Allocate components of GO, DC, OH
+*-----------------------------------------------------------------------
+
+* Moved to sub_do/FADNallocationmethod.do, which must be called before 
+*  this file can run. 
+
+
+
+*-----------------------------------------------------------------------
+* Shares of GO, DC, OH
+*-----------------------------------------------------------------------
+* Shares of GO (whole farm level)
+gen sh_dc_farmgo                  = farmdc                          / farmgo
+gen sh_oh_farmgo                  = farmohct                        / farmgo
+
+* Shares of GO (enterprise level)
+gen sh_dc_fdairygo                = fdairydc                        / fdairygo
+gen sh_oh_fdairygo                = fdairyoh                        / fdairygo
+
+* Shares of DC (whole farm level)
+gen sh_feedgl                     = feedforgrazinglivestock         / farmdc
+gen sh_feedpp                     = feedforpigspoultry              / farmdc
+gen sh_othlivsc                   = otherlivestockspecificcosts     / farmdc
+gen sh_seeds                      = seedsandplants                  / farmdc
+gen sh_fert                       = fertilisers                     / farmdc
+gen sh_croppro                    = cropprotection                  / farmdc
+gen sh_othcrop                    = othercropspecific               / farmdc
+gen sh_forestsc                   = forestryspecificcosts           / farmdc
+
+* Shares of DC (enterprise level)
+gen sh_ddfeedgl                   = ddfeedgl                        / fdairydc
+gen sh_ddfeedpp                   = ddfeedpp                        / fdairydc
+gen sh_ddothlivsc                 = ddothlivsc                      / fdairydc
+gen sh_ddseeds                    = ddseeds                         / fdairydc
+gen sh_ddfert                     = ddfert                          / fdairydc
+gen sh_ddcroppro                  = ddcroppro                       / fdairydc
+gen sh_ddothcrop                  = ddothcrop                       / fdairydc
+gen sh_ddforestsc                 = ddforestsc                      / fdairydc
+
+
+* Shares of OH (whole farm level)
+gen sh_contwork                   = contractwork                    / farmohct
+gen sh_mchbldcurr                 = machininerybuildingcurrentcosts / farmohct
+gen sh_energy                     = energy                          / farmohct
+gen sh_othdirin                   = otherdirectinputs               / farmohct
+gen sh_dep                        = depreciation                    / farmohct
+gen sh_wages                      = wagespaid                       / farmohct
+gen sh_rent                       = rentpaid                        / farmohct
+gen sh_intst                      = interestpaid                    / farmohct
+
+
+* Shares of OH (enterprise level)
+gen sh_dohcontwork                = dohcontwork                     / fdairyoh
+gen sh_dohmchbldcurr              = dohmchbldcurr                   / fdairyoh
+gen sh_dohenergy                  = dohenergy                       / fdairyoh
+gen sh_dohothdirin                = dohothdirin                     / fdairyoh
+gen sh_dohdep                     = dohdep                          / fdairyoh
+gen sh_dohwages                   = dohwages                        / fdairyoh
+gen sh_dohrent                    = dohrent                         / fdairyoh
+gen sh_dohintst                   = dohintst                        / fdairyoh
+
+
+*-----------------------------------------------------------------------
+* Scaled units GO, DC, OH
+*-----------------------------------------------------------------------
+
+* Per hectare components of DC (farm level)
+gen sh_contwork                   = contractwork                    / farmohct
+gen sh_mchbldcurr                 = machininerybuildingcurrentcosts / farmohct
+gen sh_energy                     = energy                          / farmohct
+gen sh_othdirin                   = otherdirectinputs               / farmohct
+gen sh_dep                        = depreciation                    / farmohct
+gen sh_wages                      = wagespaid                       / farmohct
+gen sh_rent                       = rentpaid                        / farmohct
+gen sh_intst                      = interestpaid                    / farmohct
+
+* Per hectare components of DC (enterprise level)
+gen ddfeedgl_lt      = ddfeedgl   / dotomkgl
+gen ddfeedpp_lt      = ddfeedpp   / dotomkgl
+gen ddothlivsc_lt    = ddothlivsc / dotomkgl
+gen ddseeds_lt       = ddseeds    / dotomkgl
+gen ddfert_lt        = ddfert     / dotomkgl
+gen ddcroppro_lt     = ddcroppro  / dotomkgl
+gen ddothcrop_lt     = ddothcrop  / dotomkgl
+gen ddforestsc_lt    = ddforestsc / dotomkgl
+
+gen ddfeedgl_lu      = ddfeedgl   / dpnolu
+gen ddfeedpp_lu      = ddfeedpp   / dpnolu
+gen ddothlivsc_lu    = ddothlivsc / dpnolu
+gen ddseeds_lu       = ddseeds    / dpnolu
+gen ddfert_lu        = ddfert     / dpnolu
+gen ddcroppro_lu     = ddcroppro  / dpnolu
+gen ddothcrop_lu     = ddothcrop  / dpnolu
+gen ddforestsc_lu    = ddforestsc / dpnolu
+
+gen ddfeedgl_ha      = ddfeedgl   / daforare
+gen ddfeedpp_ha      = ddfeedpp   / daforare
+gen ddothlivsc_ha    = ddothlivsc / daforare
+gen ddseeds_ha       = ddseeds    / daforare
+gen ddfert_ha        = ddfert     / daforare
+gen ddcroppro_ha     = ddcroppro  / daforare
+gen ddothcrop_ha     = ddothcrop  / daforare
+gen ddforestsc_ha    = ddforestsc / daforare
+
+gen ddfeedgl_labu1   = ddfeedgl   / flabunpd
+gen ddfeedpp_labu1   = ddfeedpp   / flabunpd
+gen ddothlivsc_labu1 = ddothlivsc / flabunpd
+gen ddseeds_labu1    = ddseeds    / flabunpd
+gen ddfert_labu1     = ddfert     / flabunpd
+gen ddcroppro_labu1  = ddcroppro  / flabunpd
+gen ddothcrop_labu1  = ddothcrop  / flabunpd
+gen ddforestsc_labu1 = ddforestsc / flabunpd
+
+	
+* Per hectare components of OH (enterprise level)
+gen dohcontwork_lt      = dohcontwork   / dotomkgl
+gen dohmchbldcurr_lt    = dohmchbldcurr / dotomkgl
+gen dohenergy_lt        = dohenergy     / dotomkgl
+gen dohothdirin_lt      = dohothdirin   / dotomkgl
+gen dohdep_lt           = dohdep        / dotomkgl
+gen dohwages_lt         = dohwages      / dotomkgl
+gen dohrent_lt          = dohrent       / dotomkgl
+gen dohintst_lt         = dohintst      / dotomkgl
+
+gen dohcontwork_lu      = dohcontwork   / dpnolu
+gen dohmchbldcurr_lu    = dohmchbldcurr / dpnolu
+gen dohenergy_lu        = dohenergy     / dpnolu
+gen dohothdirin_lu      = dohothdirin   / dpnolu
+gen dohdep_lu           = dohdep        / dpnolu
+gen dohwages_lu         = dohwages      / dpnolu
+gen dohrent_lu          = dohrent       / dpnolu
+gen dohintst_lu         = dohintst      / dpnolu
+
+gen dohcontwork_ha      = dohcontwork   / daforare
+gen dohmchbldcurr_ha    = dohmchbldcurr / daforare
+gen dohenergy_ha        = dohenergy     / daforare
+gen dohothdirin_ha      = dohothdirin   / daforare
+gen dohdep_ha           = dohdep        / daforare
+gen dohwages_ha         = dohwages      / daforare
+gen dohrent_ha          = dohrent       / daforare
+gen dohintst_ha         = dohintst      / daforare
+
+gen dohcontwork_labu1   = dohcontwork   / flabunpd
+gen dohmchbldcurr_labu1 = dohmchbldcurr / flabunpd
+gen dohenergy_labu1     = dohenergy     / flabunpd
+gen dohothdirin_labu1   = dohothdirin   / flabunpd
+gen dohdep_labu1        = dohdep        / flabunpd
+gen dohwages_labu1      = dohwages      / flabunpd
+gen dohrent_labu1       = dohrent       / flabunpd
+gen dohintst_labu1      = dohintst      / flabunpd
+
+
+*-----------------------------------------------------------------------
+* Exchange rate adjustment
+*-----------------------------------------------------------------------
+
+
+/* 
+*****Create constant exchange rate versions of DC, OH, and components
+
+    Constant exchange rate var shouldn't alter Irish values at all (because
+	we're on the Euro) yet the variable does record historic exchange rate
+	back to the Irish pound (constant over time) so start by setting cex 
+        equal to exchangerate for the entire column. 
+
+    Then get the 2007 exchange rate for NI (the most recent year before the 
+	appreciation).
+
+    Finally replace using this rate for all NI farms in every year. You should 
+	now have variable which is always 1 for IE and always 0.69828 for NI. 
+	We should not alter the Irish farms' cex (i.e. it should still == exchangerate)
+
+    NOTE: there should be only one rate per year, per country, so r(min), r(max)
+           and r(mean) should all be the same figure
+*/
+gen     cex		= exchangerate
+
+* Originally just picked the 2007 rate and applied to every year, 
+*  but what's probably more reasonable is to have rate follow trend
+*  established from  99 - 07. 
+*qui summarize exchangerate if year == 2007 & country == "UKI"
+*replace cex     	=  `r(mean)' if country == "UKI"
+
+qui reg exchangerate year 	  if country == "UKI" & year <= 2007
+qui scalar TREND = 1 + _b[year]
+
+* Get the 2007 rate then multiply by TREND to get adjusted 2008 rate
+summarize cex 			  if country == "UKI" & year == 2007
+replace   cex = `r(mean)' * TREND if country == "UKI" & year == 2008
+
+* Use adjusted 2008 rate to calculate 2009 rate
+summarize cex 			  if country == "UKI" & year == 2008
+replace   cex = `r(mean)' * TREND if country == "UKI" & year == 2009
+
+
+
+/* 
+    exchangerate is GBP/Euro, so just multiply to get back pounds (for NI only!!).  
+
+    We can do simple division (for the entire sample) to get back to euro because 
+	cex is still expressed as GBP/Euro, and because it's always just 1 for IE.
+*/
+
+*********DC
+* expressed in pounds
+gen gbp_fdairydc	=  fdairydc 	* exchangerate
+gen gbp_ddfeedgl 	=  ddfeedgl 	* exchangerate
+gen gbp_ddfeedpp  	=  ddfeedpp 	* exchangerate
+gen gbp_ddothlivsc	=  ddothlivsc	* exchangerate
+gen gbp_ddseeds   	=  ddseeds   	* exchangerate
+gen gbp_ddfert    	=  ddfert    	* exchangerate
+gen gbp_ddcroppro 	=  ddcroppro 	* exchangerate
+gen gbp_ddothcrop 	=  ddothcrop 	* exchangerate
+gen gbp_ddforestsc	=  ddforestsc	* exchangerate
+
+* expressed in constant exchange euro's 
+gen cex_fdairydc	= gbp_fdairydc  	/cex
+gen cex_ddfeedgl 	= gbp_ddfeedgl   	/cex
+gen cex_ddfeedpp  	= gbp_ddfeedpp   	/cex
+gen cex_ddothlivsc	= gbp_ddothlivsc	/cex
+gen cex_ddseeds   	= gbp_ddseeds    	/cex
+gen cex_ddfert    	= gbp_ddfert    	/cex
+gen cex_ddcroppro 	= gbp_ddcroppro 	/cex
+gen cex_ddothcrop 	= gbp_ddothcrop 	/cex
+gen cex_ddforestsc	= gbp_ddforestsc	/cex
+
+* expressed in constant exchange rate (scaled units)
+gen cex_fdairydc_lt	= cex_fdairydc  	/dotomkgl
+gen cex_ddfeedgl_lt  	= cex_ddfeedgl   	/dotomkgl
+gen cex_ddfeedpp_lt  	= cex_ddfeedpp   	/dotomkgl
+gen cex_ddothlivsc_lt  	= cex_ddothlivsc 	/dotomkgl
+gen cex_ddseeds_lt  	= cex_ddseeds   	/dotomkgl
+gen cex_ddfert_lt  	= cex_ddfert     	/dotomkgl
+gen cex_ddcroppro_lt  	= cex_ddcroppro 	/dotomkgl
+gen cex_ddothcrop_lt  	= cex_ddothcrop 	/dotomkgl
+gen cex_ddforestsc_lt 	= cex_ddforestsc 	/dotomkgl
+
+gen cex_fdairydc_lu	= cex_fdairydc  	/dpnolu
+gen cex_ddfeedgl_lu  	= cex_ddfeedgl   	/dpnolu
+gen cex_ddfeedpp_lu  	= cex_ddfeedpp   	/dpnolu
+gen cex_ddothlivsc_lu  	= cex_ddothlivsc 	/dpnolu
+gen cex_ddseeds_lu  	= cex_ddseeds   	/dpnolu
+gen cex_ddfert_lu  	= cex_ddfert     	/dpnolu
+gen cex_ddcroppro_lu  	= cex_ddcroppro 	/dpnolu
+gen cex_ddothcrop_lu  	= cex_ddothcrop 	/dpnolu
+gen cex_ddforestsc_lu 	= cex_ddforestsc 	/dpnolu
+
+gen cex_fdairydc_ha	= cex_fdairydc  	/daforare
+gen cex_ddfeedgl_ha  	= cex_ddfeedgl   	/daforare
+gen cex_ddfeedpp_ha  	= cex_ddfeedpp   	/daforare
+gen cex_ddothlivsc_ha  	= cex_ddothlivsc 	/daforare
+gen cex_ddseeds_ha  	= cex_ddseeds   	/daforare
+gen cex_ddfert_ha  	= cex_ddfert     	/daforare
+gen cex_ddcroppro_ha  	= cex_ddcroppro 	/daforare
+gen cex_ddothcrop_ha  	= cex_ddothcrop 	/daforare
+gen cex_ddforestsc_ha 	= cex_ddforestsc 	/daforare
+
+gen cex_fdairydc_labu1   = cex_fdairydc   / flabunpd
+gen cex_ddfeedgl_labu1   = cex_ddfeedgl   / flabunpd
+gen cex_ddfeedpp_labu1   = cex_ddfeedpp   / flabunpd
+gen cex_ddothlivsc_labu1 = cex_ddothlivsc / flabunpd
+gen cex_ddseeds_labu1    = cex_ddseeds    / flabunpd
+gen cex_ddfert_labu1     = cex_ddfert     / flabunpd
+gen cex_ddcroppro_labu1  = cex_ddcroppro  / flabunpd
+gen cex_ddothcrop_labu1  = cex_ddothcrop  / flabunpd
+gen cex_ddforestsc_labu1 = cex_ddforestsc / flabunpd
+
+
+********* OH
+* expressed in pounds
+gen gbp_fdairyoh	= fdairyoh     	* exchangerate
+gen gbp_dohcontwork  	= dohcontwork  	* exchangerate
+gen gbp_dohmchbldcurr	= dohmchbldcurr	* exchangerate
+gen gbp_dohenergy    	= dohenergy    	* exchangerate
+gen gbp_dohothdirin 	= dohothdirin	* exchangerate
+gen gbp_dohdep     	= dohdep       	* exchangerate
+gen gbp_dohwages    	= dohwages     	* exchangerate
+gen gbp_dohrent       	= dohrent      	* exchangerate
+gen gbp_dohintst       	= dohintst     	* exchangerate
+
+* expressed in constant exchange rate euro's 
+gen cex_fdairyoh	= gbp_fdairyoh     	/cex
+gen cex_dohcontwork  	= gbp_dohcontwork  	/cex
+gen cex_dohmchbldcurr	= gbp_dohmchbldcurr	/cex
+gen cex_dohenergy    	= gbp_dohenergy    	/cex
+gen cex_dohothdirin 	= gbp_dohothdirin 	/cex
+gen cex_dohdep     	= gbp_dohdep     	/cex
+gen cex_dohwages    	= gbp_dohwages    	/cex
+gen cex_dohrent       	= gbp_dohrent      	/cex
+gen cex_dohintst       	= gbp_dohintst    	/cex
+
+* expressed in constant exchange rate (scaled units)
+gen cex_fdairyoh_lt	 = cex_fdairyoh     	/dotomkgl
+gen cex_dohcontwork_lt 	 = cex_dohcontwork     	/dotomkgl
+gen cex_dohmchbldcurr_lt = cex_dohmchbldcurr 	/dotomkgl
+gen cex_dohenergy_lt 	 = cex_dohenergy       	/dotomkgl
+gen cex_dohothdirin_lt 	 = cex_dohothdirin     	/dotomkgl
+gen cex_dohdep_lt 	 = cex_dohdep         	/dotomkgl
+gen cex_dohwages_lt 	 = cex_dohwages     	/dotomkgl
+gen cex_dohrent_lt 	 = cex_dohrent       	/dotomkgl
+gen cex_dohintst_lt 	 = cex_dohintst       	/dotomkgl
+
+gen cex_fdairyoh_lu	 = cex_fdairyoh     	/dpnolu
+gen cex_dohcontwork_lu 	 = cex_dohcontwork     	/dpnolu
+gen cex_dohmchbldcurr_lu = cex_dohmchbldcurr 	/dpnolu
+gen cex_dohenergy_lu 	 = cex_dohenergy       	/dpnolu
+gen cex_dohothdirin_lu 	 = cex_dohothdirin     	/dpnolu
+gen cex_dohdep_lu 	 = cex_dohdep         	/dpnolu
+gen cex_dohwages_lu 	 = cex_dohwages     	/dpnolu
+gen cex_dohrent_lu 	 = cex_dohrent       	/dpnolu
+gen cex_dohintst_lu 	 = cex_dohintst       	/dpnolu
+
+gen cex_fdairyoh_ha	 = cex_fdairyoh     	/daforare
+gen cex_dohcontwork_ha 	 = cex_dohcontwork     	/daforare
+gen cex_dohmchbldcurr_ha = cex_dohmchbldcurr 	/daforare
+gen cex_dohenergy_ha 	 = cex_dohenergy       	/daforare
+gen cex_dohothdirin_ha 	 = cex_dohothdirin     	/daforare
+gen cex_dohdep_ha 	 = cex_dohdep         	/daforare
+gen cex_dohwages_ha 	 = cex_dohwages     	/daforare
+gen cex_dohrent_ha 	 = cex_dohrent       	/daforare
+gen cex_dohintst_ha 	 = cex_dohintst       	/daforare
+
+gen cex_fdairyoh_labu1      = cex_fdairyoh      / flabunpd
+gen cex_dohcontwork_labu1   = cex_dohcontwork   / flabunpd
+gen cex_dohmchbldcurr_labu1 = cex_dohmchbldcurr / flabunpd
+gen cex_dohenergy_labu1     = cex_dohenergy     / flabunpd
+gen cex_dohothdirin_labu1   = cex_dohothdirin   / flabunpd
+gen cex_dohdep_labu1        = cex_dohdep        / flabunpd
+gen cex_dohwages_labu1      = cex_dohwages      / flabunpd
+gen cex_dohrent_labu1       = cex_dohrent       / flabunpd
+gen cex_dohintst_labu1      = cex_dohintst      / flabunpd
+
+
+********* GO (whole farm level only)
+
+gen gbp_cereals          = cerealsvalue              * exchangerate
+gen gbp_sugarbeet        = sugarbeetvalue            * exchangerate
+gen gbp_fruit            = fruitvalue                * exchangerate
+gen gbp_foragecrops      = foragecropsvalue          * exchangerate
+gen gbp_proteincrops     = proteincropsvalue         * exchangerate
+gen gbp_oilseedrape      = oilseedrapevalue          * exchangerate
+gen gbp_citrus           = citrusfruitvalue          * exchangerate
+gen gbp_othercropoutput  = othercropoutputvalue      * exchangerate
+gen gbp_energycrops      = energycropsvalue          * exchangerate
+gen gbp_indlcrops        = industrialcropsvalue      * exchangerate
+gen gbp_wineandgrapes    = wineandgrapesvalue        * exchangerate
+gen gbp_potatoes         = potatoesvalue             * exchangerate
+gen gbp_vegandflowers    = vegetablesandflowersvalue * exchangerate
+gen gbp_olivesoliveoil   = olivesandoliveoilvalue    * exchangerate
+gen gbp_pigmeat          = pigmeat                   * exchangerate
+gen gbp_eggs             = eggs                      * exchangerate
+gen gbp_cowmilkdairy     = cowsmilkandmilkproducts   * exchangerate
+gen gbp_sheepandgoats    = sheepandgoats             * exchangerate
+gen gbp_ewesandgoatsmilk = ewesandgoatsmilk          * exchangerate
+gen gbp_beefandveal      = beefandveal               * exchangerate
+gen gbp_poultrymeat      = poultrymeat               * exchangerate
+gen gbp_othlvstkandprod  = otherlivestockandproducts * exchangerate
+gen gbp_otheroutput      = otheroutput               * exchangerate
+
+gen cex_cereals          = cerealsvalue              / cex
+gen cex_sugarbeet        = sugarbeetvalue            / cex
+gen cex_fruit            = fruitvalue                / cex
+gen cex_foragecrops      = foragecropsvalue          / cex
+gen cex_proteincrops     = proteincropsvalue         / cex
+gen cex_oilseedrape      = oilseedrapevalue          / cex
+gen cex_citrus           = citrusfruitvalue          / cex
+gen cex_othercropoutput  = othercropoutputvalue      / cex
+gen cex_energycrops      = energycropsvalue          / cex
+gen cex_indlcrops        = industrialcropsvalue      / cex
+gen cex_wineandgrapes    = wineandgrapesvalue        / cex
+gen cex_potatoes         = potatoesvalue             / cex
+gen cex_vegandflowers    = vegetablesandflowersvalue / cex
+gen cex_olivesoliveoil   = olivesandoliveoilvalue    / cex
+gen cex_pigmeat          = pigmeat                   / cex
+gen cex_eggs             = eggs                      / cex
+gen cex_cowsmilkdairypr  = cowsmilkandmilkproducts   / cex
+gen cex_sheepandgoats    = sheepandgoats             / cex
+gen cex_ewesandgoatsmilk = ewesandgoatsmilk          / cex
+gen cex_beefandveal      = beefandveal               / cex
+gen cex_poultrymeat      = poultrymeat               / cex
+gen cex_othlvstkandprod  = otherlivestockandproducts / cex
+gen cex_otheroutput      = otheroutput               / cex
+

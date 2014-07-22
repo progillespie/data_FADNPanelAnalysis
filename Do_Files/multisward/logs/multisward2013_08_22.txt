@@ -1,0 +1,196 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}C:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_08_22.txt
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}22 Aug 2013, 17:02:58
+{txt}
+{com}. di  "Job  Started  at  $S_TIME  on $S_DATE"
+{res}Job  Started  at  17:02:58  on 22 Aug 2013
+{txt}
+{com}. cmdlog using logs/$project$datestamp.cmd.txt, replace
+{txt}(cmdlog C:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2013_08_22.cmd.txt opened)
+
+{com}. 
+. outsheet pid year country `dep_vlist' `indep_vlist' `z_vlist' using `fadnoutdatadir'/export2nlogit.csv, comma replace
+{txt}
+{com}. 
+. *sfpanel `dep_vlist' `indep_vlist' year,  model(bc95) cost d(tnormal) emean(`z_vlist') // usigma(`z_vlist')  vsigma(`z_vlist') marginal(`z_vlist')  constraint(1)
+. 
+. sfpanel `dep_vlist' `indep_vlist' year if country=="IRE",  model(tfe) cost d(exponential) usigma(`z_vlist') vsigma(`z_vlist') // emean(`z_vlist')  
+
+{res}
+{txt}initial:{col 16}Log likelihood = {res:-26016.726}
+Iteration 0:{space 3}Log likelihood = {res:-26016.726}  (not concave)
+Iteration 1:{space 3}Log likelihood = {res:-25771.914}  (not concave)
+Iteration 2:{space 3}Log likelihood = {res:-25722.277}  (not concave)
+Iteration 3:{space 3}Log likelihood = {res:-25601.128}  (not concave)
+Iteration 4:{space 3}Log likelihood = {res:-25552.916}  (not concave)
+Iteration 5:{space 3}Log likelihood = {res:-25514.731}  (not concave)
+Iteration 6:{space 3}Log likelihood = {res:-25484.664}  (not concave)
+Iteration 7:{space 3}Log likelihood = {res:-25460.647}  (not concave)
+Iteration 8:{space 3}Log likelihood = {res:-25385.505}  (not concave)
+Iteration 9:{space 3}Log likelihood = {res:-25325.576}  (not concave)
+Iteration 10:{space 2}Log likelihood = {res:-25313.619}  (not concave)
+Iteration 11:{space 2}Log likelihood = {res:-25292.824}  (not concave)
+Iteration 12:{space 2}Log likelihood = {res:-25276.207}  (not concave)
+Iteration 13:{space 2}Log likelihood = {res:-25262.923}  (not concave)
+Iteration 14:{space 2}Log likelihood = {res:-25230.562}  (not concave)
+Iteration 15:{space 2}Log likelihood = {res: -25127.63}  (not concave)
+Iteration 16:{space 2}Log likelihood = {res: -24969.87}  (not concave)
+Iteration 17:{space 2}Log likelihood = {res:-24963.918}  (not concave)
+Iteration 18:{space 2}Log likelihood = {res:-24939.752}  (not concave)
+Iteration 19:{space 2}Log likelihood = {res:-24901.123}  (not concave)
+Iteration 20:{space 2}Log likelihood = {res:-24870.268}  (not concave)
+Iteration 21:{space 2}Log likelihood = {res:-24867.186}  (not concave)
+Iteration 22:{space 2}Log likelihood = {res:  -24801.5}  (not concave)
+Iteration 23:{space 2}Log likelihood = {res:-24649.317}  (not concave)
+Iteration 24:{space 2}Log likelihood = {res:-24646.721}  (not concave)
+Iteration 25:{space 2}Log likelihood = {res:-24638.714}  (not concave)
+Iteration 26:{space 2}Log likelihood = {res:-24625.908}  (not concave)
+Iteration 27:{space 2}Log likelihood = {res:-24605.475}  (not concave)
+Iteration 28:{space 2}Log likelihood = {res:-24575.717}  (not concave)
+Iteration 29:{space 2}Log likelihood = {res:-24440.716}  (not concave)
+Iteration 30:{space 2}Log likelihood = {res:-24399.634}  (not concave)
+Iteration 31:{space 2}Log likelihood = {res:-24276.009}  (not concave)
+Iteration 32:{space 2}Log likelihood = {res:-24197.513}  (not concave)
+Iteration 33:{space 2}Log likelihood = {res:-23947.643}  (not concave)
+Iteration 34:{space 2}Log likelihood = {res:-23552.388}  (not concave)
+Iteration 35:{space 2}Log likelihood = {res:-23030.632}  (not concave)
+Iteration 36:{space 2}Log likelihood = {res:-22247.338}  (not concave)
+Iteration 37:{space 2}Log likelihood = {res:-21032.857}  (not concave)
+Iteration 38:{space 2}Log likelihood = {res:-19409.088}  (not concave)
+Iteration 39:{space 2}Log likelihood = {res: -17076.39}  (not concave)
+Iteration 40:{space 2}Log likelihood = {res: -13120.04}  (not concave)
+Iteration 41:{space 2}Log likelihood = {res:-9284.8596}  (not concave)
+Iteration 42:{space 2}Log likelihood = {res:-7742.6955}  (not concave)
+Iteration 43:{space 2}Log likelihood = {res:-5087.9865}  (not concave)
+Iteration 44:{space 2}Log likelihood = {res: -5087.589}  (not concave)
+Iteration 45:{space 2}Log likelihood = {res:-5087.3334}  (not concave)
+Iteration 46:{space 2}Log likelihood = {res:-4008.2153}  (not concave)
+Iteration 47:{space 2}Log likelihood = {res:-1585.2638}  (not concave)
+Iteration 48:{space 2}Log likelihood = {res:-1584.4441}  (not concave)
+Iteration 49:{space 2}Log likelihood = {res:-1581.9734}  (not concave)
+Iteration 50:{space 2}Log likelihood = {res:-283.94286}  (not concave)
+Iteration 51:{space 2}Log likelihood = {res:-282.61488}  (not concave)
+Iteration 52:{space 2}Log likelihood = {res: 1456.6307}  (not concave)
+Iteration 53:{space 2}Log likelihood = {res: 1466.0201}  
+Iteration 54:{space 2}Log likelihood = {res: 2472.3894}  (not concave)
+Iteration 55:{space 2}Log likelihood = {res: 2484.6959}  (not concave)
+Iteration 56:{space 2}Log likelihood = {res: 2594.1485}  (not concave)
+Iteration 57:{space 2}Log likelihood = {res:  2636.176}  (not concave)
+Iteration 58:{space 2}Log likelihood = {res: 2648.1376}  
+Iteration 59:{space 2}Log likelihood = {res: 2658.3068}  (backed up)
+Iteration 60:{space 2}Log likelihood = {res: 2758.1154}  
+Iteration 61:{space 2}Log likelihood = {res: 2766.7762}  
+Iteration 62:{space 2}Log likelihood = {res: 2774.7181}  
+Iteration 63:{space 2}Log likelihood = {res: 2775.2576}  
+Iteration 64:{space 2}Log likelihood = {res: 2775.2665}  
+Iteration 65:{space 2}Log likelihood = {res: 2775.2665}  
+
+True fixed-effects model (exponential){col 54}Number of obs {col 68}={col 70}{res}     2820
+{txt}Group variable: {res}pid{txt}{col 51}Number of groups{col 68}={col 70}{res}      605
+{txt}Time variable: {res}year{txt}{col 49}Obs per group: min{col 68}={col 70}{res}        1
+{col 64}{txt}avg{col 68}={col 70}{res}      4.7
+{col 64}{txt}max{col 68}={col 70}{res}        9
+
+{txt}{col 54}Prob > chi2   = {res}   0.0000
+{txt}Log likelihood = {res} 2775.2665{txt}{col 54}Wald chi2({res}4{txt})  = {res}  1292.15
+
+{txt}{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}   lntotalinputs{col 18}{c |}      Coef.{col 30}   Std. Err.{col 42}      z{col 50}   P>|z|{col 58}     [95% Con{col 71}f. Interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Frontier         {txt}{c |}
+{space 3}lntotaloutput {c |}{col 18}{res}{space 2} .4464176{col 30}{space 2} .0143256{col 41}{space 1}   31.16{col 50}{space 3}0.000{col 58}{space 4}   .41834{col 71}{space 3} .4744953
+{txt}lnPCompoundfee~t {c |}{col 18}{res}{space 2} .0439959{col 30}{space 2} .0473256{col 41}{space 1}    0.93{col 50}{space 3}0.353{col 58}{space 4}-.0487605{col 71}{space 3} .1367523
+{txt}lnPFERTILISERS~S {c |}{col 18}{res}{space 2} .3738634{col 30}{space 2} .0483601{col 41}{space 1}    7.73{col 50}{space 3}0.000{col 58}{space 4} .2790793{col 71}{space 3} .4686475
+{txt}{space 12}year {c |}{col 18}{res}{space 2} -.012587{col 30}{space 2} .0012172{col 41}{space 1}  -10.34{col 50}{space 3}0.000{col 58}{space 4}-.0149726{col 71}{space 3}-.0102014
+{txt}{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Usigma           {txt}{c |}
+{space 9}fdratio {c |}{col 18}{res}{space 2}-4.424813{col 30}{space 2} .6962579{col 41}{space 1}   -6.36{col 50}{space 3}0.000{col 58}{space 4}-5.789453{col 71}{space 3}-3.060172
+{txt}{space 11}_cons {c |}{col 18}{res}{space 2}-4.511717{col 30}{space 2} .1525118{col 41}{space 1}  -29.58{col 50}{space 3}0.000{col 58}{space 4}-4.810634{col 71}{space 3}-4.212799
+{txt}{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Vsigma           {txt}{c |}
+{space 9}fdratio {c |}{col 18}{res}{space 2}-.1575067{col 30}{space 2} .4230277{col 41}{space 1}   -0.37{col 50}{space 3}0.710{col 58}{space 4}-.9866258{col 71}{space 3} .6716124
+{txt}{space 11}_cons {c |}{col 18}{res}{space 2}-5.379459{col 30}{space 2} .1313474{col 41}{space 1}  -40.96{col 50}{space 3}0.000{col 58}{space 4}-5.636895{col 71}{space 3}-5.122023
+{txt}{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+  E(sigma_u) {c |}  {res} .0655305                                 .0649309    .0661301
+{txt}  E(sigma_v) {c |}  {res} .0666982                                  .066675    .0667214
+{txt}{hline 13}{c BT}{hline 64}
+
+{com}. estimates store tfe
+{txt}
+{com}. 
+. sfpanel `dep_vlist' `indep_vlist' year if country=="IRE",  model(tre) cost d(exponential) usigma(`z_vlist') vsigma(`z_vlist') // emean(`z_vlist')  
+
+{res}
+{txt}initial:{col 16}Log simulated-likelihood = {res: 535.64177}
+Iteration 0:{space 3}Log simulated-likelihood = {res: 535.64177}  (not concave)
+Iteration 1:{space 3}Log simulated-likelihood = {res: 1028.4781}  
+Iteration 2:{space 3}Log simulated-likelihood = {res: 1159.4544}  (not concave)
+Iteration 3:{space 3}Log simulated-likelihood = {res: 1198.0233}  (not concave)
+Iteration 4:{space 3}Log simulated-likelihood = {res:  1206.745}  
+Iteration 5:{space 3}Log simulated-likelihood = {res:  1243.196}  (not concave)
+Iteration 6:{space 3}Log simulated-likelihood = {res: 1279.7156}  (not concave)
+Iteration 7:{space 3}Log simulated-likelihood = {res: 1293.0293}  (not concave)
+Iteration 8:{space 3}Log simulated-likelihood = {res: 1295.2073}  (not concave)
+Iteration 9:{space 3}Log simulated-likelihood = {res: 1295.7123}  (not concave)
+Iteration 10:{space 2}Log simulated-likelihood = {res: 1296.2414}  (not concave)
+Iteration 11:{space 2}Log simulated-likelihood = {res:  1296.598}  
+Iteration 12:{space 2}Log simulated-likelihood = {res: 1322.8866}  
+Iteration 13:{space 2}Log simulated-likelihood = {res: 1333.8717}  
+Iteration 14:{space 2}Log simulated-likelihood = {res: 1333.8905}  
+Iteration 15:{space 2}Log simulated-likelihood = {res: 1333.8905}  
+
+True random-effects model (exponential){col 54}Number of obs {col 68}={col 70}{res}     2820
+{txt}Group variable: {res}pid{txt}{col 51}Number of groups{col 68}={col 70}{res}      605
+{txt}Time variable: {res}year{txt}{col 49}Obs per group: min{col 68}={col 70}{res}        1
+{col 64}{txt}avg{col 68}={col 70}{res}      4.7
+{col 64}{txt}max{col 68}={col 70}{res}        9
+
+{txt}{col 54}Prob > chi2   = {res}   0.0000
+{txt}Log simulated-likelihood = {res} 1333.8905{txt}{col 54}Wald chi2({res}4{txt})  = {res}  3093.82
+
+{txt}Number of Pseudo Random Draws = {res}250
+{txt}{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}   lntotalinputs{col 18}{c |}      Coef.{col 30}   Std. Err.{col 42}      z{col 50}   P>|z|{col 58}     [95% Con{col 71}f. Interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Frontier         {txt}{c |}
+{space 3}lntotaloutput {c |}{col 18}{res}{space 2} .7707894{col 30}{space 2} .0144072{col 41}{space 1}   53.50{col 50}{space 3}0.000{col 58}{space 4} .7425518{col 71}{space 3} .7990269
+{txt}lnPCompoundfee~t {c |}{col 18}{res}{space 2}-.1529657{col 30}{space 2} .0555229{col 41}{space 1}   -2.75{col 50}{space 3}0.006{col 58}{space 4}-.2617886{col 71}{space 3}-.0441427
+{txt}lnPFERTILISERS~S {c |}{col 18}{res}{space 2} .4388206{col 30}{space 2} .0560256{col 41}{space 1}    7.83{col 50}{space 3}0.000{col 58}{space 4} .3290124{col 71}{space 3} .5486288
+{txt}{space 12}year {c |}{col 18}{res}{space 2}-.0192596{col 30}{space 2} .0012436{col 41}{space 1}  -15.49{col 50}{space 3}0.000{col 58}{space 4} -.021697{col 71}{space 3}-.0168222
+{txt}{space 11}_cons {c |}{col 18}{res}{space 2} 39.41151{col 30}{space 2}  2.43964{col 41}{space 1}   16.15{col 50}{space 3}0.000{col 58}{space 4}  34.6299{col 71}{space 3} 44.19311
+{txt}{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Usigma           {txt}{c |}
+{space 9}fdratio {c |}{col 18}{res}{space 2}-6.164372{col 30}{space 2} .8357466{col 41}{space 1}   -7.38{col 50}{space 3}0.000{col 58}{space 4}-7.802406{col 71}{space 3}-4.526339
+{txt}{space 11}_cons {c |}{col 18}{res}{space 2}-4.177288{col 30}{space 2} .1665469{col 41}{space 1}  -25.08{col 50}{space 3}0.000{col 58}{space 4}-4.503714{col 71}{space 3}-3.850862
+{txt}{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Vsigma           {txt}{c |}
+{space 9}fdratio {c |}{col 18}{res}{space 2} .7021255{col 30}{space 2} .3454897{col 41}{space 1}    2.03{col 50}{space 3}0.042{col 58}{space 4} .0249782{col 71}{space 3} 1.379273
+{txt}{space 11}_cons {c |}{col 18}{res}{space 2}-4.932877{col 30}{space 2} .1087721{col 41}{space 1}  -45.35{col 50}{space 3}0.000{col 58}{space 4}-5.146066{col 71}{space 3}-4.719687
+{txt}{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}Theta            {txt}{c |}
+{space 11}_cons {c |}{col 18}{res}{space 2} .2275723{col 30}{space 2} .0090559{col 41}{space 1}   25.13{col 50}{space 3}0.000{col 58}{space 4} .2098231{col 71}{space 3} .2453216
+{txt}{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+  E(sigma_u) {c |}  {res} .0654988                                  .064677    .0663206
+{txt}  E(sigma_v) {c |}  {res} .0920172                                 .0918716    .0921629
+{txt}{hline 13}{c BT}{hline 64}
+
+{com}. estimates store tre
+{txt}
+{com}. 
+. 
+. STOP!!
+{err}unrecognized command:  STOP
+{txt}{search r(199):r(199);}
+
+end of do-file
+
+{search r(199):r(199);}
+
+{com}. exit
+{err}no; data in memory would be lost
+{txt}{search r(4):r(4);}
+
+{com}. exit, clear

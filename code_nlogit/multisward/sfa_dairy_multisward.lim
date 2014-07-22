@@ -1,0 +1,939 @@
+?*******************************************************
+?*******************************************************
+?       Cathal O'Donoghue, REDP Teagasc
+?       &
+?       Patrick R. Gillespie                            
+?       Walsh Fellow                    
+?       Teagasc, REDP                           
+?       patrick.gillespie@teagasc.ie            
+?*******************************************************
+? Farm Level Microsimulation Model
+?       Cross country SFA analysis
+?       Using FADN Panel Data                         
+?       
+?       Code for PhD Thesis chapter
+?       Contribution to Multisward 
+?       Framework Project
+?                                                    
+?       Thesis Supervisors:
+?       Cathal O'Donoghue
+?       Stephen Hynes
+?       Thia Hennessey
+?       Fiona Thorne
+?
+?*******************************************************
+? READ THE README.txt FILE BEFORE CHANGING ANYTHING!!!
+?*******************************************************
+
+
+
+
+
+RESET							$ 
+
+
+READ	;FILE="G:\Data\data_FADNPanelAnalysis\OutData\DataCreatorFADN\test_constructed_data_FADN.csv" $
+?READ	;FILE="\productivity\inputdata\xls\9609v2d.xls" $
+?READ	;FILE="\productivity\Limdep Data (xls)\DAIRY XLS.xls" $
+?READ	;FILE="\productivity\Limdep Data (xls)\DY9609v2d.xls" $
+
+
+
+
+
+?SU*********************************************************************************
+
+
+RENAME	;DC=D					$
+
+
+?-----------------------------------------------
+? CREATE LAND
+?-----------------------------------------------
+
+CREATE	;A=LANDFAGE				$
+
+DSTAT		;RHS=Y2,H,D,C,L3,A 		$
+
+REJECT	;Y2<=0				$
+REJECT	;H<=0					$
+REJECT	;D<=0					$ 
+REJECT	;C<=0					$
+REJECT	;L3<=0				$
+REJECT	;A<=0					$
+
+DSTAT		;RHS=Y2,H,D,C,L3,A 		$
+DSTAT		;RHS=Y2,H,D,C,L3,A 		$
+
+
+
+?-----------------------------------------------
+? CREATE PANEL INDICATOR 
+?-----------------------------------------------
+
+SORT		;LHS=FC;RHS=* 			$
+
+CREATE	;IND=NDX(FC,0) 			$
+
+REGRESS	;LHS=ONE;RHS=ONE;STR=fc;PANEL	$
+
+CREATE	;GRPSIZE=_GROUPTI 		$
+
+CALC		;LIST;G=MAX(GRPSIZE) 		$
+
+
+
+?-----------------------------------------------
+? CALCULATE MEANS		
+?-----------------------------------------------
+
+CALC		;MEANY1=XBR(Y1)			$
+CALC		;MEANY2=XBR(Y2)			$
+CALC		;MEANH=XBR(H)			$
+CALC		;MEAND=XBR(D)			$ 
+CALC		;MEANC=XBR(C)			$
+CALC		;MEANL=XBR(L3)			$
+CALC		;MEANA=XBR(A)			$
+
+
+
+?-----------------------------------------------
+? MEAN ADJUST
+?-----------------------------------------------
+
+CREATE	;MY1=Y1/MEANY1 ;MY2=Y2/MEANY2 
+		;MH=H/MEANH  ;MD=D/MEAND  ;MC=C/MEANC
+		;ML=L3/MEANL ;MA=A/MEANA 	$
+
+
+
+?-----------------------------------------------
+? CONVERT TO LOGS
+?-----------------------------------------------
+
+CREATE	;LNY1=LOG(MY1);LNY2=LOG(MY2)
+		;LNH=LOG(MH) ;LND=LOG(MD)
+		;LNC=LOG(MC) ;LNL=LOG(ML) 
+		;LNA=LOG(MA)			$ 
+
+
+
+?-----------------------------------------------
+? CREATE INTERACTION VARIABLES FOR TRANSLOG
+?-----------------------------------------------
+
+CREATE	;TT=T*T ;TTT=TT*T 
+		;LNHH=LNH*LNH ;LNHD=LNH*LND ;LNHC=LNH*LNC ;LNHL=LNH*LNL ;LNHA=LNH*LNA 
+		;LNDC=LND*LNC ;LNDD=LND*LND ;LNDL=LND*LNL ;LNDA=LND*LNA 
+		;LNCC=LNC*LNC ;LNCL=LNC*LNL ;LNCA=LNC*LNA 
+		;LNLL=LNL*LNL ;LNLA=LNL*LNA 
+		;LNAA=LNA*LNA
+		;LNHT=LNH*T   ;LNCT=LNC*T   ;LNDT=LND*T   ;LNLT=LNL*T 	$ 
+
+
+
+
+
+?-----------------------------------------------
+? CREATE NAMELISTS
+? ----------------
+?
+?	IMPORTANT:	
+?
+? The order of the variables and their interactions matters! 
+? The parameter estimates that are saved below will depend on
+? the proper order being specified, as do the calculations in
+? the definitions of EH, ED, EC, EL, EA, and finally RTS.
+?-----------------------------------------------
+
+
+NAMELIST	;CD=ONE,LNH,LND,LNC,LNL,LNA 	$ 
+
+NAMELIST	;TL=LNHH,LNHD,LNHC,LNHL,LNHA
+		   ,LNDD,LNDC,LNDL,LNDA
+		   ,LNCC,LNCL,LNCA
+		   ,LNLL,LNLA
+		   ,LNAA				$ 
+
+NAMELIST	;TCD=T,TT				$
+
+NAMELIST	;TTL=T,TT,LNHT,LNCT,LNDT,LNLT	$ 
+
+NAMELIST	;TDV=T2,T3,T4,T5,T6,T7,T8,T9 	$  ?<-- one for each year, less the first
+
+?SU*********************************************************************************
+
+
+
+
+
+
+
+
+
+
+?PL*********************************************************************************
+? Pitt and Lee (1984)
+?***********************************************************************************
+
+REJECT	;NEW;_GROUPTI<0			$
+
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV
+		;PDS=GRPSIZE;EFF=UPL		$
+
+CREATE	;EPL=EXP(-UPL)			$
+
+SAMPLE	;ALL					$
+
+
+
+?-----------------------------------------------
+
+? Referencing the B vector 
+
+CREATE;	EH=B( 2) +(2*LNH*B( 7))+  (LND*B( 8))+  (LNC*B( 9))+  (LNL*B(10))+  (LNA*B(11)) $
+CREATE;	ED=B( 3) +  (LNH*B( 8))+(2*LND*B(12))+  (LNC*B(13))+  (LNL*B(14))+  (LNA*B(15)) $
+CREATE;	EC=B( 4) +  (LNH*B( 9))+  (LND*B(13))+(2*LNC*B(16))+  (LNL*B(17))+  (LNA*B(18)) $
+CREATE;	EL=B( 5) +  (LNH*B(10))+  (LND*B(14))+  (LNC*B(17))+(2*LNL*B(19))+  (LNA*B(20)) $ 
+CREATE;	EA=B( 6) +  (LNH*B(11))+  (LND*B(15))+  (LNC*B(18))+  (LNL*B(20))+(2*LNA*B(21)) $ 
+
+?-----------------------------------------------
+
+
+
+? EH to EA are created, so use to calculate returns to scale.
+
+CREATE	;RTS = EH + ED + EC + EL + EA		$ 
+
+DSTAT		;RHS=EH,EC,EL,EA,RTS;WTS=W 		$ 
+
+INCLUDE	;New;t=1					$
+DSTAT		;RHS=EPL,EH,ED,EC,EL,EA,LNH,LND,LNC
+		,LNL,LNA;WTS=W 				$
+
+INCLUDE	;New;t=2					$
+DSTAT		;RHS=EPL,EH,ED,EC,EL,EA,LNH,LND,LNC
+		,LNL,LNA;WTS=W				$
+
+INCLUDE	;New;t=3					$
+DSTAT		;RHS=EPL,EH,ED,EC,EL,EA,LNH,LND,LNC
+		,LNL,LNA;WTS=W 				$
+
+INCLUDE	;New;t=4					$
+DSTAT		;RHS=EPL,EH,ED,EC,EL,EA,LNH,LND,LNC
+		,LNL,LNA;WTS=W 				$
+
+INCLUDE	;New;t=5					$
+DSTAT		;RHS=EPL,EH,ED,EC,EL,EA,LNH,LND,LNC
+		,LNL,LNA;WTS=W 				$
+
+INCLUDE	;New;t=6					$
+DSTAT		;RHS=EPL,EH,ED,EC,EL,EA,LNH,LND,LNC
+		,LNL,LNA;WTS=W 				$
+
+INCLUDE	;New;t=7					$
+DSTAT		;RHS=EPL,EH,ED,EC,EL,EA,LNH,LND,LNC
+		,LNL,LNA;WTS=W 				$
+
+INCLUDE	;New;t=8					$
+DSTAT		;RHS=EPL,EH,ED,EC,EL,EA,LNH,LND,LNC
+		,LNL,LNA;WTS=W 				$
+
+INCLUDE	;New;t=9					$
+DSTAT		;RHS=EPL,EH,ED,EC,EL,EA,LNH,LND,LNC
+		,LNL,LNA;WTS=W 				$
+
+SAMPLE	;ALL						$
+
+
+
+
+
+?BC*********************************************************************************
+? Battese and Coelli (1992)
+?***********************************************************************************
+
+REJECT	;NEW;_GROUPTI<0				$
+
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV;PDS=GRPSIZE
+		;MODEL=BC;EFF=UBC 			$
+CREATE	;EBC=EXP(-UBC)				$
+
+SAMPLE	;ALL						$
+
+
+
+?-----------------------------------------------
+
+? Referencing the B vector 
+
+CREATE;	EH=B( 2) +(2*LNH*B( 7))+  (LND*B( 8))+  (LNC*B( 9))+  (LNL*B(10))+  (LNA*B(11)) $
+CREATE;	ED=B( 3) +  (LNH*B( 8))+(2*LND*B(12))+  (LNC*B(13))+  (LNL*B(14))+  (LNA*B(15)) $
+CREATE;	EC=B( 4) +  (LNH*B( 9))+  (LND*B(13))+(2*LNC*B(16))+  (LNL*B(17))+  (LNA*B(18)) $
+CREATE;	EL=B( 5) +  (LNH*B(10))+  (LND*B(14))+  (LNC*B(17))+(2*LNL*B(19))+  (LNA*B(20)) $ 
+CREATE;	EA=B( 6) +  (LNH*B(11))+  (LND*B(15))+  (LNC*B(18))+  (LNL*B(20))+(2*LNA*B(21)) $ 
+
+?-----------------------------------------------
+
+
+
+CREATE	;RTS=EH+ED+EC+EL+EA 			$
+
+DSTAT		;RHS=EH,ED,EC,EL,EA,RTS;WTS=W 	$
+
+INCLUDE	;New;t=1					$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=2					$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=3					$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=4					$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=5					$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=6					$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=7					$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=8					$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=9					$
+DSTAT		;RHS=EBC,EH,ED,EC,EL,EA;WTS=W		$
+
+SAMPLE	;ALL						$
+
+
+
+
+
+
+
+
+
+
+?TRE********************************************************************************
+? 'True' Random Effects Model (Greene, 2005) - with time dummies
+?***********************************************************************************
+
+?ONLY RESULTS IN LIMDEP 9 - Coefficients are BELOW. UITS are in excel and stata file ??
+REJECT	;NEW;_GROUPTI<0				$
+
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV $
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV;PDS=GRPSIZE
+		;HALTON;PTS=10;RPM;FCN=ONE(n)
+		;EFF=UTRE 					$
+
+CREATE	;ETRE=EXP(-UTRE)				$
+
+
+SAMPLE	;ALL						$
+
+
+
+?-----------------------------------------------
+
+? Referencing the B vector 
+
+CREATE;	EH=B( 2) +(2*LNH*B( 7))+  (LND*B( 8))+  (LNC*B( 9))+  (LNL*B(10))+  (LNA*B(11)) $
+CREATE;	ED=B( 3) +  (LNH*B( 8))+(2*LND*B(12))+  (LNC*B(13))+  (LNL*B(14))+  (LNA*B(15)) $
+CREATE;	EC=B( 4) +  (LNH*B( 9))+  (LND*B(13))+(2*LNC*B(16))+  (LNL*B(17))+  (LNA*B(18)) $
+CREATE;	EL=B( 5) +  (LNH*B(10))+  (LND*B(14))+  (LNC*B(17))+(2*LNL*B(19))+  (LNA*B(20)) $ 
+CREATE;	EA=B( 6) +  (LNH*B(11))+  (LND*B(15))+  (LNC*B(18))+  (LNL*B(20))+(2*LNA*B(21)) $ 
+
+?-----------------------------------------------
+
+
+
+CREATE;	RTS=EH+ED+EC+EL+EA 			$
+
+DSTAT		;RHS=EH,ED,EC,EL,EA,RTS;WTS=W 	$ 
+
+INCLUDE	;New;t=1					$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=2					$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=3					$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=4					$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=5					$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=6					$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=7					$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=8					$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=9					$
+DSTAT		;RHS=ETRE,EH,ED,EC,EL,EA;WTS=W	$
+
+SAMPLE		;ALL					$
+
+
+
+
+
+
+
+
+
+
+?TFE********************************************************************************
+? 'True' Fixed Effects Model (Greene, 2005) - with time dummies
+?***********************************************************************************
+
+REJECT	;NEW;_GROUPTI<0				$
+
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV 		$
+
+DSTAT		;RHS=_GROUPTI,FC,T 			$
+
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV
+		;PDS=GRPSIZE;FEM;EFF=UTFE 		$
+	
+CREATE	;ETFE=EXP(-UTFE)				$
+
+SAMPLE	;ALL						$
+
+
+
+?-----------------------------------------------
+
+? Referencing the B vector 
+
+CREATE;	EH=B( 2) +(2*LNH*B( 7))+  (LND*B( 8))+  (LNC*B( 9))+  (LNL*B(10))+  (LNA*B(11)) $
+CREATE;	ED=B( 3) +  (LNH*B( 8))+(2*LND*B(12))+  (LNC*B(13))+  (LNL*B(14))+  (LNA*B(15)) $
+CREATE;	EC=B( 4) +  (LNH*B( 9))+  (LND*B(13))+(2*LNC*B(16))+  (LNL*B(17))+  (LNA*B(18)) $
+CREATE;	EL=B( 5) +  (LNH*B(10))+  (LND*B(14))+  (LNC*B(17))+(2*LNL*B(19))+  (LNA*B(20)) $ 
+CREATE;	EA=B( 6) +  (LNH*B(11))+  (LND*B(15))+  (LNC*B(18))+  (LNL*B(20))+(2*LNA*B(21)) $ 
+
+?-----------------------------------------------
+
+
+
+CREATE	;RTS=EH+ED+EC+EL+EA 			$ 
+
+DSTAT		;RHS=EH,ED,EC,EL,EA,RTS;WTS=W $
+INCLUDE	;New;t=1					$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=2					$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=3					$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=4					$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=5					$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=6					$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=7					$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=8					$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=9					$
+DSTAT		;RHS=ETFE,EH,ED,EC,EL,EA;WTS=W	$
+
+SAMPLE	;ALL						$
+
+
+
+
+
+
+
+
+
+
+?OK*********************************************************************************
+? Orea and Kumbhakar - variables effects variance of Ui
+?***********************************************************************************
+
+REJECT	;NEW;_GROUPTI < 0				$
+
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV
+		;PDS=GRPSIZE
+		;MODEL=BC; EFF=UKO
+		;HFU=AID,FSIZE,AGE,ALLOC
+		,INTENSE,EXTEND 				$ 
+
+		?*** "SOIL2,SOIL3,,OFFFARM," removed from HFU above... don't have them		***
+		?*** ",DECOUP" also removed because it's a 0 vector (causes singular matrix) 	***
+
+
+CREATE	;EKO=EXP(-UKO)				$
+
+DSTAT		;RHS=EKO;WTS=W				$
+
+SAMPLE	;ALL						$
+
+
+
+?-----------------------------------------------
+
+? Referencing the B vector 
+
+CREATE;	EH=B( 2) +(2*LNH*B( 7))+  (LND*B( 8))+  (LNC*B( 9))+  (LNL*B(10))+  (LNA*B(11)) $
+CREATE;	ED=B( 3) +  (LNH*B( 8))+(2*LND*B(12))+  (LNC*B(13))+  (LNL*B(14))+  (LNA*B(15)) $
+CREATE;	EC=B( 4) +  (LNH*B( 9))+  (LND*B(13))+(2*LNC*B(16))+  (LNL*B(17))+  (LNA*B(18)) $
+CREATE;	EL=B( 5) +  (LNH*B(10))+  (LND*B(14))+  (LNC*B(17))+(2*LNL*B(19))+  (LNA*B(20)) $ 
+CREATE;	EA=B( 6) +  (LNH*B(11))+  (LND*B(15))+  (LNC*B(18))+  (LNL*B(20))+(2*LNA*B(21)) $ 
+
+?-----------------------------------------------
+
+
+
+CREATE	;RTS=EH+ED+EC+EL+EA			$ 
+DSTAT		;RHS=EH,ED,EC,EL,EA,RTS;WTS=W		$
+
+INCLUDE	;New;t=1					$
+DSTAT		;RHS=EKO,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=2					$
+DSTAT		;RHS=EKO,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=3					$
+DSTAT		;RHS=EKO,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=4					$
+DSTAT		;RHS=EKO,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=5					$
+DSTAT		;RHS=EKO,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=6					$
+DSTAT		;RHS=EKO,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=7					$
+DSTAT		;RHS=EKO,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=8					$
+DSTAT		;RHS=EKO,EH,ED,EC,EL,EA;WTS=W		$
+
+INCLUDE	;New;t=9					$
+DSTAT		;RHS=EKO,EH,ED,EC,EL,EA;WTS=W		$
+
+
+SAMPLE	;ALL						$
+
+
+
+
+
+
+
+
+
+
+?LCM********************************************************************************
+? Latent Class Model
+?***********************************************************************************
+
+REJECT	;NEW;_GROUPTI<0				$
+
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV			$
+FRONTIER	;LHS=LNY2;RHS=CD,TL,TDV
+		;PDS=GRPSIZE;LCM;PTS=2
+		;EFF=ULCM					$
+
+CREATE	;ELCM=EXP(-ULCM)				$
+
+DSTAT		;RHS=ELCM;WTS=W				$
+
+SAMPLE	;ALL						$
+
+
+
+?-----------------------------------------------
+
+? Referencing the B vector 
+
+CREATE;	EH=B( 2) +(2*LNH*B( 7))+  (LND*B( 8))+  (LNC*B( 9))+  (LNL*B(10))+  (LNA*B(11)) $
+CREATE;	ED=B( 3) +  (LNH*B( 8))+(2*LND*B(12))+  (LNC*B(13))+  (LNL*B(14))+  (LNA*B(15)) $
+CREATE;	EC=B( 4) +  (LNH*B( 9))+  (LND*B(13))+(2*LNC*B(16))+  (LNL*B(17))+  (LNA*B(18)) $
+CREATE;	EL=B( 5) +  (LNH*B(10))+  (LND*B(14))+  (LNC*B(17))+(2*LNL*B(19))+  (LNA*B(20)) $ 
+CREATE;	EA=B( 6) +  (LNH*B(11))+  (LND*B(15))+  (LNC*B(18))+  (LNL*B(20))+(2*LNA*B(21)) $ 
+
+?-----------------------------------------------
+
+
+
+CREATE	;RTS=EH+ED+EC+EL+EA			$
+ 
+DSTAT		;RHS=EH,ED,EC,EL,EA,RTS;WTS=W		$ 		
+
+INCLUDE	;New;t=1					$
+DSTAT		;RHS=ELCM,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=2					$
+DSTAT		;RHS=ELCM,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=3					$
+DSTAT		;RHS=ELCM,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=4					$
+DSTAT		;RHS=ELCM,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=5					$
+DSTAT		;RHS=ELCM,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=6					$
+DSTAT		;RHS=ELCM,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=7					$
+DSTAT		;RHS=ELCM,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=8					$
+DSTAT		;RHS=ELCM,EH,ED,EC,EL,EA;WTS=W	$
+
+INCLUDE	;New;t=9					$
+DSTAT		;RHS=ELCM,EH,ED,EC,EL,EA;WTS=W	$
+
+SAMPLE	;ALL						$
+
+
+
+
+
+
+
+
+
+
+?RK*********************************************************************************
+? RANKS AND CORRELATION MATRIX
+?***********************************************************************************
+
+
+DSTAT;Rhs=UPL,UBC,UTRE,UTFE,UKO,ULCM;
+	Wts=W;Output=2					$  
+
+
+
+
+? CREATE RANKS AND COMPARE CORRELATIONS
+
+CREATE	;RKPL=RNK(UPL)				$
+CREATE	;RKBC=RNK(UBC)				$
+CREATE	;RKTRE=RNK(UTRE)				$
+CREATE	;RKTFE=RNK(UTFE)				$
+CREATE	;RKKO=RNK(UKO)				$
+CREATE	;RKLCM=RNK(ULCM)				$
+
+DSTAT	;Rhs=RKPL,RKBC,RKKO,RKTRE,RKTFE
+	;Wts=W;Output=2					$	
+
+
+
+? RANK BY YEAR 
+
+INCLUDE	;New;t=1					$
+
+CREATE	;RKPL2=RNK(UPL)				$
+CREATE	;RKBC2=RNK(UBC)				$
+CREATE	;RKTRE2=RNK(UTRE)				$
+CREATE	;RKTFE2=RNK(UTFE)				$	
+CREATE	;RKKO2=RNK(UKO)				$
+CREATE	;RKLCM2=RNK(ULCM)				$
+
+
+
+INCLUDE	;New;t=2					$
+
+CREATE	;RKPL2=RNK(UPL)				$
+CREATE	;RKBC2=RNK(UBC)				$
+CREATE	;RKTRE2=RNK(UTRE)				$
+CREATE	;RKTFE2=RNK(UTFE)				$
+CREATE	;RKKO2=RNK(UKO)				$
+CREATE	;RKLCM2=RNK(ULCM)				$
+
+
+
+INCLUDE	;New;t=3					$
+
+CREATE	;RKPL2=RNK(UPL)				$
+CREATE	;RKBC2=RNK(UBC)				$
+CREATE	;RKTRE2=RNK(UTRE)				$
+CREATE	;RKTFE2=RNK(UTFE)				$
+CREATE	;RKKO2=RNK(UKO)				$
+CREATE	;RKLCM2=RNK(ULCM)				$
+
+
+
+INCLUDE	;New;t=4					$
+
+CREATE	;RKPL2=RNK(UPL)				$
+CREATE	;RKBC2=RNK(UBC)				$
+CREATE	;RKTRE2=RNK(UTRE)				$
+CREATE	;RKTFE2=RNK(UTFE)				$
+CREATE	;RKKO2=RNK(UKO)				$
+CREATE	;RKLCM2=RNK(ULCM)				$
+
+
+
+INCLUDE	;New;t=5					$
+
+CREATE	;RKPL2=RNK(UPL)				$
+CREATE	;RKBC2=RNK(UBC)				$
+CREATE	;RKTRE2=RNK(UTRE)				$
+CREATE	;RKTFE2=RNK(UTFE)				$
+CREATE	;RKKO2=RNK(UKO)				$
+CREATE	;RKLCM2=RNK(ULCM)				$
+
+
+
+INCLUDE	;New;t=6					$
+
+CREATE	;RKPL2=RNK(UPL)				$
+CREATE	;RKBC2=RNK(UBC)				$
+CREATE	;RKTRE2=RNK(UTRE)				$
+CREATE	;RKTFE2=RNK(UTFE)				$
+CREATE	;RKKO2=RNK(UKO)				$
+CREATE	;RKLCM2=RNK(ULCM)				$
+
+
+
+INCLUDE	;New;t=7					$
+
+CREATE	;RKPL2=RNK(UPL)				$
+CREATE	;RKBC2=RNK(UBC)				$
+CREATE	;RKTRE2=RNK(UTRE)				$
+CREATE	;RKTFE2=RNK(UTFE)				$
+CREATE	;RKKO2=RNK(UKO)				$
+CREATE	;RKLCM2=RNK(ULCM)				$
+
+
+
+INCLUDE	;New;t=8					$
+
+CREATE	;RKPL2=RNK(UPL)				$
+CREATE	;RKBC2=RNK(UBC)				$
+CREATE	;RKTRE2=RNK(UTRE)				$
+CREATE	;RKTFE2=RNK(UTFE)				$
+CREATE	;RKKO2=RNK(UKO)				$
+CREATE	;RKLCM2=RNK(ULCM)				$
+
+
+
+INCLUDE	;New;t=9					$
+
+CREATE	;RKPL2=RNK(UPL)				$
+CREATE	;RKBC2=RNK(UBC)				$
+CREATE	;RKTRE2=RNK(UTRE)				$
+CREATE	;RKTFE2=RNK(UTFE)				$
+CREATE	;RKKO2=RNK(UKO)				$
+CREATE	;RKLCM2=RNK(ULCM)				$
+
+
+
+
+
+
+
+
+
+
+?WP*********************************************************************************
+?WRITE and PLOT
+?***********************************************************************************
+
+REJECT	;NEW	;_GROUPTI<0				$
+
+DSTAT	;Rhs=RKPL2,RKBC2,RKTRE2,RKTFE2
+	   , RKKO2, RKLCM2
+	;Wts=W ; Output=2					$
+
+
+WRITE	;T,FC,W,UPL,UBC,UTRE ,UTFE,UKO
+	 ,ULCM,EPL, EBC, ETRE,ETFE,EKO
+	 ,ELCM,RKPL,RKBC,RKTRE,RKTFE
+	 ,RKKO,RKLCM,RKPL2,RKBC2
+	 ,RKTRE2,RKTFE2,RKKO2,RKLCM2
+	;File="G:\Data\data_FADNPanelAnalysis\OutData\multisward\uits_dairy_multisward.xls"
+	;Format=XLS						$
+
+
+?*** IMPORTANT: If the WRITE command above is given a list containing vars not in the current
+?*** dataset, then it will throw an error saying that the first variable on the list is an
+?*** "Unidentifiable string", EVEN IF THAT VARIABLE IS IN THE DATA! Therefore, check ALL of 
+?*** the variables in the list to make sure they are there, not just the one referenced in the 
+?*** error message. It's only reference because it's the first variable, and it might not 
+?*** be causing the error at all! 
+
+
+
+? PLOT INEFFICIENCES
+
+?PLOT	;LHS=RKPL2 	;RHS=RKBC2				$
+?PLOT	;LHS=RKTFE2	;RHS=RKTRE2				$
+?PLOT	;LHS=RKTRE2	;RHS=RKPL2				$
+?PLOT	;LHS=RKKO2	;RHS=RKLCM2				$
+?PLOT	;LHS=RKTRE2	;RHS=RKLCM2				$
+?PLOT	;LHS=RKTFE2	;RHS=RKLCM2				$
+?PLOT	;LHS=RKTRE2	;RHS=RKKO2				$
+?PLOT	;LHS=RKTFE2	;RHS=RKKO2				$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+?AP*********************************************************************************
+?
+?	APPENDIX - Comments and template code only, no active code
+?
+?
+?***********************************************************************************
+
+
+?-----------------------------------------------
+
+?		HARD CODING TEMPLATE
+
+?-----------------------------------------------
+?
+?  Hard coded values are specific to the particular
+?  model formulation you use, and possibly even to 
+?  each run of the model if your changes affect the 
+?  parameter estimates (as they most likely will).
+?
+?  Therefore, this template will only be of value to 
+?  make transparent the parameter estimates from a 
+?  particular run.It's best not to use this approach
+?  unless you're really sure you know what you're 
+?  doing.
+?
+?-----------------------------------------------
+? You can hard code beta values by setting them here. Naming convention
+? for the B's is B1-B5 for the X's, then B11 for first square, then 
+? B12 for interaction of 1 with 2, etc. Comments in at the line endings 
+? are for reference.
+?  --------------------------------------------------
+?		CODE				|	COMMENT
+?  --------------------------------------------------
+?CREATE	;B1    =    0.6444      ?   LNH   is  B(2)
+?		;B2    =    0.3804      ?   LND   is  B(3)
+?		;B3    =    0.0564      ?   LNC   is  B(4)
+?		;B4    =    0.0490      ?   LNL   is  B(5)
+?		;B5    =    0.0265      ?   LNA   is  B(6)
+?		;B11   =   -0.0331      ?   LNHH  is  B(7)
+?		;B12   =   -0.0743      ?   LNHD  is  B(8)
+?		;B13   =   -0.0012      ?   LNHC  is  B(9)
+?		;B14   =    0.0675      ?   LNHL  is  B(10)
+?		;B15   =    0.0064      ?   LNHA  is  B(11)
+?		;B22   =    0.0392      ?   LNDD  is  B(12)
+?		;B23   =   -0.0201      ?   LNDC  is  B(13)
+?		;B24   =   -0.0442      ?   LNDL  is  B(14)
+?		;B25   =   -0.0165      ?   LNDA  is  B(15)
+?		;B33   =    0.0092      ?   LNCC  is  B(16)
+?		;B34   =   -0.0232      ?   LNCL  is  B(17)
+?		;B35   =    0.0218      ?   LNCA  is  B(18)
+?		;B44   =   -0.0303      ?   LNLL  is  B(19)
+?		;B45   =    0.0543      ?   LNLA  is  B(20)
+?		;B55   =   -0.0228 $    ?   LNAA  is  B(21)
+?  -------------------------------------------------
+?				COMMENT		
+?  -------------------------------------------------
+						? T2		is B(16)
+?	? You won't be too		? T3		is B(17)
+?	? interested in the		? T4	 	is B(18)
+?	? time dummy beta's		? T5		is B(19)
+?	? but I've kept them		? T6		is B(20)
+?	? listed for reference		? T7		is B(21)
+?	? assuming a 9 year panel	? T8		is B(22)
+? 						? T9		is B(23)
+?
+?  You would then use these CREATE statements for the 
+?  hard coded values (differs from above)
+?
+?  --------------------------------------------------
+? 				CODE
+?  --------------------------------------------------
+?CREATE;	EH=B1 +(2*LNH*B11)+  (LND*B12)+  (LNC*B13)+  (LNL*B14)+  (LNA*B15) $ 
+?CREATE;	ED=B2 +  (LNH*B12)+(2*LND*B22)+  (LNC*B23)+  (LNL*B24)+  (LNA*B25) $ 
+?CREATE;	EC=B3 +  (LNH*B13)+  (LND*B23)+(2*LNC*B33)+  (LNL*B34)+  (LNA*B35) $ 
+?CREATE;	EL=B4 +  (LNH*B14)+  (LND*B24)+  (LNC*B34)+(2*LNL*B44)+  (LNA*B45) $ 
+?CREATE;	EA=B5 +  (LNH*B15)+  (LND*B25)+  (LNC*B35)+  (LNL*B45)+(2*LNA*B55) $ 
+?  --------------------------------------------------
+
+
+
+
+?-----------------------------------------------
+
+?	NOTES ON REFERNCING THE B VECTOR
+
+?-----------------------------------------------
+?
+? The method employed normally is to reference 
+? the B vector directly. If there are 5 independent
+? variables and a translog specification is used, then 
+? the numbers to put inside the brackets of B()  
+? will be an augmented matrix like this ...
+?
+?
+?		X		XH	XD	XC	XL	XA
+?	EH	2	|	7	8	9	10	11
+?			|
+?	ED	3	|	8	12	13	14	15
+?			|
+?	EC	4	|	9	13	16	17	18
+?			|
+?	EL	5	|	10	14	17	19	20
+?			|
+?	EA	6	|	11	15	18	20	21
+?
+?
+? ... where the X column is the relevant variable,
+?     and XH to XA are interactions. Note the 
+?     patterns in the interaction matrix and X vector.
+? 	Those patterns are extendable if one wishes to add
+?	more variables. 
+?
+
+? See how these vector indices apply in the following
+? example code (copied from above).
+
+?-----------------------------------------------
+
+? Referencing the B vector 
+
+?CREATE;	EH=B( 2) +(2*LNH*B( 7))+  (LND*B( 8))+  (LNC*B( 9))+  (LNL*B(10))+  (LNA*B(11)) $
+?CREATE;	ED=B( 3) +  (LNH*B( 8))+(2*LND*B(12))+  (LNC*B(13))+  (LNL*B(14))+  (LNA*B(15)) $
+?CREATE;	EC=B( 4) +  (LNH*B( 9))+  (LND*B(13))+(2*LNC*B(16))+  (LNL*B(17))+  (LNA*B(18)) $
+?CREATE;	EL=B( 5) +  (LNH*B(10))+  (LND*B(14))+  (LNC*B(17))+(2*LNL*B(19))+  (LNA*B(20)) $ 
+?CREATE;	EA=B( 6) +  (LNH*B(11))+  (LND*B(15))+  (LNC*B(18))+  (LNL*B(20))+(2*LNA*B(21)) $ 
+
+?-----------------------------------------------
