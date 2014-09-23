@@ -1,0 +1,289 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  D:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2014_09_21.txt
+  log type:  text
+ opened on:  21 Sep 2014, 21:13:02
+
+. di  "Job  Started  at  $S_TIME  on $S_DATE"
+Job  Started  at  21:13:02  on 21 Sep 2014
+
+. cmdlog using logs/$project$datestamp.cmd.txt, append 
+(note: file D:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2014_09_21.cmd.txt not found)
+(cmdlog D:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2014_09_21.cmd.txt opened)
+
+. 
+. 
+. 
+. 
+. preserve
+
+. 
+. 
+. drop country
+
+. gen int country = countrycode2
+
+. keep pid year country `dep_vlist' `indep_vlist' `z_vlist' TREND
+
+. 
+. outsheet _all using `fadnoutdatadir'/exported_data.csv, comma replace nolabel
+
+. save `fadnoutdatadir'/exported_data.dta, replace nolabel
+file D:\\Data/data_FADNPanelAnalysis/OutData/multisward/exported_data.dta saved
+
+. 
+. restore
+
+. 
+. 
+. 
+. * ===================
+. * MODEL COMMANDS HERE
+. * ===================
+. if "`cost'"=="cost"{
+.         local   tech_or_cost    "cost"
+. }
+
+. else{
+.         local   tech_or_cost    "tech"
+. }
+
+. /*
+> sfpanel `dep_vlist' `indep_vlist' TREND if country == "DEU",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') vsigma(TREND)
+> estimates store `model1name'_DEU_`tech_or_cost'
+> estimates save `fadnoutdatadir'/`model1name'_DEU_`tech_or_cost'_$datestamp$timestamp.ster, replace
+> di `e(converged)'
+> 
+> sfpanel `dep_vlist' `indep_vlist' TREND if country == "FRA",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') vsig
+> ma(TREND)
+> estimates store `model1name'_FRA_`tech_or_cost' 
+> estimates save `fadnoutdatadir'/`model1name'_FRA_`tech_or_cost'_$datestamp$timestamp.ster, replace
+> di `e(converged)'
+> */
+. xtreg  `dep_vlist' `indep_vlist' TREND, re
+note: half_lnX_12 dropped because of collinearity
+note: half_lnX_13 dropped because of collinearity
+note: half_lnX_14 dropped because of collinearity
+note: half_lnX_23 dropped because of collinearity
+note: half_lnX_24 dropped because of collinearity
+note: half_lnX_34 dropped because of collinearity
+
+Random-effects GLS regression                   Number of obs      =      4669
+Group variable: pid                             Number of groups   =      1790
+
+R-sq:  within  = 0.3216                         Obs per group: min =         1
+       between = 0.7050                                        avg =       2.6
+       overall = 0.7131                                        max =         9
+
+                                                Wald chi2(9)       =   5352.34
+corr(u_i, X)   = 0 (assumed)                    Prob > chi2        =    0.0000
+
+------------------------------------------------------------------------------
+lndairypro~s |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        CD_1 |   8.20e-07   1.23e-06     0.67   0.506    -1.59e-06    3.23e-06
+        CD_2 |  -1.29e-07   3.10e-07    -0.42   0.678    -7.37e-07    4.80e-07
+        CD_3 |   .0033095   .0003101    10.67   0.000     .0027017    .0039173
+        CD_4 |   .0000129   4.60e-06     2.81   0.005     3.90e-06    .0000219
+ half_lnX_11 |   .0083939   .0091374     0.92   0.358    -.0095151     .026303
+ half_lnX_22 |   .1333667   .0091817    14.53   0.000      .115371    .1513624
+ half_lnX_33 |   .4580001   .0154431    29.66   0.000     .4277322     .488268
+ half_lnX_44 |   .0031143   .0104698     0.30   0.766    -.0174061    .0236348
+       TREND |   .0255839   .0026289     9.73   0.000     .0204313    .0307364
+       _cons |   9.099939   .1206447    75.43   0.000      8.86348    9.336399
+-------------+----------------------------------------------------------------
+     sigma_u |  .62450928
+     sigma_e |   .2822531
+         rho |  .83038017   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+
+. sfpanel `dep_vlist' `indep_vlist' TREND if country == "IRE",  `cost' model(tre) d(tnormal) posthessian robust svfrontier(e(b))// emean(`z_vlist') usig
+> ma(`z_vlist') 
+
+note: half_lnX_22 omitted because of collinearity
+note: half_lnX_23 omitted because of collinearity
+note: half_lnX_24 omitted because of collinearity
+note: half_lnX_33 omitted because of collinearity
+note: half_lnX_34 omitted because of collinearity
+note: half_lnX_44 omitted because of collinearity
+User specified starting values in svfrontier() do not match frontier's regressors number
+invalid syntax
+r(198);
+
+end of do-file
+
+r(198);
+
+. qui reg `dep_vlist' `indep_vlist' i.pid
+depvar may not be a factor variable
+r(198);
+
+. ereturn list
+
+. doedit
+
+. do "C:\Users\PATRIC~1.GIL\AppData\Local\Temp\STD05000000.tmp"
+
+. *===============================
+. * Cost (c)
+. *local  lnc_vlist       "lntotalinputs"
+. local   lnc_vlist       "lntotalspecificcosts"
+
+. *===============================
+. 
+. 
+. *===============================
+. * Output quantities (q)
+. *local  lnq_vlist       "lndotomkglndx " // measure of output (simple index)
+. *local  lnq_vlist       "lndairyproductsndx" // measure of output (physical quantity)
+. local   lnq_vlist       "lndairyproducts" // measure of output (physical quantity)
+
+. *local  lnq_vlist       "lndairyproducts_ha" // measure of output (physical quantity)
+. *local  lnq_vlist       "lndotomkgl " // measure of output (physical quantity)
+. *local  lnq_vlist       "lntotaloutput" // measure of output (nominal euro)
+. *===============================
+. 
+. 
+. 
+. 
+. *===============================
+. * Prices (w)
+. 
+. * CALCULATED FROM FADN VARIABLES
+. * ------------------------------
+. *local  lnw_vlist       "`lnw_vlist' lnPLand" 
+. local   lnw_vlist       "`lnw_vlist' lnPTotalCattle" 
+
+. *local  lnw_vlist       "`lnw_vlist' lnPLabour"  
+. * EUROSTAT PRICE INDICES
+. * ---------------------
+.         * FEED
+. *local  lnw_vlist       "`lnw_vlist' lnPCompoundfeedingstuffsforcalv"
+. local   lnw_vlist       "`lnw_vlist' lnPCompoundfeedingstuffsforcatt"
+
+. *local  lnw_vlist       "`lnw_vlist' lnPCerealsandmillingbyproducts"
+. *local  lnw_vlist       "`lnw_vlist' lnPOilcakes"
+.         * FERTILISER
+. *local  lnw_vlist       "`lnw_vlist' lnPOtherfertilizerssoilimprovers"
+. local   lnw_vlist       "`lnw_vlist' lnPFERTILISERSANDSOILIMPROVERS"
+
+. *local  lnw_vlist       "`lnw_vlist' lnPNitrogenousfertilizers"
+.         * ANY REMAINING COSTS
+. *local  lnw_vlist       "`lnw_vlist' lnPElectricity" 
+. *local  lnw_vlist       "`lnw_vlist' lnPMotorfuels" 
+. *local  lnw_vlist       "`lnw_vlist' lnPVETERINARYEXPENSES"
+. *local  lnw_vlist       "`lnw_vlist' lnPSEEDSANDPLANTINGSTOCK"
+. *local  lnw_vlist       "`lnw_vlist' lnPMACHINERYANDOTHEREQUIPMENT"
+. *local  lnw_vlist       "`lnw_vlist' lnPMAINTENANCEOFBUILDINGS"
+. *local  lnw_vlist       "`lnw_vlist' lnPOTHERGOODSANDSERVICES"
+. *===============================
+. 
+end of do-file
+
+. do "C:\Users\PATRIC~1.GIL\AppData\Local\Temp\STD05000000.tmp"
+
+. *===============================
+. * Cost (c)
+. *local  lnc_vlist       "lntotalinputs"
+. local   lnc_vlist       "lntotalspecificcosts"
+
+. *===============================
+. 
+. 
+. *===============================
+. * Output quantities (q)
+. *local  lnq_vlist       "lndotomkglndx " // measure of output (simple index)
+. *local  lnq_vlist       "lndairyproductsndx" // measure of output (physical quantity)
+. local   lnq_vlist       "lndairyproducts" // measure of output (physical quantity)
+
+. *local  lnq_vlist       "lndairyproducts_ha" // measure of output (physical quantity)
+. *local  lnq_vlist       "lndotomkgl " // measure of output (physical quantity)
+. *local  lnq_vlist       "lntotaloutput" // measure of output (nominal euro)
+. *===============================
+. 
+. 
+. 
+. 
+. *===============================
+. * Prices (w)
+. 
+. * CALCULATED FROM FADN VARIABLES
+. * ------------------------------
+. *local  lnw_vlist       "`lnw_vlist' lnPLand" 
+. local   lnw_vlist       "`lnw_vlist' lnPTotalCattle" 
+
+. *local  lnw_vlist       "`lnw_vlist' lnPLabour"  
+. * EUROSTAT PRICE INDICES
+. * ---------------------
+.         * FEED
+. *local  lnw_vlist       "`lnw_vlist' lnPCompoundfeedingstuffsforcalv"
+. local   lnw_vlist       "`lnw_vlist' lnPCompoundfeedingstuffsforcatt"
+
+. *local  lnw_vlist       "`lnw_vlist' lnPCerealsandmillingbyproducts"
+. *local  lnw_vlist       "`lnw_vlist' lnPOilcakes"
+.         * FERTILISER
+. *local  lnw_vlist       "`lnw_vlist' lnPOtherfertilizerssoilimprovers"
+. local   lnw_vlist       "`lnw_vlist' lnPFERTILISERSANDSOILIMPROVERS"
+
+. *local  lnw_vlist       "`lnw_vlist' lnPNitrogenousfertilizers"
+.         * ANY REMAINING COSTS
+. *local  lnw_vlist       "`lnw_vlist' lnPElectricity" 
+. *local  lnw_vlist       "`lnw_vlist' lnPMotorfuels" 
+. *local  lnw_vlist       "`lnw_vlist' lnPVETERINARYEXPENSES"
+. *local  lnw_vlist       "`lnw_vlist' lnPSEEDSANDPLANTINGSTOCK"
+. *local  lnw_vlist       "`lnw_vlist' lnPMACHINERYANDOTHEREQUIPMENT"
+. *local  lnw_vlist       "`lnw_vlist' lnPMAINTENANCEOFBUILDINGS"
+. *local  lnw_vlist       "`lnw_vlist' lnPOTHERGOODSANDSERVICES"
+. *===============================
+. 
+.         local   dep_vlist       "`lnc_vlist'" 
+
+.         local   indep_vlist     "`lnq_vlist' `lnw_vlist'"
+
+. 
+end of do-file
+
+. macro list
+S_FNDATE:       20 Nov 2013 17:37
+S_FN:           D:\\Data/data_FADNPanelAnalysis/OutData/multisward/multisward.dta
+S_1:            lndairyproducts CD_1 CD_2 CD_3 CD_4 half_lnX_11 half_lnX_22 half_lnX_33 half_lnX_44 TREND
+timestamp:      0912pm
+datestamp:      2014_09_21
+dataname:       multisward.dta
+FADN_4:         1
+FADN_3:         0
+FADN_2:         1
+FADN_1:         1
+grassvars:      temporarygrassaa meadowpermpastaa roughgrazingaa
+newvars:        *
+oldvars:        *
+sectors:        principalfarmtype==41
+countrylabels:  msname
+ms:             Germany France Ireland UnitedKingdom
+databuild:      0
+project:        multisward
+datadir:        D:\\Data
+T_gm_fix_span:  0
+nfs:            NFSPanelAnalysis
+fadn:           FADNPanelAnalysis
+S_level:        95
+F1:             help advice;
+F2:             describe;
+F7:             save
+F8:             use
+S_ADO:          UPDATES;BASE;SITE;.;PERSONAL;PLUS;OLDPLACE
+S_StataSE:      SE
+S_FLAVOR:       Intercooled
+S_OS:           Windows
+S_MACH:         PC
+_noln:          nspecial
+_vlist:         lntotalspecificcosts lndairyproducts lnPTotalCattle lnPCompoundfeedingstuffsforcatt lnPFERTILISERSANDSOILIMPROVERS lngrassratio lnspecial
+
+. do msward_WRSresults_cost_2014_09_22
+file msward_WRSresults_cost_2014_09_22.do not found
+r(601);
+
+. do msward_WFSresults_cost_2014_09_22
+
+. * Based on msward_code_clarity.do
+. capture log close

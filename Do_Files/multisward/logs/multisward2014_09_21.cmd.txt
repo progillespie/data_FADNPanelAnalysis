@@ -1,0 +1,8 @@
+qui reg `dep_vlist' `indep_vlist' i.pid
+ereturn list
+doedit
+do "C:\Users\PATRIC~1.GIL\AppData\Local\Temp\STD05000000.tmp"
+do "C:\Users\PATRIC~1.GIL\AppData\Local\Temp\STD05000000.tmp"
+macro list
+do msward_WRSresults_cost_2014_09_22
+do msward_WFSresults_cost_2014_09_22

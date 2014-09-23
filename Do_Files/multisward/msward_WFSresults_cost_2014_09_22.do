@@ -269,6 +269,8 @@ else {
 	local 	indep_vlist 	"`lnx_vlist'"
 }
 
+
+
 * Give a name for stored estimates (e.g. "bc95")
 local 	model1name 	"bc95"
 
@@ -415,7 +417,7 @@ if $databuild == 1{
 	* create a unique panel id (farmcodes repeat)
 	egen pid = group(country region subregion farmcode)
 	destring pid, replace
-	tsset pid year
+	xtset pid year
 	duplicates report pid year
 
 	label variable farmcode "ID (only unique within country)" 
@@ -901,7 +903,7 @@ sort country year
 ********************************************************
 
 sort pid year
-
+xtset pid year, yearly // already done, but just in case
 
 * turn on logs 
 log using logs/$project$datestamp.txt, append text
@@ -923,7 +925,17 @@ save `fadnoutdatadir'/exported_data.dta, replace nolabel
 
 restore
 
+local vlist "`dep_vlist' `indep_vlist'"
+foreach var of  local vlist {
 
+  recast double `var'
+
+}
+
+
+set more on
+do sub_do/diagnostics.do "`dep_vlist'" "`indep_vlist'"
+set more off
 
 * ===================
 * MODEL COMMANDS HERE
