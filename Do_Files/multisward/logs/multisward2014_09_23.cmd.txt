@@ -1,0 +1,133 @@
+cd ../
+dir
+cd ../../
+cd NFSPanelAnalysis/Do_Files/
+cd data_NFSPanelAnalysis/Do_Files/
+dir
+cd _Colleagues_Projects
+dir
+cd FarmPriceVolMSM
+dir
+cd ../../
+dir
+cd RAW_79_83/
+dir
+cd sub_do
+dir
+dir ../../../OutData/
+dir ../../../OutData/FarmPriceVolMSM/
+use ../../../OrigData/FarmPriceVolMSM/
+dir ../../../OrigData/FarmPriceVolMSM/
+dir ../../../OrigData/FarmPriceVolMSM/svy_weights, clear
+use ../../../OrigData/FarmPriceVolMSM/svy_weights, clear-
+use ../../../OrigData/FarmPriceVolMSM/svy_weights, clear
+describe
+describe, detail
+br
+tab UAA_WEIGHT, by(YE_AR)
+tab UAA_WEIGHT
+tab UAA_WEIGHT YE_AR
+tabstat UAA_WEIGHT, by(YE_AR)
+tab YE_AR
+describe
+use ../../../OrigData/FarmPriceVolMSM/svy_farm, clear
+tab YE_AR
+ds FARM*
+tabstat FARM_SYSTEM, by(YE_AR )
+ds UAA*
+tabstat UAA_SIZE, by(YE_AR )
+dir ../../../OutData/FarmPriceVolMSM/
+merge 1:1 FARM_CODE YE_AR using ../../../OutData/FarmPriceVolMSM/d_dairy_gross_output.dta
+preserve do Cr_d_sample_cell.do
+preserve
+do Cr_d_sample_cell.do
+do createWeights.do
+do createWeights.do
+do createWeights.do
+tabstat d_dairy_gross_output_eu if FARM_SYSTEM==1 [weight==WTvalue] , by(YE_AR )
+tabstat d_dairy_gross_output_eu if FARM_SYSTEM == 1 [weight = WTvalue] , by(YE_AR )
+ds
+fds
+ds D_FARM*, varwidth(32)
+tabstat D_FARM_GROSS_OUTPUT if FARM_SYSTEM == 1 [weight = WTvalue] , by(YE_AR )
+tabstat D_FARM_GROSS_OUTPUT if FARM_SYSTEM == 1 & D_SOIL_GROUP < 3 [weight=WTvalue], by(YE_AR)
+tabstat D_FARM_GROSS_OUTPUT if FARM_SYSTEM == 1 [weight=WTvalue], by(YE_AR)
+restore
+dir ../../../OutData/
+dir ../../../OutData/RAW_79_83/justGO/
+use ../../../OrigData/FarmPriceVolMSM/svy_farm, clear
+fds
+use ../../../OutData/RAW_79_83/svy_tables_7983/svy_farm, clear
+fds
+merge 1:1 FARM_CODE YE_AR using ../../../OutData/RAW_79_83/justGO/d_dairy_gross_output, clear
+merge 1:1 FARM_CODE YE_AR using ../../../OutData/RAW_79_83/justGO/d_dairy_gross_output
+fds
+merge 1:1 FARM_CODE YE_AR using ../../../OutData/RAW_79_83/justGO/1/farm_gross_output
+drop _merge
+merge 1:1 FARM_CODE YE_AR using ../../../OutData/RAW_79_83/justGO/1/farm_gross_output
+ds FARM_SYSTEM
+gen int FARM_SYSTEM = .
+replace FARM_SYSTEM == 1 if d_dairy_gross_output_eu > .5(d_farm_gross_output )
+replace FARM_SYSTEM = 1 if d_dairy_gross_output_eu > .5(d_farm_gross_output )
+replace FARM_SYSTEM = 1 if d_dairy_gross_output_eu > .5*d_farm_gross_output
+tabstat d_farm_gross_output if FARM_SYSTEM ==1, by(YE_AR )
+ds S*, varwidth(32)
+tab SOIL_CODE
+gen SOIL_GROUP = 3 if SOIL_CODE > 4
+replace SOIL_GROUP  = 0 if missing(SOIL_GROUP )
+tabstat D_FARM_GROSS_OUTPUT if FARM_SYSTEM == 1 & D_SOIL_GROUP < 3, by(YE_AR)
+tabstat d_farm_gross_output FARM_SYSTEM == 1 & D_SOIL_GROUP < 3, by(YE_AR)
+tabstat d_farm_gross_output if FARM_SYSTEM == 1 & D_SOIL_GROUP < 3, by(YE_AR)
+rename SOIL_GROUP D_SOIL_GROUP
+tabstat d_farm_gross_output if FARM_SYSTEM == 1 & D_SOIL_GROUP < 3, by(YE_AR)
+clear
+cd ../../
+cd Quota
+do main.do
+do main.do
+do main.do
+do main.do
+dir D:\Data\data_NFSPanelAnalysis\OutData\RAW_79_83\justGO\svy_tables_7983\
+dir D:\Data\data_NFSPanelAnalysis\OutData\RAW_79_83\justGO\
+do main.do
+do main.do
+dir D:\Data\data_NFSPanelAnalysis\OutData\RAW_79_83\justGO\
+dir D:\Data\data_NFSPanelAnalysis\OutData\RAW_79_83\justGO\*farm*
+dir D:\Data\data_NFSPanelAnalysis\OutData\RAW_79_83\justGO\1\*farm*
+dir D:\Data\data_NFSPanelAnalysis\OutData\RAW_79_83\justGO\*farm*
+dir D:\Data\data_NFSPanelAnalysis\OutData\RAW_79_83\justGO\1\*farm*
+help macro list
+help macro
+do main.do
+do main.do
+do main.do
+do main.do
+do main.do
+do main.do
+do main.do
+help macro
+do main.do
+do main.do
+local dodir "D:\Data\data_NFSPanelAnalysis\Do_Files\Quota"
+cd `dodir'
+do main.do
+do main.do
+cd `dodir'
+do main.do
+fds
+do main.do
+fds
+do main.do
+fds
+do main.do
+do main.do
+do main.do
+do main.do
+do main.do
+tab bulkfeed_cond
+do main.do
+do main.do
+cd `dodir'
+do main.do
+clear
+exit

@@ -65,6 +65,7 @@ foreach var of local indep_vlist {
 
 }
 
+graph drop _all
 
 /* Tests for Model Specification
 ---------------------------------------------*/
@@ -73,7 +74,11 @@ more
 ovtest 
 more
 
-graph drop _all
+
+/* Wooldridge's panel test for Serial Correlation
+---------------------------------------------*/
+xtserial `dep_vlist' `indep_vlist'
+more
 
 
 * Data description
@@ -85,53 +90,59 @@ xtdescribe
 xtsum       pid year `dep_vlist' `indep_vlist'
 
 
+
 capture erase panel_est.doc
 
+
 * Pooled OLS
-reg `dep_vlist' `indep_vlist'
+qui reg `dep_vlist' `indep_vlist'
 outreg using panel_est, nodisplay ctitle("", Pooled) ///
   starlevels(10 5 1)
-more
+
 
 * Population-averaged estimator
-xtreg `dep_vlist' `indep_vlist', pa
+qui xtreg `dep_vlist' `indep_vlist', pa
 outreg using panel_est, merge nodisplay ctitle("", Pop. Avg.)
-more
+
 
 
 * Between estimator
-xtreg `dep_vlist' `indep_vlist', be
+qui xtreg `dep_vlist' `indep_vlist', be
 outreg using panel_est, merge nodisplay ctitle("", Between)
-more
+
 
 
 * Fixed effects estimator 
-xtreg `dep_vlist' `indep_vlist', fe
+qui xtreg `dep_vlist' `indep_vlist', fe
 estimates store fixed
 predict alphafehat, u
 outreg using panel_est, merge nodisplay ctitle("", FE)
-more
+
 
 
 * First-differences estimator
-reg D.(`dep_vlist' `indep_vlist'), noconstant
+qui reg D.(`dep_vlist' `indep_vlist'), noconstant
 outreg using panel_est, merge nodisplay ctitle("", 1st Diff)
-more
+
 
 
 * Random effects estimator
-xtreg `dep_vlist' `indep_vlist', re theta
+qui xtreg `dep_vlist' `indep_vlist', re theta
 estimates store random
 outreg using panel_est, merge ctitle("", RE) 
 more
 
+
 * Hausman test for RE vs FE
 hausman fixed random
+more
 
 
 * Breusch-Pagan LM test for RE vs OLS
 estimates restore random // make sure RE estimates are active
 xttest0
+more
+
 
 * Individual specific effects from FE
 summ alphafehat
