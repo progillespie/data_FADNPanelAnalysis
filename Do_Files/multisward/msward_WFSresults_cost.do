@@ -304,7 +304,7 @@ global 	countrylabels 	"msname"	 //ms2, ms3 for 2, 3 character abbrev.
 global 	sectors 	"principalfarmtype==41" //select desired FADN system
 global 	oldvars 	"*"		 //list of desired eupanel vars. * means all.
 global 	newvars 	"*"		 //list of desired FADN2 vars. * means all.
-global 	grassvars 	"temporarygrassaa meadowpermpastaa roughgrazingaa "  //list of desired FADN4 vars. * means all.
+global 	grassvars 	"temporarygrassAA meadowpermpastAA roughgrazingAA "  //list of desired FADN4 vars. * means all.
 
 * OrigData to use (1 = use, else don't)
 global FADN_1 = 1
@@ -351,8 +351,7 @@ global 	dataname 	"$project.dta"
 * Data prep and other setup
 ********************************************************
 
-* Directory check done, you can now define directory 
-*   locals for this file (FADNprep.do's locals gone now)
+* Directory check done
 local fadnpaneldir $datadir/data_FADNPanelAnalysis
 local fadnoutdatadir `fadnpaneldir'/OutData/$project
 local nfspaneldir $datadir/data_NFSPanelAnalysis
@@ -361,6 +360,16 @@ local fadn9907dir  `origdatadir'/FADN_1
 local fadn2dir  `origdatadir'/FADN_2/TEAGSC
 local fadn3dir `origdatadir'/FADN_3
 local fadn4dir  `origdatadir'/FADN_4/TEAGSC
+
+capture mkdir `fadnpaneldir'
+capture mkdir `fadnoutdatadir'
+capture mkdir `nfspaneldir'
+capture mkdir `origdatadir'
+capture mkdir `fadn9907dir'
+capture mkdir `fadn2dir'
+capture mkdir `fadn3dir'
+capture mkdir `fadn4dir'
+
 
 * Prepares the FADN data. Tests if databuild = 1 first
 * If directories are missing, will also make them.
@@ -847,8 +856,15 @@ capture drop fdratio
 capture drop forage_sh 
 capture drop lnfdratio 
 capture drop intwt
-gen fdratio = (feedforgrazinglivestockhomegrown/feedforgrazinglivestock)
-gen grass_sh = (temporarygrassaa+meadowpermpastaa+roughgrazingaa)/foragecropsuaa
+
+* If farm doesn't have homegrown feed, we want to make the grassratio
+*  close to 0 ((but not equal to it, because it will be logged). This
+*  may be controversial, so be upfront about it. 
+gen homegrownfeed = feedforgrazinglivestockhomegrown 
+replace homegrownfeed = 0.00001 if homegrownfeed==0
+
+gen fdratio = (homegrownfeed/feedforgrazinglivestock)
+gen grass_sh = (temporarygrassAA+meadowpermpastAA+roughgrazingAA)/foragecropsuaa
 gen grassratio = fdratio * grass_sh * 100
 gen special    = dpallocgo * 100
 gen intense    = (dairyproduct/daforare) *100
@@ -934,12 +950,12 @@ if "`cost'"=="cost"{
 else{
 	local 	tech_or_cost	"tech"
 }
-
+/*
 sfpanel `dep_vlist' `indep_vlist' TREND if country == "DEU",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') vsigma(TREND)
 estimates store `model1name'_DEU_`tech_or_cost'
 estimates save `fadnoutdatadir'/`model1name'_DEU_`tech_or_cost'_$datestamp$timestamp.ster, replace
 di `e(converged)'
-
+*/
 sfpanel `dep_vlist' `indep_vlist' TREND if country == "FRA",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') vsigma(TREND)
 estimates store `model1name'_FRA_`tech_or_cost' 
 estimates save `fadnoutdatadir'/`model1name'_FRA_`tech_or_cost'_$datestamp$timestamp.ster, replace

@@ -1,3 +1,4 @@
+quiet{
 * Based on msward_code_clarity.do
 capture log close
 capture cmdlog close
@@ -292,7 +293,7 @@ local	graphs		= 0
 
 * Run from raw FADN data? (1 = yes, all else/missing = no)
 
-global 	databuild = 1
+global 	databuild = 0
 
 
 
@@ -857,22 +858,23 @@ capture drop forage_sh
 capture drop lnfdratio 
 capture drop intwt
 
+scalar define sc_epsilon = 0.01
+gen fdratio = (feedforgrazinglivestockhomegrown/feedforgrazinglivestock)
+gen grass_sh = (temporarygrassAA+meadowpermpastAA+roughgrazingAA)/foragecropsuaa
+gen grassratio = (fdratio * grass_sh * 10) + sc_epsilon
 * If farm doesn't have homegrown feed, we want to make the grassratio
 *  close to 0 ((but not equal to it, because it will be logged). This
 *  may be controversial, so be upfront about it. 
-gen homegrownfeed = feedforgrazinglivestockhomegrown 
-replace homegrownfeed = 0.00001 if homegrownfeed==0
 
-gen fdratio = (homegrownfeed/feedforgrazinglivestock)
-gen grass_sh = (temporarygrassAA+meadowpermpastAA+roughgrazingAA)/foragecropsuaa
-gen grassratio = fdratio * grass_sh * 100
-gen special    = dpallocgo * 100
-gen intense    = (dairyproduct/daforare) *100
+
+gen special    = (dpallocgo * 10) + sc_epsilon
+gen intense    = (dairyproduct/daforare * 10) + sc_epsilon
 gen lnfdratio = ln(fdratio)
 gen lngrassratio = ln(grassratio)
 gen lnspecial = ln(special)
 gen lnintense = ln(intense)
 gen intwt = int(farmsrepresented)
+
 
 	
 *===============================*
@@ -911,7 +913,7 @@ sort country year
 
 
 
-
+}
 ********************************************************
 * MODELLING               
 ********************************************************
@@ -924,8 +926,11 @@ log using logs/$project$datestamp.txt, append text
 di  "Job  Started  at  $S_TIME  on $S_DATE"
 cmdlog using logs/$project$datestamp.cmd.txt, append 
 
-
-
+* dpallocgo will be neg if beefandveal < 0 and large. Causes missing 
+*  value in lnspecial. There's < 10 of these in each country, and they
+*  represent about 1700 farm-years over the entire sample of over 
+*  1.25 million farm-years
+drop if dpallocgo < 0
 
 preserve
 
@@ -950,48 +955,75 @@ if "`cost'"=="cost"{
 else{
 	local 	tech_or_cost	"tech"
 }
-/*
-sfpanel `dep_vlist' `indep_vlist' TREND if country == "DEU",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') vsigma(TREND)
+
+
+qui reg `dep_vlist' `indep_vlist' TREND if country == "DEU"
+matrix define SV = e(b)
+sfpanel `dep_vlist' `indep_vlist' TREND if country == "DEU",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') vsigma(TREND) iterate(1000) svfrontier(SV) nolog
 estimates store `model1name'_DEU_`tech_or_cost'
 estimates save `fadnoutdatadir'/`model1name'_DEU_`tech_or_cost'_$datestamp$timestamp.ster, replace
 di `e(converged)'
-*/
-sfpanel `dep_vlist' `indep_vlist' TREND if country == "FRA",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') vsigma(TREND)
+
+
+qui xtreg `dep_vlist' `indep_vlist' TREND if country == "FRA",  fe
+matrix define SV = e(b)
+sfpanel `dep_vlist' `indep_vlist' TREND if country == "FRA",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') vsigma(TREND) iterate(1000) svfrontier(SV) nolog
 estimates store `model1name'_FRA_`tech_or_cost' 
 estimates save `fadnoutdatadir'/`model1name'_FRA_`tech_or_cost'_$datestamp$timestamp.ster, replace
 di `e(converged)'
 
-sfpanel `dep_vlist' `indep_vlist' TREND if country == "IRE",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') 
+
+qui xtreg `dep_vlist' `indep_vlist' TREND if country == "IRE",  fe
+matrix define SV = e(b)
+sfpanel `dep_vlist' `indep_vlist' TREND if country == "IRE",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') iterate(1000) svfrontier(SV) nolog
 estimates store `model1name'_IRE_`tech_or_cost'
 estimates save `fadnoutdatadir'/`model1name'_IRE_`tech_or_cost'_$datestamp$timestamp.ster, replace
 di `e(converged)'
 
-sfpanel `dep_vlist' `indep_vlist' TREND if country == "UKI",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist')
+
+qui xtreg `dep_vlist' `indep_vlist' TREND if country == "UKI",  fe
+matrix define SV = e(b)
+sfpanel `dep_vlist' `indep_vlist' TREND if country == "UKI",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') iterate(1000) svfrontier(SV) nolog
 estimates store `model1name'_UKI_`tech_or_cost'
 estimates save `fadnoutdatadir'/`model1name'_UKI_`tech_or_cost'_$datestamp$timestamp.ster, replace
 di `e(converged)'
 
-sfpanel `dep_vlist' `indep_vlist' TREND if atl_plains == 1, `cost'  model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') vsigma(TREND)
+
+qui xtreg `dep_vlist' `indep_vlist' TREND if atl_plains == 1, fe
+matrix define SV = e(b)
+sfpanel `dep_vlist' `indep_vlist' TREND if atl_plains == 1, `cost'  model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') vsigma(TREND) iterate(1000) svfrontier(SV) nolog
 estimates store `model1name'_ATL_`tech_or_cost'
 estimates save `fadnoutdatadir'/`model1name'_ATL_`tech_or_cost'_$datestamp$timestamp.ster, replace
 di `e(converged)'
 
-sfpanel `dep_vlist' `indep_vlist' TREND if cont_eur == 1,   `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') 
+
+* CEU model's likelihood function is difficult. dfp algorithm (tech option) with plain OLS for 
+*   start parameters seems to let the model complete.
+qui reg `dep_vlist' `indep_vlist' TREND if cont_eur == 1
+matrix define SV = e(b)
+sfpanel `dep_vlist' `indep_vlist' TREND if cont_eur == 1,   `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') iterate(1000) svfrontier(SV) tech(dfp) nolog //nr bhhh bfgs
 estimates store `model1name'_CEU_`tech_or_cost'
 estimates save `fadnoutdatadir'/`model1name'_CEU_`tech_or_cost'_$datestamp$timestamp.ster, replace
 di `e(converged)'
 
-* BEST RESULT Effect on Mu parameter = -0.0054 Sigma U Parameter = 2.308268 need to figure out partial effect for this. Non-monotonic effect of grass. HARD CODE for reference. 
-*sfpanel lntotalspecificcosts lndairyproducts lnPTotalCattle lnPCompoundfeedingstuffsforcatt lnPFERTILISERSANDSOILIMPROVERS TREND , cost model(bc95) d(tnormal) posthessian robust emean(lngrassratio lnspecial) usigma(lngrassratio lnspecial) vsigma(TREND)
 
-sfpanel `dep_vlist' `indep_vlist' TREND , `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') vsigma(TREND)
+qui reg `dep_vlist' `indep_vlist' TREND if country == "DEU"
+matrix define SV = e(b)
+sfpanel `dep_vlist' `indep_vlist' TREND , `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') vsigma(TREND) iterate(1000)  svfrontier(SV) tech(dfp) nolog // not specifying svfrontier is best
 estimates store `model1name'_ALL_`tech_or_cost'
 estimates save `fadnoutdatadir'/`model1name'_ALL_`tech_or_cost'_$datestamp$timestamp.ster, replace
 di `e(converged)'
 
 log close
 cmdlog close
-STOP!!
+
+
+exit
+
+
+* BEST RESULT Effect on Mu parameter = -0.0054 Sigma U Parameter = 2.308268 need to figure out partial effect for this. Non-monotonic effect of grass. HARD CODE for reference. 
+*sfpanel lntotalspecificcosts lndairyproducts lnPTotalCattle lnPCompoundfeedingstuffsforcatt lnPFERTILISERSANDSOILIMPROVERS TREND , cost model(bc95) d(tnormal) posthessian robust emean(lngrassratio lnspecial) usigma(lngrassratio lnspecial) vsigma(TREND)
+
 * ===================
 
 

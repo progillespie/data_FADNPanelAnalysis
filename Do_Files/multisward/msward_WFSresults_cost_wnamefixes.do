@@ -10,7 +10,14 @@ set more off
 
 /*******************************************************
 ********************************************************
-       Cathal O'Donoghue, REDP Teagasc
+       
+	   Temporary file for debugging. Edited grassvar names
+	   to match cleanvarnames.do. German results turned off
+	   for speed of debugging (FRA not estimating, and I didn't
+	   want to wait for DEU to run everytime. DEU also not converging.)
+	   Grabbing
+	   
+	   Cathal O'Donoghue, REDP Teagasc
        &
        Patrick R. Gillespie                            
        Walsh Fellow                    
@@ -292,7 +299,7 @@ local	graphs		= 0
 
 * Run from raw FADN data? (1 = yes, all else/missing = no)
 
-global 	databuild = 1
+global 	databuild = 0
 
 
 
@@ -856,14 +863,7 @@ capture drop fdratio
 capture drop forage_sh 
 capture drop lnfdratio 
 capture drop intwt
-
-* If farm doesn't have homegrown feed, we want to make the grassratio
-*  close to 0 ((but not equal to it, because it will be logged). This
-*  may be controversial, so be upfront about it. 
-gen homegrownfeed = feedforgrazinglivestockhomegrown 
-replace homegrownfeed = 0.00001 if homegrownfeed==0
-
-gen fdratio = (homegrownfeed/feedforgrazinglivestock)
+gen fdratio = (feedforgrazinglivestockhomegrown/feedforgrazinglivestock)
 gen grass_sh = (temporarygrassAA+meadowpermpastAA+roughgrazingAA)/foragecropsuaa
 gen grassratio = fdratio * grass_sh * 100
 gen special    = dpallocgo * 100
@@ -956,15 +956,23 @@ estimates store `model1name'_DEU_`tech_or_cost'
 estimates save `fadnoutdatadir'/`model1name'_DEU_`tech_or_cost'_$datestamp$timestamp.ster, replace
 di `e(converged)'
 */
-sfpanel `dep_vlist' `indep_vlist' TREND if country == "FRA",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') vsigma(TREND)
+
+keep feedforgrazinglivestockhomegrown feedforgrazinglivestock fdratio grass_sh grassratio special TREND farmcode pid year country region subregion
+keep if country == "FRA"
+codebook _all
+exit
+
+
+sfpanel `dep_vlist' `indep_vlist' TREND if country == "FRA",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') vsigma(TREND) difficult
 estimates store `model1name'_FRA_`tech_or_cost' 
 estimates save `fadnoutdatadir'/`model1name'_FRA_`tech_or_cost'_$datestamp$timestamp.ster, replace
 di `e(converged)'
 
-sfpanel `dep_vlist' `indep_vlist' TREND if country == "IRE",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') 
+sfpanel `dep_vlist' `indep_vlist' TREND if country == "IRE",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') iterate(1000)
 estimates store `model1name'_IRE_`tech_or_cost'
 estimates save `fadnoutdatadir'/`model1name'_IRE_`tech_or_cost'_$datestamp$timestamp.ster, replace
 di `e(converged)'
+
 
 sfpanel `dep_vlist' `indep_vlist' TREND if country == "UKI",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist')
 estimates store `model1name'_UKI_`tech_or_cost'

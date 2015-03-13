@@ -20,7 +20,7 @@ capture mkdir `outdatadir'/densities
 cd "`dodir'"
 
 * Data prep file, uncomment to run from raw data
-*qui do sub_do/FADNprep.do standalone
+qui do sub_do/FADNprep.do standalone
 
 if "`BMWonly'" == ""{
 local BMWonly = 0

@@ -128,5 +128,5 @@ merge m:1 region subregion using tempweathervars.dta
 drop if _merge == 2
 tab _merge
 
-
+erase tempweathervars.dta
 

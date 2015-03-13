@@ -1,0 +1,508 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  D:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2015_01_20.txt
+  log type:  text
+ opened on:  20 Jan 2015, 18:04:49
+
+. di  "Job  Started  at  $S_TIME  on $S_DATE"
+Job  Started  at  18:04:49  on 20 Jan 2015
+
+. cmdlog using logs/$project$datestamp.cmd.txt, append 
+(note: file D:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2015_01_20.cmd.txt not found)
+(cmdlog D:\Data\data_FADNPanelAnalysis\Do_Files\multisward\logs/multisward2015_01_20.cmd.txt opened)
+
+. 
+. 
+. 
+. 
+. preserve
+
+. 
+. 
+. drop country
+
+. gen int country = countrycode2
+
+. keep pid year country `dep_vlist' `indep_vlist' `z_vlist' TREND
+
+. 
+. outsheet _all using `fadnoutdatadir'/exported_data.csv, comma replace nolabel
+(note: file D:\\Data/data_FADNPanelAnalysis/OutData/multisward/exported_data.csv not found)
+
+. save `fadnoutdatadir'/exported_data.dta, replace nolabel
+(note: file D:\\Data/data_FADNPanelAnalysis/OutData/multisward/exported_data.dta not found)
+file D:\\Data/data_FADNPanelAnalysis/OutData/multisward/exported_data.dta saved
+
+. 
+. restore
+
+. 
+. 
+. 
+. * ===================
+. * MODEL COMMANDS HERE
+. * ===================
+. if "`cost'"=="cost"{
+.         local   tech_or_cost    "cost"
+. }
+
+. else{
+.         local   tech_or_cost    "tech"
+. }
+
+. 
+. sfpanel `dep_vlist' `indep_vlist' TREND if country == "DEU",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') vsigma(TREND)
+
+
+initial:       Log pseudolikelihood = -42518.131
+Iteration 0:   Log pseudolikelihood = -42518.131  
+Iteration 1:   Log pseudolikelihood =  -38183.37  (backed up)
+Iteration 2:   Log pseudolikelihood = -37807.616  (backed up)
+Iteration 3:   Log pseudolikelihood = -34524.878  (backed up)
+Iteration 4:   Log pseudolikelihood = -34353.654  (backed up)
+Iteration 5:   Log pseudolikelihood = -32585.997  (backed up)
+Iteration 6:   Log pseudolikelihood = -32526.091  (backed up)
+Iteration 7:   Log pseudolikelihood = -32450.802  (backed up)
+Iteration 8:   Log pseudolikelihood = -32450.129  (backed up)
+Iteration 9:   Log pseudolikelihood =  -32448.94  (backed up)
+Iteration 10:  Log pseudolikelihood =  -32448.94  (backed up)
+Iteration 11:  Log pseudolikelihood = -32448.758  (backed up)
+Iteration 12:  Log pseudolikelihood = -32448.758  (backed up)
+Iteration 13:  Log pseudolikelihood = -32133.112  
+Iteration 14:  Log pseudolikelihood = -32092.934  
+Iteration 15:  Log pseudolikelihood = -31634.523  
+Iteration 16:  Log pseudolikelihood = -31331.451  
+Iteration 17:  Log pseudolikelihood = -31112.894  
+Iteration 18:  Log pseudolikelihood = -30998.719  
+Iteration 19:  Log pseudolikelihood =  -30991.21  
+Iteration 20:  Log pseudolikelihood =  -30991.21  (backed up)
+Iteration 21:  Log pseudolikelihood = -30983.867  
+Iteration 22:  Log pseudolikelihood = -30960.643  
+Iteration 23:  Log pseudolikelihood =  -30953.89  
+Iteration 24:  Log pseudolikelihood = -30935.401  
+Iteration 25:  Log pseudolikelihood = -30913.509  
+Iteration 26:  Log pseudolikelihood = -30888.291  
+Iteration 27:  Log pseudolikelihood = -30885.725  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 28:  Log pseudolikelihood = -30885.725  (backed up)
+Iteration 29:  Log pseudolikelihood = -30813.609  (backed up)
+Iteration 30:  Log pseudolikelihood = -26782.567  (backed up)
+Iteration 31:  Log pseudolikelihood = -23078.222  (backed up)
+Iteration 32:  Log pseudolikelihood = -20434.282  (backed up)
+Iteration 33:  Log pseudolikelihood = -17077.721  (backed up)
+Iteration 34:  Log pseudolikelihood = -16650.302  (backed up)
+Iteration 35:  Log pseudolikelihood = -14742.053  (backed up)
+Iteration 36:  Log pseudolikelihood = -14511.327  (backed up)
+Iteration 37:  Log pseudolikelihood = -14317.413  (backed up)
+Iteration 38:  Log pseudolikelihood = -11738.592  (backed up)
+Iteration 39:  Log pseudolikelihood = -9880.1764  
+Iteration 40:  Log pseudolikelihood = -8932.3679  
+Iteration 41:  Log pseudolikelihood = -6597.3116  
+Iteration 42:  Log pseudolikelihood = -5396.0481  
+Iteration 43:  Log pseudolikelihood = -3747.0898  
+Iteration 44:  Log pseudolikelihood = -3621.6024  
+Iteration 45:  Log pseudolikelihood = -3459.1122  
+Iteration 46:  Log pseudolikelihood =  -3362.219  
+Iteration 47:  Log pseudolikelihood = -3067.5353  
+Iteration 48:  Log pseudolikelihood = -2984.2472  
+Iteration 49:  Log pseudolikelihood = -2929.6664  (backed up)
+Iteration 50:  Log pseudolikelihood = -2914.4333  (backed up)
+Iteration 51:  Log pseudolikelihood = -2912.5336  (backed up)
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 52:  Log pseudolikelihood = -2911.6593  (backed up)
+Iteration 53:  Log pseudolikelihood = -2869.8267  (backed up)
+Iteration 54:  Log pseudolikelihood = -2820.6794  (backed up)
+Iteration 55:  Log pseudolikelihood = -2810.3763  (backed up)
+Iteration 56:  Log pseudolikelihood = -2810.3684  (backed up)
+Iteration 57:  Log pseudolikelihood = -2810.3672  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+numerical derivatives are approximate
+nearby values are missing
+Iteration 58:  Log pseudolikelihood = -2810.3654  (backed up)
+Iteration 59:  Log pseudolikelihood = -2754.1681  (backed up)
+Iteration 60:  Log pseudolikelihood = -2708.7017  (backed up)
+Iteration 61:  Log pseudolikelihood = -2702.2293  
+Iteration 62:  Log pseudolikelihood = -2359.0818  
+Iteration 63:  Log pseudolikelihood =  -2342.659  (backed up)
+Iteration 64:  Log pseudolikelihood = -2202.2474  
+Iteration 65:  Log pseudolikelihood = -1841.1943  
+Iteration 66:  Log pseudolikelihood = -1841.1943  (backed up)
+Iteration 67:  Log pseudolikelihood = -1569.8637  
+Iteration 68:  Log pseudolikelihood = -1453.6579  
+Iteration 69:  Log pseudolikelihood = -1261.4022  
+Iteration 70:  Log pseudolikelihood = -1256.0494  
+Iteration 71:  Log pseudolikelihood = -1256.0494  (backed up)
+Iteration 72:  Log pseudolikelihood = -1248.9465  
+Iteration 73:  Log pseudolikelihood = -1095.3428  
+Iteration 74:  Log pseudolikelihood = -1026.4829  
+Iteration 75:  Log pseudolikelihood = -944.96765  
+Iteration 76:  Log pseudolikelihood = -942.47158  
+Iteration 77:  Log pseudolikelihood = -875.88227  
+Iteration 78:  Log pseudolikelihood = -867.36819  
+Iteration 79:  Log pseudolikelihood = -864.55322  
+Iteration 80:  Log pseudolikelihood = -860.61259  
+Iteration 81:  Log pseudolikelihood = -859.62314  
+Iteration 82:  Log pseudolikelihood = -859.54425  
+Iteration 83:  Log pseudolikelihood = -859.54425  (backed up)
+Iteration 84:  Log pseudolikelihood = -859.22783  (backed up)
+Iteration 85:  Log pseudolikelihood = -856.25921  
+Iteration 86:  Log pseudolikelihood = -852.51231  
+Iteration 87:  Log pseudolikelihood = -850.89309  
+Iteration 88:  Log pseudolikelihood = -848.52891  
+Iteration 89:  Log pseudolikelihood = -836.73215  
+Iteration 90:  Log pseudolikelihood = -812.95452  
+Iteration 91:  Log pseudolikelihood = -781.89267  
+Iteration 92:  Log pseudolikelihood = -760.87206  
+Iteration 93:  Log pseudolikelihood = -753.68609  
+Iteration 94:  Log pseudolikelihood = -748.61137  
+Iteration 95:  Log pseudolikelihood = -746.19582  
+Iteration 96:  Log pseudolikelihood = -745.20339  
+Iteration 97:  Log pseudolikelihood = -744.59401  
+Iteration 98:  Log pseudolikelihood = -744.48693  
+Iteration 99:  Log pseudolikelihood = -744.48693  (backed up)
+Iteration 100: Log pseudolikelihood = -744.47778  (backed up)
+
+Inefficiency effects model (truncated-normal)        Number of obs =     13359
+Group variable: pid                               Number of groups =      2964
+Time variable: year                             Obs per group: min =         1
+                                                               avg =       4.5
+                                                               max =         9
+
+                                                     Prob > chi2   =    0.0000
+Log pseudolikelihood =  -744.4778                    Wald chi2(5)  =   6413.92
+
+                                                    (Std. Err. adjusted for 2964 clusters in pid)
+-------------------------------------------------------------------------------------------------
+                                |               Robust
+           lntotalspecificcosts |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------------------+----------------------------------------------------------------
+Frontier                        |
+                lndairyproducts |   1.028992   .0197252    52.17   0.000     .9903319    1.067653
+                 lnPTotalCattle |    .315857   .1317383     2.40   0.017     .0576546    .5740594
+lnPCompoundfeedingstuffsforcatt |  -.1498203   .0654727    -2.29   0.022    -.2781444   -.0214963
+ lnPFERTILISERSANDSOILIMPROVERS |   .4757972   .0844047     5.64   0.000      .310367    .6412275
+                          TREND |  -.0008148   .0037507    -0.22   0.828     -.008166    .0065364
+                          _cons |  -4.243146   .4485341    -9.46   0.000    -5.122257   -3.364036
+--------------------------------+----------------------------------------------------------------
+Mu                              |
+                   lngrassratio |   .0170296   .0223957     0.76   0.447    -.0268652    .0609244
+                      lnspecial |  -.9236016   .6604194    -1.40   0.162       -2.218    .3707966
+                          _cons |   4.354344   2.422793     1.80   0.072    -.3942427    9.102931
+--------------------------------+----------------------------------------------------------------
+Usigma                          |
+                          _cons |  -3.156551    .613306    -5.15   0.000    -4.358609   -1.954494
+--------------------------------+----------------------------------------------------------------
+Vsigma                          |
+                          TREND |   .8636832          .        .       .            .           .
+                          _cons |  -4.693316   .1563269   -30.02   0.000    -4.999711   -4.386921
+--------------------------------+----------------------------------------------------------------
+  E(sigma_v) |   1.451044                                 1.426773    1.475316
+     sigma_u |   .2063306   .0632719     3.26   0.001     .1131202    .3763458
+------------------------------------------------------------------------------
+
+. estimates store `model1name'_DEU_`tech_or_cost'
+
+. estimates save `fadnoutdatadir'/`model1name'_DEU_`tech_or_cost'_$datestamp$timestamp.ster, replace
+(note: file D:\Data/data_FADNPanelAnalysis/OutData/multisward/bc95_DEU_cost_2015_01_200600pm.ster not found)
+file D:\Data/data_FADNPanelAnalysis/OutData/multisward/bc95_DEU_cost_2015_01_200600pm.ster saved
+
+. di `e(converged)'
+0
+
+. 
+. sfpanel `dep_vlist' `indep_vlist' TREND if country == "FRA",  `cost' model(bc95) d(tnormal) posthessian robust emean(`z_vlist') usigma(`z_vlist') vsigma(TREND)
+
+
+initial:       Log pseudolikelihood = -18983.218
+Iteration 0:   Log pseudolikelihood = -18983.218  
+Iteration 1:   Log pseudolikelihood = -12863.119  (backed up)
+Iteration 2:   Log pseudolikelihood = -8907.1051  (backed up)
+Iteration 3:   Log pseudolikelihood = -8869.4126  (backed up)
+Iteration 4:   Log pseudolikelihood = -8045.2255  (backed up)
+Iteration 5:   Log pseudolikelihood = -7834.6487  (backed up)
+Iteration 6:   Log pseudolikelihood = -7822.0161  (backed up)
+Iteration 7:   Log pseudolikelihood = -7749.9543  (backed up)
+Iteration 8:   Log pseudolikelihood = -7698.2652  (backed up)
+Iteration 9:   Log pseudolikelihood = -7358.0826  
+Iteration 10:  Log pseudolikelihood =  -6674.904  
+Iteration 11:  Log pseudolikelihood = -6334.3839  
+Iteration 12:  Log pseudolikelihood = -5269.8348  
+Iteration 13:  Log pseudolikelihood = -4668.1197  
+Iteration 14:  Log pseudolikelihood =  -4538.786  (backed up)
+Iteration 15:  Log pseudolikelihood = -2677.0326  
+Iteration 16:  Log pseudolikelihood = -2404.1053  
+Iteration 17:  Log pseudolikelihood = -1866.1455  
+Iteration 18:  Log pseudolikelihood = -1695.7104  
+Iteration 19:  Log pseudolikelihood = -1690.8914  (backed up)
+Iteration 20:  Log pseudolikelihood = -1690.0705  (backed up)
+Iteration 21:  Log pseudolikelihood = -1689.7772  (backed up)
+Iteration 22:  Log pseudolikelihood = -1689.6964  (backed up)
+Iteration 23:  Log pseudolikelihood = -1689.6702  (backed up)
+Iteration 24:  Log pseudolikelihood = -1689.6625  (backed up)
+Iteration 25:  Log pseudolikelihood = -1689.6616  (backed up)
+Iteration 26:  Log pseudolikelihood = -1689.6614  (backed up)
+Iteration 27:  Log pseudolikelihood = -1689.6613  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+numerical derivatives are approximate
+nearby values are missing
+Iteration 28:  Log pseudolikelihood = -1689.6612  (backed up)
+Iteration 29:  Log pseudolikelihood = -922.25708  
+Iteration 30:  Log pseudolikelihood = -629.69432  
+Iteration 31:  Log pseudolikelihood = -527.62834  
+Iteration 32:  Log pseudolikelihood = -467.80677  
+Iteration 33:  Log pseudolikelihood = -465.71579  
+Iteration 34:  Log pseudolikelihood = -465.71579  (backed up)
+Iteration 35:  Log pseudolikelihood =  -465.0188  (backed up)
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 36:  Log pseudolikelihood =  -465.0188  (backed up)
+Iteration 37:  Log pseudolikelihood = -458.15105  (backed up)
+Iteration 38:  Log pseudolikelihood = -449.71405  (backed up)
+Iteration 39:  Log pseudolikelihood = -430.21922  (backed up)
+Iteration 40:  Log pseudolikelihood = -413.50115  (backed up)
+Iteration 41:  Log pseudolikelihood = -411.27052  (backed up)
+Iteration 42:  Log pseudolikelihood = -410.96591  (backed up)
+Iteration 43:  Log pseudolikelihood = -408.32204  (backed up)
+Iteration 44:  Log pseudolikelihood = -406.97926  (backed up)
+Iteration 45:  Log pseudolikelihood = -390.34051  (backed up)
+Iteration 46:  Log pseudolikelihood = -370.72498  
+Iteration 47:  Log pseudolikelihood = -328.95801  
+Iteration 48:  Log pseudolikelihood = -327.76137  (backed up)
+Iteration 49:  Log pseudolikelihood = -302.67867  
+Iteration 50:  Log pseudolikelihood = -281.70962  
+Iteration 51:  Log pseudolikelihood = -279.78718  (backed up)
+Iteration 52:  Log pseudolikelihood = -279.30413  (backed up)
+Iteration 53:  Log pseudolikelihood = -279.06091  (backed up)
+Iteration 54:  Log pseudolikelihood =  -278.9389  (backed up)
+Iteration 55:  Log pseudolikelihood = -278.87777  (backed up)
+Iteration 56:  Log pseudolikelihood = -278.86244  (backed up)
+Iteration 57:  Log pseudolikelihood = -278.86149  (backed up)
+Iteration 58:  Log pseudolikelihood = -278.86136  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+Iteration 59:  Log pseudolikelihood = -278.86134  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+Iteration 60:  Log pseudolikelihood = -278.86134  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+numerical derivatives are approximate
+nearby values are missing
+Iteration 61:  Log pseudolikelihood = -278.86134  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+numerical derivatives are approximate
+nearby values are missing
+Iteration 62:  Log pseudolikelihood = -278.86134  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+numerical derivatives are approximate
+nearby values are missing
+Iteration 63:  Log pseudolikelihood = -278.86134  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+numerical derivatives are approximate
+nearby values are missing
+Iteration 64:  Log pseudolikelihood = -278.86134  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+numerical derivatives are approximate
+nearby values are missing
+Iteration 65:  Log pseudolikelihood = -278.86134  (backed up)
+Iteration 66:  Log pseudolikelihood = -278.52123  
+BFGS stepping has contracted, resetting BFGS Hessian
+Iteration 67:  Log pseudolikelihood = -278.52123  (backed up)
+Iteration 68:  Log pseudolikelihood = -257.24362  (backed up)
+Iteration 69:  Log pseudolikelihood = -240.86269  (backed up)
+Iteration 70:  Log pseudolikelihood = -235.76649  (backed up)
+Iteration 71:  Log pseudolikelihood = -233.34261  (backed up)
+Iteration 72:  Log pseudolikelihood = -232.89345  (backed up)
+Iteration 73:  Log pseudolikelihood = -232.79036  (backed up)
+Iteration 74:  Log pseudolikelihood = -232.76225  (backed up)
+Iteration 75:  Log pseudolikelihood = -229.72158  (backed up)
+Iteration 76:  Log pseudolikelihood = -220.01663  (backed up)
+Iteration 77:  Log pseudolikelihood = -218.91514  
+Iteration 78:  Log pseudolikelihood = -203.73006  
+Iteration 79:  Log pseudolikelihood = -198.67014  (backed up)
+Iteration 80:  Log pseudolikelihood = -194.04622  (backed up)
+Iteration 81:  Log pseudolikelihood = -193.13001  (backed up)
+Iteration 82:  Log pseudolikelihood = -192.68583  (backed up)
+Iteration 83:  Log pseudolikelihood = -192.57576  (backed up)
+Iteration 84:  Log pseudolikelihood = -192.54829  (backed up)
+Iteration 85:  Log pseudolikelihood = -192.54142  (backed up)
+Iteration 86:  Log pseudolikelihood = -192.53798  (backed up)
+Iteration 87:  Log pseudolikelihood = -192.53626  (backed up)
+Iteration 88:  Log pseudolikelihood =  -192.5354  (backed up)
+Iteration 89:  Log pseudolikelihood = -192.53529  (backed up)
+Iteration 90:  Log pseudolikelihood = -192.53527  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+Iteration 91:  Log pseudolikelihood = -192.53525  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+Iteration 92:  Log pseudolikelihood = -192.53525  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+numerical derivatives are approximate
+nearby values are missing
+Iteration 93:  Log pseudolikelihood = -192.53525  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+numerical derivatives are approximate
+nearby values are missing
+Iteration 94:  Log pseudolikelihood = -192.53525  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+numerical derivatives are approximate
+nearby values are missing
+Iteration 95:  Log pseudolikelihood = -192.53525  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+numerical derivatives are approximate
+nearby values are missing
+Iteration 96:  Log pseudolikelihood = -192.53525  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+numerical derivatives are approximate
+nearby values are missing
+Iteration 97:  Log pseudolikelihood = -192.53525  (backed up)
+numerical derivatives are approximate
+nearby values are missing
+could not calculate numerical derivatives -- discontinuous region with missing values encountered
+numerical derivatives are approximate
+nearby values are missing
+could not calculate numerical derivatives -- discontinuous region with missing values encountered
+estimates post: matrix has missing values
+r(504);
+
+end of do-file
+There was a problem running multisward.
+D:\Data
+
+end of do-file
+
+
+. ml query
+no ml model defined
+
+. ereturn list
+
+. br
+
+. help dta_equal
+
+. dir "D:\Data\data_FADNPanelAnalysis\OutData\multisward"
+  <dir>   1/20/15 18:06  multisward        
+
+. dir "D:\Data\data_FADNPanelAnalysis\OutData\multisward\"
+  <dir>   1/20/15 18:06  .                 
+  <dir>   1/20/15 18:06  ..                
+  34.0k   1/20/15 18:06  bc95_DEU_cost_2015_01_200600pm.ster
+ 109.8M   1/20/15 18:02  data1.dta         
+  89.2k   1/20/15 18:02  data1_varlist.csv 
+ 151.8k   1/20/15 18:02  data1_varlist.dta 
+  34.5M   1/20/15 18:03  data2.dta         
+  89.7k   1/20/15 18:03  data2_varlist.csv 
+ 152.4k   1/20/15 18:03  data2_varlist.dta 
+  27.4M   1/20/15 18:03  data3.dta         
+  88.3k   1/20/15 18:03  data3_varlist.csv 
+ 150.8k   1/20/15 18:03  data3_varlist.dta 
+  40.3M   1/20/15 18:04  data4.dta         
+  88.6k   1/20/15 18:04  data4_varlist.csv 
+ 149.3k   1/20/15 18:04  data4_varlist.dta 
+  27.2k   1/20/15 18:04  eurostat_apri_pi00_ina.dta
+2122.1k   1/20/15 18:04  exported_data.csv 
+1126.4k   1/20/15 18:04  exported_data.dta 
+ 220.7M   1/20/15 18:04  multisward.dta    
+  77.0M   1/20/15 18:00  old_data1.dta     
+
+. dir "D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data"
+file not found
+
+. dir "D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+1126.4k   1/20/15 18:04  exported_data.dta 
+
+. dir "D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+1126.4k   1/20/15 10:55  exported_data.dta 
+
+. dta_equal "D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"  "D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta has 28755 obs.
+D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta has 28753 obs.
+r(9);
+
+. di "`r(uniq1)'"
+
+
+. return list
+
+. dta_equal "D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"  "D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta has 28755 obs.
+D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta has 28753 obs.
+r(9);
+
+. return list
+
+. help dta_equal
+
+. help return
+
+. return list
+
+. dta_equal "D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"  "D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta has 28755 obs.
+D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta has 28753 obs.
+r(9);
+
+. return list
+
+. ereturn list
+
+. return list, all
+
+. help cf
+
+. use "D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"  , clear
+
+. merge 1:1 pid year using "D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                        14,770
+        from master                     7,386  (_merge==1)
+        from using                      7,384  (_merge==2)
+
+    matched                            21,369  (_merge==3)
+    -----------------------------------------
+
+. sort pid year farmcode
+variable farmcode not found
+r(111);
+
+. sort pid year
+
+. br pid year _all
+
+. use "D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"  , clear
+
+. merge 1:1 using "D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+varlist or _n required after merge 1:1
+    for a match merge, you must specify the key variables after merge 1:1 or, if you want a sequential merge, specify merge 1:1 _n
+r(198);
+
+. merge 1:1 _all using "D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                        35,616
+        from master                    17,809  (_merge==1)
+        from using                     17,807  (_merge==2)
+
+    matched                            10,946  (_merge==3)
+    -----------------------------------------
+
+. exit
+no; data in memory would be lost
+r(4);
+
+. exit, clear

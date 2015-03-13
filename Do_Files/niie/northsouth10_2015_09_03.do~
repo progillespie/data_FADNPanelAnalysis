@@ -1,4 +1,4 @@
-quietly {
+quiet {
 args BMWonly
 matrix drop _all
 mata: mata clear
@@ -384,10 +384,8 @@ if `BMWonly'==1 {
 
 * "bmw" passed into do files via args command. (See help file for args)
 do sub_do/cex_vargen.do      `bmwarg' 	// variables for cex_ do-files
-gen cex_rentpaid     = rentpaid              / cex
-gen cex_wages        = wages*exchangerate    / cex
-gen cex_quotasales   = milkquotasales        / cex
-gen cex_quotarentrec = milkquotarentreceived / cex
+gen cex_rentpaid = rentpaid/cex 
+gen cex_wages = wages*exchangerate/cex
 
 gen hrs_lu = labourinputhours/totallivestockunits
 
@@ -420,14 +418,10 @@ gen double nocex_fdairygm = fdairygm
 gen double nocex_fdairyoh = fdairyoh 
 gen double nocex_fdairynm = nocex_fdairygm - nocex_fdairyoh
 gen double nocex_fdairyec = fdairyec 
-gen double nocex_quotasales   = milkquotasales 
-gen double nocex_quotarentrec = milkquotarentreceived
 
 * Use the exchange rate adjusted version from here on
 replace wages     = cex_wages
 replace rentpaid  = cex_rentpaid 
-replace milkquotasales        = cex_quotasales
-replace milkquotarentreceived = cex_quotarentrec 
 replace fdairygo  = cex_fdairygo
 replace fdairydc  = cex_fdairydc
 replace fdairygm  = fdairygo - fdairydc //must come after GO & DC
@@ -440,97 +434,92 @@ replace fdairytct = fdairydc + fdairyoh // must come after DC & OH
 capture drop fdairynem
 gen double fdairynem = fdairynm - fdairyec //must come after NM & EC
 
-*Net economic margin incl. quota income
-capture drop fdairynemqi
-gen double fdairynemqi = ///
-   fdairynem + milkquotasales + milkquotarentreceived
 
 
 
 
-  *=== Program definition - testmat ===
-  
-  capture program drop testmat 
-  program testmat, nclass
-    args k_or_t matname t_vlist byvar cond
-  
-    quietly {
-  
-    * Add & to cond if it's not empty
-    if "`cond'" != "" local cond "& `cond'"
-  
-    * Initialise index and matrix with a row of 0's
-    local i = 1
-    capture matrix drop `k_or_t'`matname'
-    matrix `k_or_t'`matname' = (0 , 0)
-  
-    * Do t tests for each var in the table and store results in matrix
-    foreach var of local t_vlist {
-  
-          
-    	if "`k_or_t'" == "T" {
-  
-           ttest `var' if !missing(`byvar')  `cond' , by(`byvar') unequal
-           local stat "`r(t)'"
-           local pval "`r(p)'"
-          }
-  
-  
-    	if "`k_or_t'" == "K" {
-            ksmirnov `var' if !missing(`byvar')  `cond' , by(`byvar')
-           local stat "`r(D)'"
-           local pval "`r(p)'"
-          }
-  
-    	matrix `k_or_t'`matname'= ///
-             (`k_or_t'`matname'\ `stat', round(`pval', .001))
-    	local i	= `i'+1
-  
-    }
-  
-    * Remove the row of 0's we initialised the matrix with
-    matrix `k_or_t'`matname'= `k_or_t'`matname'[2..`i',1..2]
-  
-    * Label the rows and the single column of the t-test matrix
-    matrix rownames `k_or_t'`matname'= `t_vlist'
-    matrix colnames `k_or_t'`matname'= stat p-value
-    }
-  
-    matrix list `k_or_t'`matname'
-  
-  
-  end
-  
-  *=== Program definition - testmat ===
-  
-  
-  
-  *=== Program definition - testSNBN ===
-  * MUST come after definition of ttestmat!!!
-  
-  capture program drop testSNBN 
-  program testSNBN, nclass
-    args k_or_t matname t_vlist cond
-  
-    * Matrix of t-tests (SE-NI and BMW-NI comparisons)
-    quietly {
-  
-    testmat "`k_or_t'" "`matname'1" "`t_vlist'" "seni" "`cond'"
-    testmat "`k_or_t'" "`matname'2" "`t_vlist'" "bmwni" "`cond'"
-    matrix `k_or_t'`matname' = (`k_or_t'`matname'1 , `k_or_t'`matname'2)
-    matrix drop `k_or_t'`matname'1
-    matrix drop `k_or_t'`matname'2
-  
-    matrix colnames `k_or_t'`matname' = ///
-       SE-NI_stat p-value BMW-NI_stat p-value
-  
-    }
-    matrix list `k_or_t'`matname'
-  
-  end
-  
-  *=== Program definition - testSNBN ===
+*=== Program definition - testmat ===
 
+capture program drop testmat 
+program testmat, nclass
+  args k_or_t matname t_vlist byvar cond
+
+  quietly {
+
+  * Add & to cond if it's not empty
+  if "`cond'" != "" local cond "& `cond'"
+
+  * Initialise index and matrix with a row of 0's
+  local i = 1
+  capture matrix drop `k_or_t'`matname'
+  matrix `k_or_t'`matname' = (0 , 0)
+
+  * Do t tests for each var in the table and store results in matrix
+  foreach var of local t_vlist {
+
+        
+  	if "`k_or_t'" == "T" {
+
+         ttest `var' if !missing(`byvar')  `cond' , by(`byvar') unequal
+         local stat "`r(t)'"
+         local pval "`r(p)'"
+        }
+
+
+  	if "`k_or_t'" == "K" {
+          ksmirnov `var' if !missing(`byvar')  `cond' , by(`byvar')
+         local stat "`r(D)'"
+         local pval "`r(p)'"
+        }
+
+  	matrix `k_or_t'`matname'= ///
+           (`k_or_t'`matname'\ `stat', round(`pval', .001))
+  	local i	= `i'+1
+
+  }
+
+  * Remove the row of 0's we initialised the matrix with
+  matrix `k_or_t'`matname'= `k_or_t'`matname'[2..`i',1..2]
+
+  * Label the rows and the single column of the t-test matrix
+  matrix rownames `k_or_t'`matname'= `t_vlist'
+  matrix colnames `k_or_t'`matname'= stat p-value
+  }
+
+  matrix list `k_or_t'`matname'
+
+
+end
+
+*=== Program definition - testmat ===
+
+
+
+*=== Program definition - testSNBN ===
+* MUST come after definition of ttestmat!!!
+
+capture program drop testSNBN 
+program testSNBN, nclass
+  args k_or_t matname t_vlist cond
+
+  * Matrix of t-tests (SE-NI and BMW-NI comparisons)
+  quietly {
+
+  testmat "`k_or_t'" "`matname'1" "`t_vlist'" "seni" "`cond'"
+  testmat "`k_or_t'" "`matname'2" "`t_vlist'" "bmwni" "`cond'"
+  matrix `k_or_t'`matname' = (`k_or_t'`matname'1 , `k_or_t'`matname'2)
+  matrix drop `k_or_t'`matname'1
+  matrix drop `k_or_t'`matname'2
+
+  matrix colnames `k_or_t'`matname' = ///
+     SE-NI_stat p-value BMW-NI_stat p-value
+
+  }
+  matrix list `k_or_t'`matname'
+
+end
+
+*=== Program definition - testSNBN ===
 
 
 
@@ -564,98 +553,94 @@ testSNBN "T" "STR" "`structuralvars'"
 *---------------------------------
 * Do Comparative Analysis
 *----------------------------------
-quietly {
-  
-  * Stocking Rate
-  capture drop lu_ha
-  capture gen lu_ha = dpnolu/daforare
-  
-  * Labour units
-  capture drop labu_ha 
-  capture gen labu_ha = flabunpd/daforare
-  
-  * Yield
-  capture drop lt_lu 
-  capture gen lt_lu = dotomkgl/dpnolu
-  
-  * Milk Price (fdairygo is just milk anyway, and it has the cex correction if applied)
-  capture drop milk_price 
-  gen milk_price = fdairygo/dotomkgl
-  
-  * Imputed value of own land
-  capture drop rentrateha 
-  capture drop ownlandpct 
-  capture drop ownlandha  
-  capture drop ownlandval 
-  gen rentrateha = rentpaid/renteduaa
-  gen ownlandpct = (totaluaa-renteduaa)/totaluaa
-  gen ownlandha  = daforare*ownlandpct
-  gen ownlandval = ownlandha*rentrateha
-  
-  
-  
-  *=== Program definition - scalevar ===
-  
-  capture program drop scalevar
-  program scalevar, rclass
-    args variable outdatadir
-  
-    capture log close
-    macro list _outdatadir
-    log using `outdatadir'/logs/`variable'.txt, text replace
-  
-    capture drop `variable'_ha
-    capture drop `variable'_lu
-    capture drop `variable'_labu
-    capture drop `variable'_lt
-    gen `variable'_ha   = `variable'/daforare
-    gen `variable'_lu   = `variable'/dpnolu
-    gen `variable'_labu = `variable'/flabunpd
-    gen `variable'_lt   = `variable'/dotomkgl
-  
-    di "You've created these scaled versions of `variable'..."
-    ds                     ///
-       `variable'_ha `variable'_lu   ///
-       `variable'_labu `variable'_lt ///
-       , v(32)
-  
-    di _newline(2) "Annual mean values of `variable' by aregion"
-    table year aregion [weight=intwt], ///
-      c(mean `variable')               ///
-        format(%9.2f)
-  
-    di _newline(2) "Annual mean values of `variable'_ha by aregion"
-    table year aregion [weight=intwt], ///
-      c(mean `variable'_ha)            ///
-        format(%9.2f)
-  
-    di _newline(2) "Annual mean values of `variable'_lu by aregion"
-    table year aregion [weight=intwt], ///
-      c(mean `variable'_lu )           ///
-        format(%9.2f)
-  
-    di _newline(2) "Annual mean values of `variable'_labu by aregion"
-    table year aregion [weight=intwt], ///
-      c(mean `variable'_labu )           ///
-        format(%9.2f)
-  
-    di _newline(2) "Annual mean values of `variable'_lt by aregion"
-    table year aregion [weight=intwt], ///
-      c(mean `variable'_lt )           ///
-        format(%9.2f)
-  
-    log close
-  
-  
-    * Uncomment to view each variables log file
-    *view "`outdatadir'/logs/`variable'.txt"
-  
-  end
-  
-  *=== Program definition - scale ===
-  
-} // end of quietly 
 
+* Stocking Rate
+capture drop lu_ha
+capture gen lu_ha = dpnolu/daforare
+
+* Labour units
+capture drop labu_ha 
+capture gen labu_ha = flabunpd/daforare
+
+* Yield
+capture drop lt_lu 
+capture gen lt_lu = dotomkgl/dpnolu
+
+* Milk Price (fdairygo is just milk anyway, and it has the cex correction if applied)
+capture drop milk_price 
+gen milk_price = fdairygo/dotomkgl
+
+* Imputed value of own land
+capture drop rentrateha 
+capture drop ownlandpct 
+capture drop ownlandha  
+capture drop ownlandval 
+gen rentrateha = rentpaid/renteduaa
+gen ownlandpct = (totaluaa-renteduaa)/totaluaa
+gen ownlandha  = daforare*ownlandpct
+gen ownlandval = ownlandha*rentrateha
+
+
+
+*=== Program definition - scalevar ===
+
+capture program drop scalevar
+program scalevar, rclass
+  args variable outdatadir
+
+  capture log close
+  macro list _outdatadir
+  log using `outdatadir'/logs/`variable'.txt, text replace
+
+  capture drop `variable'_ha
+  capture drop `variable'_lu
+  capture drop `variable'_labu
+  capture drop `variable'_lt
+  gen `variable'_ha   = `variable'/daforare
+  gen `variable'_lu   = `variable'/dpnolu
+  gen `variable'_labu = `variable'/flabunpd
+  gen `variable'_lt   = `variable'/dotomkgl
+
+  di "You've created these scaled versions of `variable'..."
+  ds                     ///
+     `variable'_ha `variable'_lu   ///
+     `variable'_labu `variable'_lt ///
+     , v(32)
+
+  di _newline(2) "Annual mean values of `variable' by aregion"
+  table year aregion [weight=intwt], ///
+    c(mean `variable')               ///
+      format(%9.2f)
+
+  di _newline(2) "Annual mean values of `variable'_ha by aregion"
+  table year aregion [weight=intwt], ///
+    c(mean `variable'_ha)            ///
+      format(%9.2f)
+
+  di _newline(2) "Annual mean values of `variable'_lu by aregion"
+  table year aregion [weight=intwt], ///
+    c(mean `variable'_lu )           ///
+      format(%9.2f)
+
+  di _newline(2) "Annual mean values of `variable'_labu by aregion"
+  table year aregion [weight=intwt], ///
+    c(mean `variable'_labu )           ///
+      format(%9.2f)
+
+  di _newline(2) "Annual mean values of `variable'_lt by aregion"
+  table year aregion [weight=intwt], ///
+    c(mean `variable'_lt )           ///
+      format(%9.2f)
+
+  log close
+
+
+  * Uncomment to view each variables log file
+  *view "`outdatadir'/logs/`variable'.txt"
+
+end
+
+*=== Program definition - scale ===
 
 
 
@@ -677,10 +662,10 @@ scalevar fdairyoh_land "`outdatadir'"
 
 
 * Margins
-scalevar fdairygm    "`outdatadir'" // Gross margin
-scalevar fdairynm    "`outdatadir'" // Net margin
-scalevar fdairynem   "`outdatadir'" // Net economic margin
-scalevar fdairynemqi "`outdatadir'" // NEM incl. of quota income 
+scalevar fdairygm  "`outdatadir'" // Gross margin
+scalevar fdairynm  "`outdatadir'" // Net margin
+scalevar fdairynem "`outdatadir'" // Net economic margin
+
 
 * Net margins with shortened names
 gen nm_ha1        = fdairynm_ha
@@ -738,8 +723,7 @@ quietly {
 
 
 
-} // end of quietly 
-
+} // END of quietly 
 
 * Price-adjusted output scaled
 scalevar fdairygo_adj "`outdatadir'" 
@@ -749,7 +733,6 @@ scalevar fdairygo_adj "`outdatadir'"
 
 
 
-quietly {
 
 * -------------------------------
 * Calculate scenario net margins
@@ -766,11 +749,6 @@ scalevar nm_adj_land "`outdatadir'"
 gen double nem_adj       = nm_adj - fdairyec
 scalevar nem_adj "`outdatadir'" 
 
-* Price-adjusted net economic margin incl. quota income
-gen double nem_adj_qi       = /// 
-  nm_adj - fdairyec + milkquotasales + milkquotarentreceived
-scalevar nem_adj_qi "`outdatadir'" 
-
 
 
 
@@ -781,71 +759,54 @@ scalevar nem_adj_qi "`outdatadir'"
 
 
 
+
 *=== Program definition - plotkden ===
 *--------------------------------------------------------------------
 * Creates overlaid kernel densities for NI, BMW, and SE
+*	- year 2008 only
+*	- Net margins per litre from -0.10 to 0.30 only
 *--------------------------------------------------------------------
 capture program drop plotkden 
 program plotkden
-  args outdatadir var yyyy UL LL limvar xunits yunits plottitle export_on
+  args outdatadir var yyyy UL LL limvar
   
-  * The argument yyyy should be a full condition, e.g. "year == 2008"
-  *   as opposed to just "2008" as previously written
-  
-  * Set defaults for optional arguments
+  * Set default bounds on graph
   if "`limvar'" == "" local limvar "`var'" // limvar defaults to var
   if "`UL'"     == "" local UL "40.0001"
   if "`LL'"     == "" local LL "-40.0001"
   
-  *- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  *- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   * Graphing command
-  *- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  kdensity `var' if                           /// ===== Command =====
+  *- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  kdensity `var' if                           /// ===== Command ========
              aregion == 1                  &  ///
-  	     `yyyy'                        &  /// First plot (SE)
+  	     year == `yyyy'                &  /// First plot (SE)
              `limvar'  < `UL'              &  ///
              `limvar'  > `LL'                 ///
       ,                                       ///
-        scheme(lean2)                         /// Start from scheme
-        legend(bplacement(neast) ring(0)      /// Legend in plot area
-               label(1 "SE")                  /// -------------------
-               label(2 "BMW")                 /// Legend labels
-               label(3 "NI"))                 ///  
-        addplot(kdensity `var' if             /// =======Options=====
+        legend(bplacement(neast) ring(0)      /// Legend in plot area    
+               label(1 "SE")                  /// ----------------------
+               label(2 "BMW")                 /// Legend labels & white
+               label(3 "NI"))                 /// legend outline
+        addplot(kdensity `var' if             /// =======Options========
                            aregion == 2    &  ///
-                           `yyyy'          &  /// 
+                           year == `yyyy'  &  /// 
                            `limvar' < `UL' &  /// Second plot (BMW)
                            `limvar' > `LL'    ///
                 ||                            /// 
-                kdensity `var' if             /// -------------------
+                kdensity `var' if             /// ----------------------
                            aregion == 3    &  ///
-                           `yyyy'          &  /// Third plot (NI)
+                           year == `yyyy'  &  /// Third plot (NI)
                            `limvar' < `UL' &  /// 
-                           `limvar' > `LL'  ) /// -------------------
-        xscale(range(`LL' `UL'))              /// Minimum x range
-        yscale(range(0 .15))                  /// Minimum y range
-        xtick(#6)                             /// 6 ticks on x-axis
-        xlabel(#6)                            /// 6 labelled ticks
-        ytick(#6)                             /// 6 ticks on x-axis
-        ylabel(#6, nogrid)                    /// also no grid lines
-        xtitle("`xunits'")                    /// Label x-axis
-        ytitle("`yunits'")                    /// Label x-axis
-        subtitle("`plottitle'",               /// Title  text
-                  pos(11) ring(0)             ///     placement
-                  margin(medsmall)            ///
-                  box )                       //  End of command
+                           `limvar' > `LL'  ) /// ----------------------          
+        scheme(s2mono)                         /// Start from s2mono 
 
-  *- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  *- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   * Graphing command
-  *- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  *- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  if "`export_on'" == "ex" {
-
-    graph export `outdatadir'/densities/kden_`var'.wmf, replace
-    graph drop _all
-
-  }
-
+  graph export `outdatadir'/densities/kden_`var'.wmf, replace
+  graph drop _all
 end
 
 *=== Program definition - plotkden ===
@@ -885,7 +846,7 @@ if `BMWonly'==0 {
 
   foreach var of local kdenlist {
 
-    *plotkden "`outdatadir'" `var' "year == 2008" 0.3 -0.1 nm_lt1 "`var'" "Density" "" "ex"
+    *plotkden "`outdatadir'" `var' 2008 0.3 -0.1 nm_lt1
 
   }
 
@@ -962,7 +923,6 @@ gen lnmin_temp_ni      = lnmin_temp        * ni
 gen azone2_ni 	       = azone2            * ni
 * --------------
 
-} // end of quietly 
 
 local do_chow = 0
 if `do_chow' == 1 {
@@ -1067,7 +1027,7 @@ if `do_chow' == 1 {
   	azone2_ni		///
   	ni
   
-} // end of do_chow switch
+}
 
 * --------------
 
@@ -1077,69 +1037,64 @@ if `do_chow' == 1 {
 
 
 
+*--- Program definition - yrlytests
+capture program drop yrlytests
+program yrlytests, nclass
+  args var yr_list UL LL limvar
 
-quietly {
-  
-  *--- Program definition - yrlytests
-  capture program drop yrlytests
-  program yrlytests, nclass
-    args var yr_list UL LL limvar
-  
-  
-    * Default values for boundary arguments
-    if "`limvar'" == "" local limvar "`var'"
-    qui summ `limvar'
-    if "`UL'"     == "" local UL     "`r(max)'"
-    if "`LL'"     == "" local LL     "`r(min)'"
-  
-    capture matrix drop YT`var'
-    capture matrix drop YK`var'
-  
-    matrix YT`var' = (0, 0, 0, 0)
-    matrix YK`var' = (0, 0, 0, 0)
-      
-  
-  
-    local i = 1
-    foreach yr of local yr_list {
-  
-      * & `limvar' < `UL' & `limvvar' > `LL'
-      qui testSNBN "T" "`yr'" "`var'" "year==`yr' & `limvar' < `UL'"
-      qui testSNBN "K" "`yr'" "`var'" "year==`yr' & `limvar' < `UL'"
-  
-      matrix YT`var' = (YT`var' \ T`yr')
-      matrix YK`var' = (YK`var' \ K`yr')
-  
-      matrix drop T`yr'
-      matrix drop K`yr'
-  
-      local i = `i' + 1
-    }
-  
-    *matrix YT`var' = YT`var'[2..`i', 1..4]
-    matrix YT`var' = (YT`var'[2..., 2], YT`var'[2..., 4] )
-    matrix rownames YT`var' = `yr_list'
-    matrix colnames YT`var' = SE-NI BMW-NI
-      
-    *matrix YK`var' = YK`var'[2..`i', 1..4]
-    matrix YK`var' = (YK`var'[2..., 2], YK`var'[2..., 4] )
-    matrix rownames YK`var' = `yr_list'
-    matrix colnames YK`var' = SE-NI BMW-NI
+
+  * Default values for boundary arguments
+  if "`limvar'" == "" local limvar "`var'"
+  qui summ `limvar'
+  if "`UL'"     == "" local UL     "`r(max)'"
+  if "`LL'"     == "" local LL     "`r(min)'"
+
+  capture matrix drop YT`var'
+  capture matrix drop YK`var'
+
+  matrix YT`var' = (0, 0, 0, 0)
+  matrix YK`var' = (0, 0, 0, 0)
     
-    matrix PVAL`var' = (YK`var' , YT`var')
+
+
+  local i = 1
+  foreach yr of local yr_list {
+
+    * & `limvar' < `UL' & `limvvar' > `LL'
+    qui testSNBN "T" "`yr'" "`var'" "year==`yr' & `limvar' < `UL'"
+    qui testSNBN "K" "`yr'" "`var'" "year==`yr' & `limvar' < `UL'"
+
+    matrix YT`var' = (YT`var' \ T`yr')
+    matrix YK`var' = (YK`var' \ K`yr')
+
+    matrix drop T`yr'
+    matrix drop K`yr'
+
+    local i = `i' + 1
+  }
+
+  matrix YT`var' = YT`var'[2..`i', 1..4]
+  matrix rownames YT`var' = `yr_list'
+  matrix colnames YT`var' = ///
+    SE-NI_t-stat p-value BMW-NI_stat p-value
+
   
-  end
-  
-  *--- Program definition - yrlytests
-  
-  
-} // end of quietly 
+  matrix YK`var' = YK`var'[2..`i', 1..4]
+  matrix rownames YK`var' = `yr_list'
+  matrix colnames YK`var' = ///
+    SE-NI_k-stat p-value BMW-NI_k-stat p-value
+
+
+end
+
+*--- Program definition - yrlytests
+
 
 
 
 
 *******************************************************
-* K-S and T tests 
+* K-S tests*  Per Labour Unit 
 *******************************************************
 local testvlist ""
 local testvlist "`testvlist' nm_labu1"         // Scenario 1
@@ -1147,59 +1102,30 @@ local testvlist "`testvlist' nm_adj_labu"      // Scenario 2
 local testvlist "`testvlist' nm_labu1_land"    // Scenario 3
 local testvlist "`testvlist' nm_adj_land_labu" // Scenario 4
 local testvlist "`testvlist' nem_adj_labu"     // Scenario 5
-local testvlist "`testvlist' nem_adj_qi_labu"  // Scenario 6
-
-local i = 1
 foreach var of local testvlist {
 
   yrlytests "`var'" "`yr_list'" "" "" ""
-  matrix list PVAL`var', format(%9.3f) title("Scenario `i'")
-
-
-  * Box plots of distributions by year and aregion
-  * For monochrome graphs
-  graph box `var', over(aregion) over(year) asyvars noout ///
-      scheme(lean2) legend(pos(6) ring(0) row(1))         ///
-      ytitle("euro per hour") note("") box(3, bstyle(p9box))
-      
+  matrix list YT`var'
+  matrix list YK`var'
 
   /*
-  * For colour graphs
+  * For monochrome graphs
   graph box `var', over(aregion) over(year) asyvars noout ///
-       legend(row(1)) ytitle("euro per hour") note("")
+      scheme(lean2) legend(pos(north) row(1)) ///
+      ytitle("¿ per hour") note("")
   */
 
+  * For colour graphs
+  graph box `var', over(aregion) over(year) asyvars noout ///
+       legend(row(1)) ytitle("¿ per hour") note("")
+
   * Export whichever is currently displayed
-  graph export "`outdatadir'/densities/scen`i'_box.wmf", replace
-
-
-
-  * Before and after trading densities
-  *Reminder that command's args are 
-*    1        2    3  4  5   6      7       8      9        10    
-* outdatadir var yyyy UL LL limvar xunits yunits plottitle export_on
-  plotkden "`outdatadir'" "`var'" "year == 2006" "30" "-20" "" "" "" "2006" ""
-  graph save before, replace
-
-  plotkden "`outdatadir'" "`var'" "year == 2008" "30" "-20" "" "" "" "2008" ""
-  graph save after, replace
-
-  graph combine before.gph after.gph,                  ///
-    col(1) iscale(1.3) xsize(3) ysize(3.5) imargin(zero)  ///
-    b1title("euro per hour") l1title("Density")           ///
-    commonscheme scheme(lean2)                            ///
-    title("Scenario `i' net margin distributions",        ///
-           margin(medium))
-  graph export "`outdatadir'/densities/scen`i'_kden.wmf", replace
-
+  graph export `outdatadir'/densities/box_`var'.wmf, replace
   graph drop _all
 
-
-  local i = `i' + 1
- 
 }
 
 matrix dir
 *******************************************************
-* K-S and T tests 
+* K-S tests*  Per Labour Unit 
 *******************************************************

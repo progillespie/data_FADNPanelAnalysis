@@ -1,0 +1,64 @@
+use ../../OutData/multisward/data1, clear
+cf using "D:\Data_real/data_FADNPanelAnalysis/OutData/multisward/data1"
+help cf
+cf using "D:\Data_real/data_FADNPanelAnalysis/OutData/multisward/data1", all verbose
+cf _all using "D:\Data_real/data_FADNPanelAnalysis/OutData/multisward/data1", all verbose
+local path "data_FADNPanelAnalysis/OutData/multisward"
+dta_equal "D:\Data/`path'/data1" "D:\Data_real/`path'/data1"
+clear
+dta_equal "D:\Data/`path'/data2" "D:\Data_real/`path'/data2"
+dta_equal "D:\Data/`path'/data3" "D:\Data_real/`path'/data3"
+dta_equal "D:\Data/`path'/data4" "D:\Data_real/`path'/data4"
+doedit
+do debug
+debug
+do debug_msward
+help foreach
+do debug_msward
+do debug_msward
+do debug_msward
+set trace on
+do debug_msward
+do debug_msward
+set trace off
+do debug_msward
+do debug_msward
+do debug_msward
+do debug_msward
+do debug_msward
+do debug_msward
+do debug_msward
+do debug_msward
+do debug_msward
+do debug_msward
+do debug_msward
+do debug_msward
+do debug_msward
+do debug_msward
+do debug_msward
+do debug_msward
+do msward_WFSresults_wnamefixes.do
+do msward_WFSresults_cost_wnamefixes.do
+help sfpanel
+do msward_WFSresults_cost_wnamefixes.do
+doedit msward_WFSresults_cost_wnamefixes.do
+do msward_WFSresults_cost_wnamefixes.do
+do msward_WFSresults_cost_wnamefixes.do
+do msward_WFSresults_cost_wnamefixes.do
+br
+codebook _all
+do msward_WFSresults_cost_wnamefixes.do
+do msward_WFSresults_cost_wnamefixes.do
+count if grassratio==0
+sfpanel lntotalspecificcosts lndairyproducts lnPTotalCattle lnPCompoundfeedingstuffsforcatt lnPFERTILISERSANDSOILIMPROVERS  TREND if country == "FRA",  `cost' model(bc95) d(tnormal) posthessian robust emean(grassratio special) usigma(grassratio special) vsigma(TREND) difficult
+di "`e(converged)'"
+sfpanel lntotalspecificcosts lndairyproducts lnPTotalCattle lnPCompoundfeedingstuffsforcatt lnPFERTILISERSANDSOILIMPROVERS  TREND if country == "FRA",  `cost' model(bc95) d(tnormal) posthessian robust emean(grassratio special) usigma(grassratio special) vsigma(TREND) difficult iterate(1000)
+di "`e(converged)'"
+do msward_WFSresults_cost_wnamefixes.do
+do msward_WFSresults_cost_wnamefixes.do
+count if feedforgrazinglivestockhomegrown  == 0
+hist feedforgrazinglivestockhomegrown
+hist grassratio
+hist special
+hist lngrassratio
+exit, clear

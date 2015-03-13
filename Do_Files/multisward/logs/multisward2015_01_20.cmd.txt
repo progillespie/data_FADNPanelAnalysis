@@ -1,0 +1,32 @@
+ml query
+ereturn list
+br
+help dta_equal
+dir "D:\Data\data_FADNPanelAnalysis\OutData\multisward"
+dir "D:\Data\data_FADNPanelAnalysis\OutData\multisward\"
+dir "D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data"
+dir "D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+dir "D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+dta_equal "D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"  "D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+di "`r(uniq1)'"
+return list
+dta_equal "D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"  "D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+return list
+help dta_equal
+help return
+return list
+dta_equal "D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"  "D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+return list
+ereturn list
+return list, all
+help cf
+use "D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"  , clear
+merge 1:1 pid year using "D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+sort pid year farmcode
+sort pid year
+br pid year _all
+use "D:\Data\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"  , clear
+merge 1:1 using "D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+merge 1:1 _all using "D:\Data_real\data_FADNPanelAnalysis\OutData\multisward\exported_data.dta"
+exit
+exit, clear

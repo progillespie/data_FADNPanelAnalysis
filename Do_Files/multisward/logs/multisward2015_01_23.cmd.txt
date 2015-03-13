@@ -1,0 +1,284 @@
+do msward_WFSresults_cost_fixed
+hist lngrassratio
+hist grass_sh
+do msward_WFSresults_cost_fixed
+hist grassratio
+hist lngrassratio
+hist grassratio
+summ grassratio
+return list
+gen nmgrassratio = (grassratio - r(mean))/r(sd)
+hist nmgrassratio
+summ lngrassratio
+gen nmgrassratio = (lngrassratio - r(mean))/r(sd)
+replace nmgrassratio = (lngrassratio - r(mean))/r(sd)
+hist nmgrassratio
+help qqplot
+ssc install hangroot
+ssc install qexp
+ssc install ddplot
+ssc install dpplot
+help qexp
+qexp nmgrassratio
+qexp grassratio
+help hangroot
+hangroot grassratio, dist(exp)
+hangroot grassratio, dist(exponential)
+help hangroot
+hangroot grassratio, dist(lnnormal)
+hangroot grassratio, dist(lnnormalfit)
+hangroot grassratio, dist(lognormal)
+hangroot grassratio, dist(normal)
+hangroot grassratio, dist(logistic)
+hangroot grassratio, dist(Weilbull)
+hangroot grassratio, dist(Weibull)
+hangroot grassratio, dist(weibull)
+hangroot grassratio, dist(chi2)
+hangroot grassratio, dist(normal)
+hangroot lngrassratio, dist(normal)
+hangroot lngrassratio, dist(lognormal)
+hangroot lngrassratio, dist(normal)
+hangroot lngrassratio, dist(lognormal)
+hangroot lngrassratio, dist(exponential)
+hangroot grassratio, dist(exponential)
+hangroot grassratio, dist(normal)
+hangroot grassratio, dist(lognormal)
+hangroot lngrassratio, dist(lognormal)
+hangroot lngrassratio, dist(normal)
+count if grassratio == 1
+hist grassratio
+count if grassratio == 100
+ds ln*, varwidth(32)
+reg lntotalspecificcosts lndairyproducts lnP*  lngrassratio lnspecial
+predict res, res
+hist res
+hangroot res, dist(normal)
+hangroot res, dist(normal) par(0, `e(rmse)')
+reg res
+hangroot
+margdistfit, cumul
+findit margdistfit
+margdistfit, cumul
+margdistfit, pp
+margdistfit, qq
+preserve
+webuse xtfrontier1
+webuse xtfrontier1, clear
+sfpanel lnwidgets lnmachines lnworkers, model(bc95)
+predict u, u
+predict xb, xb
+predict e, e
+help sfpanel
+gen e = lnwidgets - xb
+gen v = e - u
+hist v
+hist e
+hiist u
+hist u
+hist xb
+qq lnwidgets xb
+qqplot lnwidgets xb
+replace e = lnwidgets - xb
+replace v = e - u
+hist e
+hist u
+hist v
+gen exv = exp(v)
+hist exv
+drop xb
+drop e
+dropv
+drop v
+drop u
+ds
+xtset
+drop exv
+sfpanel lnwidgets lnworkers lnmachines, model(bc95) dist(tnormal)
+predict xb, xb
+predict u, u
+gen v = lnwidgets - (xb - u)
+hist v
+margdistfit, qq
+xtreg lnwidgets lnworkers lnmachines, fe
+margdistfit, qq
+hangroot v
+qnorm v
+restore
+sfpanel lntotalspecificcosts lndairyproducts lnP* TREND if country==3, model(bc95) dist(tnormal) emean(lngrassratio lnspecial) esigma(lngrassratio lnspecial) iterate(1000) cost
+sfpanel lntotalspecificcosts lndairyproducts lnP* TREND if country=="IRE", model(bc95) dist(tnormal) emean(lngrassratio lnspecial) esigma(lngrassratio lnspecial) iterate(1000) cost
+restore
+clear
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+hangroot v if country=="IRE"
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+hist u
+hist v
+qnorm v
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+hist lnspecial if country=="DEU"
+codebook lngrassratio lnspecial if country=="DEU"
+codebook lngrassratio lnspecial if country=="FRA"
+codebook lngrassratio lnspecial if country=="IRE"
+codebook lngrassratio lnspecial if country=="UKI"
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+codebook lngrassratio lnspecial if country=="IRE"
+codebook special if country=="IRE"
+count if special == 0 & country=="IRE"
+replace lnspecial = ln(special)
+br if missing(lnspecial) & country=="IRE"
+br pid year special dpallocgo if missing(lnspecial) & country=="IRE"
+br pid year lnspecial special dpallocgo if missing(lnspecial) & country=="IRE"
+di ln(-2.4117153)
+di ln(-2.411715)
+di ln(-2)
+di ln(2)
+di ln(-1)
+codebook cowsmilkandmilkproducts
+summ cowsmilkandmilkproducts, detail
+summ cowsmilkandmilkproducts
+summ cowsmilkandmilkproducts beefandveal sheepandgoats
+br pid year lnspecial special dpallocgo cowsmilkandmilkproducts beefandveal sheepandgoats if missing(lnspecial) & country=="IRE"
+br pid year lnspecial special dpallocgo cowsmilkandmilkproducts beefandveal sheepandgoats if missing(lnspecial)
+count if dpallocgo < 0
+tab country if dpallocgo < 0
+tabstat intwt if dpallocgo < 0, stats(sum) by(country)
+tabstat intwt , stats(sum) by(country)
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+codebook lntotalspecificcosts lndairyproducts lnP* lngrassratio lnspecial if country=="IRE"
+do msward_WFSresults_cost_fixed
+ereturn list
+matrix list `e(b)'
+matrix list e(b)
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+codebook lntotalspecificcosts lndairyproducts lnP* lngrassratio lnspecial
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+do msward_WFSresults_cost_fixed
+doedit run_thesis
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+help xtreg
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+help ml
+do run_thesis.do
+matrix list SV
+ereturn list
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+ereturn list
+matrix list e(b)
+matrix list e(b)[Frontier]
+help matrix list
+help macro list
+help matrix
+help matrix define
+help matrix list
+matrix list e(b)(1..7)
+matrix list SV
+matrix list SV(1..3)
+matrix list SV[1..3]
+help matrix
+matrix A = SV[1..3]
+matrix list SV
+matrix A = SV[1..3,]
+matrix A = SV[,1..3]
+matrix A = SV
+matrix A = SV["Frontier"]
+matrix list SV
+matrix list e(b)
+matrix list e(b)["Frontier:"]
+matrix list e(b)["Frontier:", "Frontier:"]
+matrix list e(b)[1..3]
+matrix list e(b)
+matrix A = e(b)[1..3]
+matrix A = e(b)[1..3,]
+matrix A = e(b)[,1..3]
+matrix A = e(b)[1..3, 1]
+matrix A = SV
+matrix list A
+matrix list SV
+matrix list A["`e(covariates)'"]
+matrix list A["`e(covariates)'", y1]
+matrix list e(b)["`e(covariates)'", 1]
+matrix list e(b)[`e(covariates)', 1]
+matrix list e(b)[1, 1]
+matrix list e(b)[1,1]
+matrix list SV[1,1]
+matrix A =  SV[1,1]
+matrix list A
+matrix A =  SV[1,1..2]
+matrix list A
+matrix A =  SV[1,"`e(covariates)'"]
+matrix A =  SV[1,`e(covariates)']
+local n: sizeof e(covariates)
+help macro list
+local n: word count e(covariates)
+di "`n'"
+di "`e(covariates)'"
+local n: list sizeof e(covariates)
+local n: list word count e(covariates)
+local X = e(covariates)
+local n: list sizeof X
+di `n'
+matrix  A = e(b)[1,1..`n']
+matrix EB = e(b)
+matrix SV = EB[1,1..`n']
+matrix SV
+matrix list SV
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do
+do run_thesis.do

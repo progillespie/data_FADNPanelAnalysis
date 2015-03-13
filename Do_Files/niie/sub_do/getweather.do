@@ -7,12 +7,12 @@
 
 * locals only apply to the file in which they were set, 
 *  so either way they need to be set here
-local fadnpaneldir $datadir/data_FADNPanelAnalysis
+local fadnpaneldir   $datadir/data_FADNPanelAnalysis
 local fadnoutdatadir `fadnpaneldir'/OutData/$project
-local nfspaneldir $datadir/data_NFSPanelAnalysis
-local origdatadir `fadnpaneldir'/OrigData 
-local fadn9907dir  `fadnpaneldir'/OrigData/eupanel9907
-local fadn2dir  `fadnpaneldir'/OrigData/FADN_2/TEAGSC
+local nfspaneldir    $datadir/data_NFSPanelAnalysis
+local origdatadir    `fadnpaneldir'/OrigData
+local fadn9907dir    `fadnpaneldir'/OrigData/eupanel9907
+local fadn2dir       `fadnpaneldir'/OrigData/FADN_2/TEAGSC
 
 
 * save before we load the weather data 

@@ -1,0 +1,18 @@
+help sfpanel
+help netinstall
+help install
+ssc install sfpanel , all
+ssc uninstall sfpanel , all
+ssc uninstall sfpanel
+cd D:\
+do "C:\Users\Patrick.Gillespie\Desktop\run_thesis.do"
+ssc uninstall sfpanel
+cd D:\
+do "C:\Users\Patrick.Gillespie\Desktop\run_thesis.do"
+ssc uninstall sfpanel
+cd D:\
+do "C:\Users\Patrick.Gillespie\Desktop\run_thesis.do"
+cd D:\
+do "C:\Users\Patrick.Gillespie\Desktop\run_thesis.do"
+do "C:\Users\Patrick.Gillespie\Desktop\run_thesis2.do"
+do "C:\Users\Patrick.Gillespie\Desktop\run_thesis2.do"
